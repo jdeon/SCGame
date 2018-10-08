@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: InvocationBouclierRegenerantPlaneteSolMoyen
+  m_EditorClassIdentifier: Assembly-CSharp::CapaciteInvocationModuleCible
+  nom: InvocationBouclierRegenerantPlaneteSolMoyen
+  capacite: 28
+  quantite: 1
+  typeCalcul: 0
+  appelUnique: 1
+  choixCible: 0
+  duree: 100
+  conditionCible:
+  - 11-A
+  conditionEmplacement:
+  - 1-A
+  conditionAction:
+  - 9-A
+  moduleAInvoquer: {fileID: 11400000, guid: 57ad07f8c6032b64faeb3dee440846b1, type: 2}
+  comportementSiModulSimilaire: 1

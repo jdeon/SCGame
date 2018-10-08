@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad65ca0698df3c4aaddceac0c5b03ee, type: 3}
+  m_Name: Niv2-Def-CanonAIon
+  m_EditorClassIdentifier: 
+  idNiveau: 0
+  titreNiveau: "Rayon focalis\xE9"
+  descriptionNiveau: "Augmente les d\xE9gats du cout du vaisseau en m\xE9tal sup\xE9rieur
+    \xE0 5"
+  citationNiveau: 
+  numNiveau: 2
+  cout: 3
+  manuelle: 0
+  capacite:
+  - {fileID: 11400000, guid: 42e85d7272113b34e80d8ff1b730ac7c, type: 2}

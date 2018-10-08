@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8264946cf4864a4b83dc6c7b6d9b70b, type: 3}
+  m_Name: AutoDestructionMine
+  m_EditorClassIdentifier: 
+  titreCarte: Auto-destruction
+  libelleCarte: "D\xE9truit la carte ainsi que tous les attaquant \xE9nemie"
+  citationCarte: 
+  capaciteCondition: []
+  capaciteEffet:
+  - {fileID: 11400000, guid: 80c80175107afcf41ab464f65574f3de, type: 2}
+  - {fileID: 11400000, guid: 8f785dc5d50cf2a41ba1f380d9fee6c7, type: 2}

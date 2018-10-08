@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad65ca0698df3c4aaddceac0c5b03ee, type: 3}
+  m_Name: Niv1-Bat-Laboratoire
+  m_EditorClassIdentifier: 
+  idNiveau: 0
+  titreNiveau: 
+  descriptionNiveau: "Am\xE9liore puissance des am\xE9liorations"
+  citationNiveau: 
+  numNiveau: 1
+  cout: 3
+  capacite:
+  - {fileID: 11400000, guid: 254e6f4a60ded24499046948d151ca8e, type: 2}

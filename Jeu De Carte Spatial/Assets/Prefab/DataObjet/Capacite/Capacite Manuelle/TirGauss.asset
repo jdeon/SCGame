@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8264946cf4864a4b83dc6c7b6d9b70b, type: 3}
+  m_Name: TirGauss
+  m_EditorClassIdentifier: 
+  titreCarte: Tir de gauss
+  libelleCarte: "D\xE9truit un vaisseaux, 2 tour de recharge"
+  citationCarte: 
+  capaciteCondition: []
+  capaciteEffet:
+  - {fileID: 11400000, guid: e6ca208c65844b84183f2744c2195456, type: 2}
+  - {fileID: 11400000, guid: eae2aa803b1ceea4d8f5779c0696db0c, type: 2}

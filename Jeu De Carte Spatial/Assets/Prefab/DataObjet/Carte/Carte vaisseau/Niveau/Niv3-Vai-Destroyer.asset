@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad65ca0698df3c4aaddceac0c5b03ee, type: 3}
+  m_Name: Niv3-Vai-Destroyer
+  m_EditorClassIdentifier: 
+  idNiveau: 0
+  titreNiveau: "Viseur am\xE9lior\xE9"
+  descriptionNiveau: "Double la quantit\xE9 de carburant consomm\xE9 par le vaisseau
+    lors du prochain tour"
+  citationNiveau: "Feu sur leurs r\xE9servoirs."
+  numNiveau: 3
+  cout: 4
+  capacite: []
+  typeNbCapaciteAuxChoix: 2
+  valeurTypeCapaciteAuxChoix: 1
+  typeRegroupementCapacite: 3
+  valeurRegroupement: 1
+  capaciteManuelle:
+  - {fileID: 11400000, guid: 0c05490fefb29bd4e9a8016d13bb3f64, type: 2}

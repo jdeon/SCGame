@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad65ca0698df3c4aaddceac0c5b03ee, type: 3}
+  m_Name: Niv3-Vai-Espion
+  m_EditorClassIdentifier: 
+  idNiveau: 0
+  titreNiveau: Module de recyclage
+  descriptionNiveau: "R\xE9cup\xE8re la moiti\xE9 des ressource du vaisseau qu'il
+    d\xE9truit"
+  citationNiveau: 
+  numNiveau: 3
+  cout: 2
+  capacite:
+  - {fileID: 11400000, guid: 87386d897a65dd94f8e3496e64083fca, type: 2}
+  typeRegroupementCapacite: 0
+  valeurRegroupement: 0

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad65ca0698df3c4aaddceac0c5b03ee, type: 3}
+  m_Name: Niv1-Vai-BaseIntergalactique
+  m_EditorClassIdentifier: 
+  idNiveau: 0
+  titreNiveau: Prise de position
+  descriptionNiveau: "Permet de positionner la base intergalatique dans l'atmosph\xE8re
+    ennemie pour attaquze"
+  citationNiveau: 
+  numNiveau: 1
+  cout: 4
+  capacite:
+  - {fileID: 11400000, guid: 6658d5a56ddd1334bbfa9830c3becd3c, type: 2}
+  typeNbCapaciteAuxChoix: 2
+  valeurTypeCapaciteAuxChoix: 1
+  typeRegroupementCapacite: 3
+  valeurRegroupement: 1
+  capaciteManuelle:
+  - {fileID: 11400000, guid: 52166750d07210548b459f8bacc535ec, type: 2}

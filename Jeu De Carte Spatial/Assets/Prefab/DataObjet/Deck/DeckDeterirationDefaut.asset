@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c010ab406c79e14eab5949bb811b935, type: 3}
+  m_Name: DeckDeterirationDefaut
+  m_EditorClassIdentifier: 
+  titre: Deck deterioration par defaut
+  commentaire: List des deterioration offerte au jour par defaut
+  listeCarte:
+  - {fileID: 11400000, guid: 32a1702ce7026b84ba42a786d6feb11c, type: 2}
+  - {fileID: 11400000, guid: ba9fb36da27bda640910273e87799db1, type: 2}
+  - {fileID: 11400000, guid: 6a9b939c06a59254290dd1da56aa8942, type: 2}
+  - {fileID: 11400000, guid: 3830d538668cc9447ba3e590f101b849, type: 2}
+  - {fileID: 11400000, guid: 82a2ec11a590b1245b2e58b949ea2ed6, type: 2}
+  - {fileID: 11400000, guid: 327767536bd10f749a9472ca1562b97f, type: 2}
+  - {fileID: 11400000, guid: 77007943acb556644974858ed298449a, type: 2}
+  - {fileID: 11400000, guid: f29d725585a47484eabdcfbee7f849b0, type: 2}
+  - {fileID: 11400000, guid: ae5940903c17121448bf5cf6537520c9, type: 2}
+  - {fileID: 11400000, guid: 870a0bbb107e391448c8c8102ed44810, type: 2}
+  - {fileID: 11400000, guid: 85139b3b2e538ec499096f918ffdf6ad, type: 2}
+  - {fileID: 11400000, guid: dd11f1b8cb06bfe45991c5cdde3c3192, type: 2}

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8264946cf4864a4b83dc6c7b6d9b70b, type: 3}
+  m_Name: Vol2Metal
+  m_EditorClassIdentifier: 
+  titreCarte: "Vol de m\xE9tal"
+  libelleCarte: "Vol 2 unit\xE9 de m\xE9tal"
+  citationCarte: 
+  capaciteCondition: []
+  capaciteEffet:
+  - {fileID: 11400000, guid: fe1c0c7f3242d034782d5f80befb3f9f, type: 2}

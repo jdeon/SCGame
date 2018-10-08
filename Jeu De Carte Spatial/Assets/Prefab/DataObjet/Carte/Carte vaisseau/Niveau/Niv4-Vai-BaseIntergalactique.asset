@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad65ca0698df3c4aaddceac0c5b03ee, type: 3}
+  m_Name: Niv4-Vai-BaseIntergalactique
+  m_EditorClassIdentifier: 
+  idNiveau: 0
+  titreNiveau: "Porte des \xE9toiles"
+  descriptionNiveau: "R\xE9duit de 3 avec un minumum de 1 la consomation de carburant
+    des vaisseaux alli\xE9s"
+  citationNiveau: 
+  numNiveau: 4
+  cout: 4
+  capacite:
+  - {fileID: 11400000, guid: c2b49b06ba6e7054f876af5be3d63e20, type: 2}
+  typeRegroupementCapacite: 0
+  valeurRegroupement: 0

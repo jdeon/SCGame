@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad65ca0698df3c4aaddceac0c5b03ee, type: 3}
+  m_Name: Niv4-Bat-GenerateurBouclier
+  m_EditorClassIdentifier: 
+  idNiveau: 0
+  titreNiveau: 
+  descriptionNiveau: Augmente les points de bouclier de 5
+  citationNiveau: 
+  numNiveau: 4
+  cout: 3
+  manuelle: 0
+  capacite:
+  - {fileID: 11400000, guid: 784ba98cca50c0c40a56320f3501b3da, type: 2}

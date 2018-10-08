@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a70a83fde3ef20541b4b5609a1582e1f, type: 3}
+  m_Name: VaisseauxGuerre
+  m_EditorClassIdentifier: 
+  idCarte: 0
+  titreCarte: Vaisseau de guerre
+  libelleCarte: 
+  citationCarte: 
+  nbTourAvantActif: 0
+  pointVieMax: 4
+  listNiveau:
+  - {fileID: 11400000, guid: 0f10c6716ac5941489638e421da72f40, type: 2}
+  - {fileID: 11400000, guid: 245dc06e6f9425d44a902a567dcd46ea, type: 2}
+  - {fileID: 11400000, guid: 290a748e94ff8ae4182fb07e6910d297, type: 2}
+  - {fileID: 11400000, guid: 571c7fb62a8bca5449d0a95cf21627a9, type: 2}
+  - {fileID: 11400000, guid: 23d56dbe99f085148b3524040409073a, type: 2}
+  pointAttaque: 3
+  consommationCarburant: 5

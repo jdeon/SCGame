@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad65ca0698df3c4aaddceac0c5b03ee, type: 3}
+  m_Name: Niv1-Vai-Espion
+  m_EditorClassIdentifier: 
+  idNiveau: 0
+  titreNiveau: Mode Phantom
+  descriptionNiveau: "Vaisseau invisible tant qu'il ne subit pas de d\xE9gats"
+  citationNiveau: 
+  numNiveau: 1
+  cout: 1
+  capacite:
+  - {fileID: 11400000, guid: 157fe93826d44254cae85ccd2954de22, type: 2}
+  - {fileID: 11400000, guid: ed725381703ab97419bda3428542455c, type: 2}
+  typeRegroupementCapacite: 0
+  valeurRegroupement: 0

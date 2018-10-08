@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c7582660e5cd3944a5ab96bcbf4d1e9, type: 3}
+  m_Name: Lance roquette
+  m_EditorClassIdentifier: 
+  idCarte: 0
+  titreCarte: Lance roquette
+  libelleCarte: 
+  citationCarte: 
+  nbTourAvantActif: 0
+  pointVieMax: 2
+  listNiveau:
+  - {fileID: 11400000, guid: 7f8dc7526e0bdc64ea1413f6153fefad, type: 2}
+  - {fileID: 11400000, guid: f98cad968313fa24c9f39c60c22527ca, type: 2}
+  - {fileID: 11400000, guid: 678b96565dcd03c4588e46d2ecfaa725, type: 2}
+  - {fileID: 11400000, guid: f417523a575e6764abb4d811b6f55e0e, type: 2}
+  - {fileID: 11400000, guid: db2c4c6442cdd934da167092e4145f2b, type: 2}
+  pointAttaque: 1

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad65ca0698df3c4aaddceac0c5b03ee, type: 3}
+  m_Name: Niv4-Def-MineOrbitalaire
+  m_EditorClassIdentifier: 
+  idNiveau: 0
+  titreNiveau: Brouillage radio
+  descriptionNiveau: "R\xE9oriente l'attaque d'un vaisseau sur une autre cible"
+  citationNiveau: 
+  numNiveau: 4
+  cout: 4
+  capacite:
+  - {fileID: 11400000, guid: ae3c6801ce207ce4c9fe0b0b32a8dacf, type: 2}
+  typeNbCapaciteAuxChoix: 2
+  valeurTypeCapaciteAuxChoix: 1
+  typeRegroupementCapacite: 3
+  valeurRegroupement: 1
+  capaciteManuelle:
+  - {fileID: 11400000, guid: 02c85634f7f299144a4b0c29443cff10, type: 2}

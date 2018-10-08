@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad65ca0698df3c4aaddceac0c5b03ee, type: 3}
+  m_Name: Niv2-Vai-Leger
+  m_EditorClassIdentifier: 
+  idNiveau: 0
+  titreNiveau: As du volant
+  descriptionNiveau: "Une chance sur 2 redirig\xE9 les d\xE9gats vers une cible au
+    hasard"
+  citationNiveau: 
+  numNiveau: 2
+  cout: 2
+  capacite:
+  - {fileID: 11400000, guid: 4d7397be82ce3ea4583d00cca1053345, type: 2}
+  typeRegroupementCapacite: 0
+  valeurRegroupement: 0

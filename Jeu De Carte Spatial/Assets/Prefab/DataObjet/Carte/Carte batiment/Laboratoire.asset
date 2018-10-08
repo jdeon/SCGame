@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61c7575124364e043915998b9c73db62, type: 3}
+  m_Name: Laboratoire
+  m_EditorClassIdentifier: 
+  idCarte: 0
+  titreCarte: Laboratoire
+  libelleCarte: 
+  citationCarte: 
+  nbTourAvantActif: 0
+  pointVieMax: 3
+  listNiveau:
+  - {fileID: 11400000, guid: bfef36b3d8a0f314face7cb7fd35db60, type: 2}
+  - {fileID: 11400000, guid: b6d7574d6cb3f7a49aab22a7d982c1ac, type: 2}
+  - {fileID: 11400000, guid: 1b3122129418cbf40b5bfbdb8c8e7ce3, type: 2}
+  - {fileID: 11400000, guid: be1ea3193766464428466bb4f0bb9031, type: 2}
+  - {fileID: 11400000, guid: 61ac40d169225d04f9e45a5269d384e1, type: 2}

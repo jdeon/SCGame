@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: InvocationBouclierRegenerantPlaneteMineur
+  m_EditorClassIdentifier: Assembly-CSharp::CapaciteInvocationModuleCible
+  nom: InvocationBouclierRegenerantPlaneteMineur
+  capacite: 28
+  quantite: 1
+  typeCalcul: 0
+  appelUnique: 1
+  choixCible: 0
+  duree: 100
+  conditionCible:
+  - 11-A
+  conditionEmplacement:
+  - 1-A
+  conditionAction:
+  - 9-A
+  moduleAInvoquer: {fileID: 11400000, guid: 86cad5bedb621ee4ba9d05af82657eb0, type: 2}
+  comportementSiModulSimilaire: 1

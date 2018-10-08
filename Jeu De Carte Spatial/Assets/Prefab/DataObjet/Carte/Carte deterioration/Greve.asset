@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68869fd0eb74c44cb8e7d9319b6a31b, type: 3}
+  m_Name: Greve
+  m_EditorClassIdentifier: 
+  idCarte: 0
+  titreCarte: "Gr\xE8ve"
+  libelleCarte: "Le tour est pass\xE9"
+  citationCarte: 
+  image: {fileID: 0}
+  nbTourAvantActif: 0
+  chanceDePioche: 1
+  action:
+  - {fileID: 11400000, guid: ef2a67e401399aa4a939db44db98c3ca, type: 2}

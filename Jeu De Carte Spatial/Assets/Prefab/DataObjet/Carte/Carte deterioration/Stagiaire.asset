@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68869fd0eb74c44cb8e7d9319b6a31b, type: 3}
+  m_Name: Stagiaire
+  m_EditorClassIdentifier: 
+  idCarte: 0
+  titreCarte: Stagiaire
+  libelleCarte: "Premi\xE8re action effectu\xE9 au hasard"
+  citationCarte: C'est quoi ce bouton
+  image: {fileID: 0}
+  nbTourAvantActif: 0
+  chanceDePioche: 3
+  action:
+  - {fileID: 11400000, guid: 1742e33d4946d7842866db231a9b85b1, type: 2}

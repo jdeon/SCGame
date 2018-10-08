@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a70a83fde3ef20541b4b5609a1582e1f, type: 3}
+  m_Name: Croiseur
+  m_EditorClassIdentifier: 
+  idCarte: 0
+  titreCarte: Croiseur
+  libelleCarte: 
+  citationCarte: 
+  nbTourAvantActif: 0
+  pointVieMax: 3
+  listNiveau:
+  - {fileID: 11400000, guid: 73980023da255d6439089ddafc0d0f44, type: 2}
+  - {fileID: 11400000, guid: ed3366512394e464197cd5368bb6de19, type: 2}
+  - {fileID: 11400000, guid: e73d348852f48884a89c083ae8d67975, type: 2}
+  - {fileID: 11400000, guid: 614cf2c3535fe0841a0397b637db37d0, type: 2}
+  - {fileID: 11400000, guid: a26a9e0a197d29b44befef88a66e8e25, type: 2}
+  pointAttaque: 2
+  consommationCarburant: 4
