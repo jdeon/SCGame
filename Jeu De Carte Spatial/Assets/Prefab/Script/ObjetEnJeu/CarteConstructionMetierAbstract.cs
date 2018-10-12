@@ -22,8 +22,18 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 		base.OnMouseDown ();
 		float height = panelGO.GetComponent<RectTransform>().rect.height;
 		float width = panelGO.GetComponent<RectTransform>().rect.width;
-		DesignCarteConstructionV2 designCarte = new DesignCarteConstructionV2 (panelGO, height, width);
+
 		CarteConstructionAbstractDTO carteSource = (CarteConstructionAbstractDTO)getCarteRef ();
+		int nbNiveau = carteSource.listNiveau.Count;
+
+		//On supprime le premier niveau s'il est vide
+		if (nbNiveau > 1 && carteSource.listNiveau [0].titreNiveau == "") {
+			nbNiveau--;
+		}
+
+
+		DesignCarteConstructionV2 designCarte = new DesignCarteConstructionV2 (panelGO, height, width,nbNiveau);
+
 
 		designCarte.setTitre (carteSource.titreCarte);
 		designCarte.setImage (carteSource.image);
@@ -32,6 +42,21 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 		designCarte.setCarburant (5);
 		//designCarte.setDescription ("Ceci est une description de la carte");
 		//designCarte.setCitation ("Il était une fois une carte");
+
+		bool premierNivCache = false;
+		for( int index = 0 ; index <  carteSource.listNiveau.Count; index++){
+			NiveauDTO niveau = carteSource.listNiveau [index];
+
+			//ne rempie pas le premier titre s'il est vide
+			if (index == 0 && niveau.titreNiveau == "") {
+				premierNivCache = true;
+				continue;
+			}
+
+			designCarte.setNiveau (premierNivCache? index : index + 1, niveau.titreNiveau, niveau.descriptionNiveau, niveau.cout);
+		}
+
+		//TODO calcul PA, PD, ...
 		designCarte.setPA (0);
 		designCarte.setPD (carteSource.pointVieMax);
 

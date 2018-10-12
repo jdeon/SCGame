@@ -8,7 +8,7 @@ public class ConstanteInGame {
 
 	public static readonly Font fontArial = Resources.GetBuiltinResource<Font>("Arial.ttf");
 
-	public static readonly Color colorVaisseau = new Color (1, 0, 0, .25f);
+	public static readonly Color colorVaisseau = new Color (1, 0, 0, .75f);
 
 
 

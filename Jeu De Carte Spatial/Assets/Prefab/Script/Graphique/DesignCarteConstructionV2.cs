@@ -12,6 +12,8 @@ public class DesignCarteConstructionV2 {
 	private Text txtNiveauActuel;
 	private Text txtCarburant;
 
+	private UICollapseGroup collapseGroup;
+
 	private Text txtPointAttaque;
 	private Text txtPointDefense;
 
@@ -21,13 +23,13 @@ public class DesignCarteConstructionV2 {
 	private GameObject paternPA;
 
 	//TODO utilsé l'id de la carte pour le nommage des objet
-	public DesignCarteConstructionV2 (GameObject goParent, float height, float width){
+	public DesignCarteConstructionV2 (GameObject goParent, float height, float width, int nbNiveau){
 
-		txtTitre = createText("Titre",goParent,1,
+		txtTitre = UIUtils.createText("Titre",goParent,1,
 			width*(ConstanteInGame.propDesignTitre.x-0.5f),height*(0.5f-ConstanteInGame.propDesignTitre.y),
 			width*ConstanteInGame.propDesignTitre.z,height*ConstanteInGame.propDesignTitre.w);
 
-		imageCarte = createImage(null, "Image",goParent,
+		imageCarte = UIUtils.createImage(null, "Image",goParent,
 			width*(ConstanteInGame.propDesignImage.x-0.5f),height*(0.5f-ConstanteInGame.propDesignImage.y),
 			width*ConstanteInGame.propDesignImage.z,height*ConstanteInGame.propDesignImage.w);
 
@@ -35,47 +37,63 @@ public class DesignCarteConstructionV2 {
 		float widthRessource = width*ConstanteInGame.propDesignRessource.z;
 		float heightRessource = height*ConstanteInGame.propDesignRessource.w;
 
-		GameObject paternRessource = createPanel("Ressource",goParent,
+		GameObject paternRessource = UIUtils.createPanel("Ressource",goParent,
 			width*(ConstanteInGame.propDesignRessource.x-0.5f),height*(0.5f-ConstanteInGame.propDesignRessource.y),
 			widthRessource,heightRessource);
 
-		GameObject paternRessourceMetal = createPanel("RessourceMetal",paternRessource,
+		GameObject paternRessourceMetal = UIUtils.createPanel("RessourceMetal",paternRessource,
 			widthRessource*(ConstanteInGame.propDesignMetalRessource.x-0.5f),heightRessource*(0.5f-ConstanteInGame.propDesignMetalRessource.y),
 			widthRessource*ConstanteInGame.propDesignMetalRessource.z,heightRessource*ConstanteInGame.propDesignMetalRessource.w);
-		txtMetal = createText ("textMetal", paternRessourceMetal,1, 0, 0,
+		txtMetal = UIUtils.createText ("textMetal", paternRessourceMetal,1, 0, 0,
 			.9f*widthRessource*ConstanteInGame.propDesignMetalRessource.z, heightRessource*ConstanteInGame.propDesignMetalRessource.w);
 
-		GameObject paternRessourceNiveauActuel = createPanel("RessourceNiveauActuel",paternRessource,
+		GameObject paternRessourceNiveauActuel = UIUtils.createPanel("RessourceNiveauActuel",paternRessource,
 			widthRessource*(ConstanteInGame.propDesignNiveauRessource.x-0.5f),heightRessource*(0.5f-ConstanteInGame.propDesignNiveauRessource.y),
 			widthRessource*ConstanteInGame.propDesignNiveauRessource.z,heightRessource*ConstanteInGame.propDesignNiveauRessource.w);
-		txtNiveauActuel = createText ("textNiveauActuel", paternRessourceNiveauActuel,1, 0, 0,
+		txtNiveauActuel = UIUtils.createText ("textNiveauActuel", paternRessourceNiveauActuel,1, 0, 0,
 			.9f*widthRessource*ConstanteInGame.propDesignNiveauRessource.z, heightRessource*ConstanteInGame.propDesignNiveauRessource.w);
 
-		paternRessourceCarburant = createPanel("RessourceCarburant",paternRessource,
+		paternRessourceCarburant = UIUtils.createPanel("RessourceCarburant",paternRessource,
 			widthRessource*(ConstanteInGame.propDesignCarburantRessource.x-0.5f),heightRessource*(0.5f-ConstanteInGame.propDesignCarburantRessource.y),
 			widthRessource*ConstanteInGame.propDesignCarburantRessource.z,heightRessource*ConstanteInGame.propDesignCarburantRessource.w);
-		txtCarburant = createText ("textCarburant", paternRessourceCarburant,1, 0, 0,
+		txtCarburant = UIUtils.createText ("textCarburant", paternRessourceCarburant,1, 0, 0,
 			.9f*widthRessource*ConstanteInGame.propDesignCarburantRessource.z, heightRessource*ConstanteInGame.propDesignCarburantRessource.w);
 
-		GameObject paternListNiveaux = createPanel("ListNiveaux",goParent,
+		GameObject paternListNiveaux = UIUtils.createPanel("ListNiveaux",goParent,
 			width*(ConstanteInGame.propDesignListNiveaux.x-0.5f),height*(0.5f-ConstanteInGame.propDesignListNiveaux.y),
 			width*ConstanteInGame.propDesignListNiveaux.z,height*ConstanteInGame.propDesignListNiveaux.w);
 
+		collapseGroup = paternListNiveaux.AddComponent<UICollapseGroup> ();
+		List<UICollapseElement> listCollapseElement = new List<UICollapseElement> ();
+
+		for (int i = 0; i < nbNiveau; i++) {
+			UICollapseElement collapseElement = paternListNiveaux.AddComponent<UICollapseElement> ();
+			collapseElement.TailleTitre = 50;
+			collapseElement.TailleDescription = 75;
+			collapseElement.TempsDecompression = 3;
+			listCollapseElement.Add (collapseElement);
+		}
+
+		collapseGroup.ListCollapseElement = listCollapseElement;
+
+
+
+
 		//TODO Transforme en bouton
-		GameObject paternBouton = createPanel("BoutonAction",goParent,
+		GameObject paternBouton = UIUtils.createPanel("BoutonAction",goParent,
 			width*(ConstanteInGame.propDesignBouton.x-0.5f),height*(0.5f-ConstanteInGame.propDesignBouton.y),
 			width*ConstanteInGame.propDesignBouton.z,height*ConstanteInGame.propDesignBouton.w);
 
-		paternPA = createPanel("PointAttaque",goParent,
+		paternPA = UIUtils.createPanel("PointAttaque",goParent,
 			width*(ConstanteInGame.propDesignPointAttaque.x-0.5f),height*(0.5f-ConstanteInGame.propDesignPointAttaque.y),
 			width*ConstanteInGame.propDesignPointAttaque.z,height*ConstanteInGame.propDesignPointAttaque.w);
-		txtPointAttaque = createText ("textPA", paternPA,1, 0, 0,
+		txtPointAttaque = UIUtils.createText ("textPA", paternPA,1, 0, 0,
 			.9f*width*ConstanteInGame.propDesignPointAttaque.z,height*ConstanteInGame.propDesignPointAttaque.w);
 
-		GameObject paternPD = createPanel("PointDefense",goParent,
+		GameObject paternPD = UIUtils.createPanel("PointDefense",goParent,
 			width*(ConstanteInGame.propDesignPointDefense.x-0.5f),height*(0.5f-ConstanteInGame.propDesignPointDefense.y),
 			width*ConstanteInGame.propDesignPointDefense.z,height*ConstanteInGame.propDesignPointDefense.w);
-		txtPointDefense = createText ("textPD", paternPD,1, 0, 0,
+		txtPointDefense = UIUtils.createText ("textPD", paternPD,1, 0, 0,
 			.9f*width*ConstanteInGame.propDesignPointDefense.z,height*ConstanteInGame.propDesignPointDefense.w);
 	}
 
@@ -127,52 +145,12 @@ public class DesignCarteConstructionV2 {
 		//paternImage.GetComponent<Image> ().sprite = carteRef.image; //TODO carte Ref doit être un sprite
 	}
 
+	public void setNiveau(int numNiv, string titre, string description, int cout){
+		UICollapseElement collapseElement = collapseGroup.ListCollapseElement [numNiv - 1];
 
+		collapseElement.Titre = titre;
+		collapseElement.Description = description;
 
-	//Cree un panel
-	private GameObject createPanel (string name, GameObject goParent, float anchorX, float anchorY, float width, float height){
-		GameObject panelGO = new GameObject (name);
-		panelGO.AddComponent<CanvasRenderer> ();
-		panelGO.transform.SetParent (goParent.transform, false);
-		panelGO.transform.localPosition = new Vector3(anchorX, anchorY);
-
-		Image i = panelGO.AddComponent<Image> ();
-		i.sprite = ConstanteInGame.spriteBackgroundCarte;
-		i.color = new Color (.75f, .75f, .75f, .5f);
-
-		panelGO.GetComponent<RectTransform> ().sizeDelta = new Vector2 (width, height);
-		panelGO.GetComponent<RectTransform>().ForceUpdateRectTransforms();
-
-		return panelGO;
-	}
-
-	private Image createImage (Sprite image, string nameGO, GameObject goParent, float anchorX, float anchorY, float width, float height){
-		GameObject imageGO = new GameObject (nameGO);
-		imageGO.AddComponent<CanvasRenderer> ();
-		imageGO.transform.SetParent (goParent.transform, false);
-		imageGO.transform.localPosition = new Vector3(anchorX, anchorY);
-
-		Image i = imageGO.AddComponent<Image> ();
-		i.sprite = image;
-
-		imageGO.GetComponent<RectTransform> ().sizeDelta = new Vector2 (width, height);
-
-		return i;
-	}
-
-	private Text createText (string nameGO, GameObject goParent, int nbLigneAttendu, float anchorX, float anchorY, float width, float height){
-		GameObject textGO = new GameObject (nameGO);
-		textGO.AddComponent<CanvasRenderer> ();
-		textGO.transform.SetParent (goParent.transform, false);
-		textGO.transform.localPosition = new Vector3(anchorX, anchorY);
-
-		Text text = textGO.AddComponent<Text> ();
-		text.font = ConstanteInGame.fontArial;
-		text.color = Color.black;
-		text.fontSize = (int)(height * .75f / nbLigneAttendu);
-
-		textGO.GetComponent<RectTransform> ().sizeDelta = new Vector2 (width, height);
-
-		return text;
+		//TODO cout
 	}
 }
