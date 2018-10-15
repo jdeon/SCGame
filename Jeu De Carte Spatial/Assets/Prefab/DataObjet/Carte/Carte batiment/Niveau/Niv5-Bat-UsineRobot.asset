@@ -19,4 +19,6 @@ MonoBehaviour:
   cout: 4
   capacite:
   - {fileID: 11400000, guid: 9f7b1840448c6ac498b42979b00322a8, type: 2}
-  - {fileID: 11400000, guid: 86f5cad7ad3fb1c479c523780cb7f18d, type: 2}
+  typeNbCapaciteAuxChoix: 0
+  valeurTypeCapaciteAuxChoix: 0
+  capaciteManuelle: []

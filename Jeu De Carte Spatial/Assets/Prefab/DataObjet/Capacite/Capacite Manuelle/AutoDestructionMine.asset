@@ -14,6 +14,10 @@ MonoBehaviour:
   titreCarte: Auto-destruction
   libelleCarte: "D\xE9truit la carte ainsi que tous les attaquant \xE9nemie"
   citationCarte: 
+  remplaceAttaque: 0
+  periodeUtilisable:
+  - 11-P
+  - 14-P
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: 80c80175107afcf41ab464f65574f3de, type: 2}

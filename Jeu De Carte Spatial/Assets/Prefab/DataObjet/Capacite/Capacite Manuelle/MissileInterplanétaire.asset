@@ -14,6 +14,9 @@ MonoBehaviour:
   titreCarte: "Missile interplan\xE9taire"
   libelleCarte: "Invoque un missile interplan\xE9taire"
   citationCarte: 
+  remplaceAttaque: 0
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: 4303d464ff30524478d1ab157092a050, type: 2}

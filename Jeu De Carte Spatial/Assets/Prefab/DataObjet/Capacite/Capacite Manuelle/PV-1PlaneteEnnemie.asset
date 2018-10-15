@@ -14,6 +14,9 @@ MonoBehaviour:
   titreCarte: Tir lointain
   libelleCarte: "Inflige 1 point de d\xE9gat \xE0 la plan\xE8te \xE9nemie"
   citationCarte: 
+  remplaceAttaque: 0
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: a4322df476626994a9c57b6eaf0994f3, type: 2}

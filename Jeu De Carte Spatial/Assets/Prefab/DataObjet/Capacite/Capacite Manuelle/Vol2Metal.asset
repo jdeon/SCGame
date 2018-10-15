@@ -14,6 +14,9 @@ MonoBehaviour:
   titreCarte: "Vol de m\xE9tal"
   libelleCarte: "Vol 2 unit\xE9 de m\xE9tal"
   citationCarte: 
+  remplaceAttaque: 0
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: fe1c0c7f3242d034782d5f80befb3f9f, type: 2}

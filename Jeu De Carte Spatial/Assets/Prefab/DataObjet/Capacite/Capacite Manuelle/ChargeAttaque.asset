@@ -16,6 +16,8 @@ MonoBehaviour:
     attaque."
   citationCarte: 
   remplaceAttaque: 1
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: 35e397b17525cfb459aeeacb165c1520, type: 2}

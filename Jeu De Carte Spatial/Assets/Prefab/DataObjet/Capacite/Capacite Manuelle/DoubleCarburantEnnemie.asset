@@ -15,6 +15,8 @@ MonoBehaviour:
   libelleCarte: 
   citationCarte: 
   remplaceAttaque: 1
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: c73db947da3d6a84ba999a28c6c3940b, type: 2}

@@ -16,7 +16,8 @@ MonoBehaviour:
   descriptionNiveau: 
   citationNiveau: 
   numNiveau: 1
-  cout: 0
+  cout: 1
   capacite: []
-  typeRegroupementCapacite: 0
-  valeurRegroupement: 1
+  typeNbCapaciteAuxChoix: 0
+  valeurTypeCapaciteAuxChoix: 0
+  capaciteManuelle: []

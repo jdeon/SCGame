@@ -151,6 +151,8 @@ public class DesignCarteConstructionV2 {
 		collapseElement.Titre = titre;
 		collapseElement.Description = description;
 
-		//TODO cout
+		if (cout > 0) {
+			collapseElement.Titre += " (" + cout + ")";
+		}
 	}
 }

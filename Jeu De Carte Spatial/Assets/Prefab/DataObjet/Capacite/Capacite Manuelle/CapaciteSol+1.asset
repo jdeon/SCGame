@@ -14,6 +14,9 @@ MonoBehaviour:
   titreCarte: 
   libelleCarte: "Am\xE9liore la capacit\xE9 d'un batiment au sol"
   citationCarte: 
+  remplaceAttaque: 0
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: 21fd4059bfa34624ba8d5ec01c05b59c, type: 2}

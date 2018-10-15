@@ -15,6 +15,8 @@ MonoBehaviour:
   libelleCarte: "D\xE9truit les vaisseaux adjacents"
   citationCarte: 
   remplaceAttaque: 1
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: 517d8bde8f6516e47936857d3b585a05, type: 2}

@@ -15,6 +15,9 @@ MonoBehaviour:
   libelleCarte: "D\xE9truit tous les vaisseau attaquant, si le vaisseau en fait partie"
   citationCarte: 
   remplaceAttaque: 0
+  periodeUtilisable:
+  - 11-P
+  - 14-P
   capaciteCondition:
   - {fileID: 11400000, guid: 9fbfe553d1f36aa408dfd1f77195d7a1, type: 2}
   capaciteEffet:

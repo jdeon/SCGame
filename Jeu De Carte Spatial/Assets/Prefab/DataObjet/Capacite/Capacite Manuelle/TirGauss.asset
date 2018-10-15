@@ -14,6 +14,9 @@ MonoBehaviour:
   titreCarte: Tir de gauss
   libelleCarte: "D\xE9truit un vaisseaux, 2 tour de recharge"
   citationCarte: 
+  remplaceAttaque: 0
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: e6ca208c65844b84183f2744c2195456, type: 2}

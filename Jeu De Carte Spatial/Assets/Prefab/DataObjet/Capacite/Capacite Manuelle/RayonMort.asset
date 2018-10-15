@@ -16,6 +16,8 @@ MonoBehaviour:
     passera le procahin tour."
   citationCarte: 
   remplaceAttaque: 1
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: 70d630f4de3019445bc71dc3d72a2c7b, type: 2}

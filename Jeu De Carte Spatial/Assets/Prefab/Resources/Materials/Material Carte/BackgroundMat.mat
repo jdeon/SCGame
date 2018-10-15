@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Background
+  m_Name: BackgroundMat
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -36,12 +36,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 0.8, y: 0.95}
-        m_Offset: {x: 0.1, y: 0.025}
+        m_Scale: {x: 0.85, y: 0.85}
+        m_Offset: {x: 0.075, y: 0.075}
     - _MainTex:
         m_Texture: {fileID: 10906, guid: 0000000000000000f000000000000000, type: 0}
-        m_Scale: {x: 0.8, y: 0.95}
-        m_Offset: {x: 0.1, y: 0.025}
+        m_Scale: {x: 0.85, y: 0.85}
+        m_Offset: {x: 0.075, y: 0.075}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}

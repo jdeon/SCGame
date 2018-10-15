@@ -15,6 +15,9 @@ MonoBehaviour:
   libelleCarte: "D\xE9pence de  2 ressources de chaque pour d\xE9truire le vaisseau
     attaqu\xE9, si le vaisseau n'a pas \xE9t\xE9 d\xE9truit lors de l'attaque"
   citationCarte: 
+  remplaceAttaque: 0
+  periodeUtilisable:
+  - 5-A
   capaciteCondition:
   - {fileID: 11400000, guid: 7414d1ca6bb53fb4bb1f3d55f5f3d419, type: 2}
   - {fileID: 11400000, guid: 32b1a57e5a30d5a4b859c0e71d06a8ef, type: 2}

@@ -15,6 +15,7 @@ MonoBehaviour:
   titreCarte: Vaisseau espion
   libelleCarte: 
   citationCarte: 
+  image: {fileID: 21300000, guid: 1685d9e1268350349944baae09569c66, type: 3}
   nbTourAvantActif: 0
   pointVieMax: 1
   listNiveau:

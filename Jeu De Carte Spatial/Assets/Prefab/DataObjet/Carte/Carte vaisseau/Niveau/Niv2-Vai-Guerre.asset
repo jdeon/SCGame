@@ -20,6 +20,6 @@ MonoBehaviour:
   cout: 2
   capacite:
   - {fileID: 11400000, guid: dbfb703d521d3b3479370507e7a97918, type: 2}
-  - {fileID: 11400000, guid: 71cf4704955440a4e9fe7f17271b6ebb, type: 2}
-  typeRegroupementCapacite: 0
-  valeurRegroupement: 0
+  typeNbCapaciteAuxChoix: 0
+  valeurTypeCapaciteAuxChoix: 0
+  capaciteManuelle: []

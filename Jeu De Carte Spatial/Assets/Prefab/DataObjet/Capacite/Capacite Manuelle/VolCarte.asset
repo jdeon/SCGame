@@ -15,6 +15,8 @@ MonoBehaviour:
   libelleCarte: Vol une carte dans la mains de l'adversaire
   citationCarte: 
   remplaceAttaque: 0
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: 06897d0debd19024893908728e5e6b56, type: 2}

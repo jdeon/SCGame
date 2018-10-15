@@ -14,6 +14,9 @@ MonoBehaviour:
   titreCarte: Parie carburant
   libelleCarte: "Parie 1 m\xE9tal pour en gagner jusqu'a 3"
   citationCarte: 
+  remplaceAttaque: 0
+  periodeUtilisable:
+  - 5-A
   capaciteCondition:
   - {fileID: 11400000, guid: ddb4132c729e61640bdfc34508cb5464, type: 2}
   capaciteEffet:

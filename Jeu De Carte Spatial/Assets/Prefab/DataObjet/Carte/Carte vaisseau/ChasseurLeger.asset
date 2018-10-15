@@ -15,6 +15,7 @@ MonoBehaviour:
   titreCarte: Chasseur leger
   libelleCarte: 
   citationCarte: 
+  image: {fileID: 21300000, guid: 09b587c7999e16d45a0d294abe7454b3, type: 3}
   nbTourAvantActif: 0
   pointVieMax: 1
   listNiveau:

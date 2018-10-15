@@ -14,6 +14,9 @@ MonoBehaviour:
   titreCarte: Change nature de ressource
   libelleCarte: 
   citationCarte: 
+  remplaceAttaque: 0
+  periodeUtilisable:
+  - 5-A
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: b5eabb79813e4a64ba981e5f9b846f59, type: 2}

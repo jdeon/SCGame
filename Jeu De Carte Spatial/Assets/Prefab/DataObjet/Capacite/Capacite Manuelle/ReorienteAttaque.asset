@@ -14,6 +14,9 @@ MonoBehaviour:
   titreCarte: Brouillage radio
   libelleCarte: "R\xE9oriente l'attaque d'un ennemie"
   citationCarte: 
+  remplaceAttaque: 0
+  periodeUtilisable:
+  - 8-P
   capaciteCondition: []
   capaciteEffet:
   - {fileID: 11400000, guid: ae3c6801ce207ce4c9fe0b0b32a8dacf, type: 2}

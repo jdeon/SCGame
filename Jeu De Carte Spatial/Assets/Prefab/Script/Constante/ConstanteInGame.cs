@@ -4,11 +4,40 @@ using UnityEngine;
 
 public class ConstanteInGame {
 
+	public static readonly float coefPlane = 10f;
+
+
 	public static readonly Sprite spriteBackgroundCarte = Resources.Load<Sprite>("Background");
+
+	public static readonly Sprite spriteLvl1 = Resources.Load<Sprite>("UI button sample pack 1/Part 1/1");
+
+	public static readonly Sprite spriteLvl2 = Resources.Load<Sprite>("UI button sample pack 1/Part 1/2");
+
+	public static readonly Sprite spriteLvl3 = Resources.Load<Sprite>("UI button sample pack 1/Part 1/3");
+
+	public static readonly Sprite spriteLvl4 = Resources.Load<Sprite>("UI button sample pack 1/Part 1/4");
+
+	public static readonly Sprite spriteLvl5 = Resources.Load<Sprite>("UI button sample pack 1/Part 1/5");
+
+	public static readonly Sprite spriteTest = Resources.Load<Sprite>("testImage");
+
 
 	public static readonly Font fontArial = Resources.GetBuiltinResource<Font>("Arial.ttf");
 
+	public static readonly Shader shaderStandart = Shader.Find("Standard");
+
+
 	public static readonly Color colorVaisseau = new Color (1, 0, 0, .75f);
+
+	public static readonly Color colorDefense = new Color (0, 0, 1, .75f);
+
+	public static readonly Color colorBatiment = new Color (0, 1, 0, .75f);
+
+
+	public static readonly Vector3 tailleCarte = new Vector3 (.1f, 1, .15f);
+
+
+	public static readonly Material materialBackgroundCarte = Resources.Load<Material>("Materials/Material Carte/BackgroundMat");
 
 
 
