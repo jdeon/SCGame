@@ -22,8 +22,22 @@ public class DesignCarteConstructionV2 {
 	private GameObject paternRessourceCarburant;
 	private GameObject paternPA;
 
+	private GameObject goParent;
+
+	private Joueur joueurCliquant;
+
 	//TODO utilsé l'id de la carte pour le nommage des objet
-	public DesignCarteConstructionV2 (GameObject goParent, float height, float width, int nbNiveau){
+	public DesignCarteConstructionV2 (GameObject goParent, float height, float width, int nbNiveau, Joueur joueurClick){
+
+		this.goParent = goParent;
+		this.joueurCliquant = joueurClick;
+
+		GameObject paternBoutonCancel = UIUtils.createPanel("BoutonFermeture",goParent,
+			width*(ConstanteInGame.propBoutonRetour.x-0.5f),height*(0.5f-ConstanteInGame.propBoutonRetour.y),
+			width*ConstanteInGame.propBoutonRetour.z,height*ConstanteInGame.propBoutonRetour.w);
+		paternBoutonCancel.GetComponent<Image> ().sprite = ConstanteInGame.spriteCroixCancel;
+		Button buttonFermeture = paternBoutonCancel.AddComponent<Button> ();
+		buttonFermeture.onClick.AddListener (deleteVisual);
 
 		txtTitre = UIUtils.createText("Titre",goParent,1,
 			width*(ConstanteInGame.propDesignTitre.x-0.5f),height*(0.5f-ConstanteInGame.propDesignTitre.y),
@@ -77,12 +91,11 @@ public class DesignCarteConstructionV2 {
 		collapseGroup.ListCollapseElement = listCollapseElement;
 
 
-
-
-		//TODO Transforme en bouton
 		GameObject paternBouton = UIUtils.createPanel("BoutonAction",goParent,
 			width*(ConstanteInGame.propDesignBouton.x-0.5f),height*(0.5f-ConstanteInGame.propDesignBouton.y),
 			width*ConstanteInGame.propDesignBouton.z,height*ConstanteInGame.propDesignBouton.w);
+		Button buttonAction = paternBouton.AddComponent<Button> ();
+
 
 		paternPA = UIUtils.createPanel("PointAttaque",goParent,
 			width*(ConstanteInGame.propDesignPointAttaque.x-0.5f),height*(0.5f-ConstanteInGame.propDesignPointAttaque.y),
@@ -95,6 +108,11 @@ public class DesignCarteConstructionV2 {
 			width*ConstanteInGame.propDesignPointDefense.z,height*ConstanteInGame.propDesignPointDefense.w);
 		txtPointDefense = UIUtils.createText ("textPD", paternPD,1, 0, 0,
 			.9f*width*ConstanteInGame.propDesignPointDefense.z,height*ConstanteInGame.propDesignPointDefense.w);
+	}
+
+	void deleteVisual(){
+		joueurCliquant.carteEnVisuel = false;
+		GameObject.Destroy (goParent);
 	}
 
 	public void setTitre (string titre){
@@ -142,7 +160,7 @@ public class DesignCarteConstructionV2 {
 	}
 
 	public void setImage(Sprite imageSource){
-		//paternImage.GetComponent<Image> ().sprite = carteRef.image; //TODO carte Ref doit être un sprite
+		imageCarte.sprite = imageSource; 
 	}
 
 	public void setNiveau(int numNiv, string titre, string description, int cout){

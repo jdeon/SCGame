@@ -63,7 +63,7 @@ public class UIUtils : MonoBehaviour {
 		textGO.transform.localPosition = new Vector3(anchorX, anchorY);
 
 		Text text = textGO.AddComponent<Text> ();
-		text.font = ConstanteInGame.fontArial;
+		text.font = ConstanteInGame.fontChintzy;
 		text.color = Color.black;
 		text.fontSize = (int)(height * .75f / nbLigneAttendu);
 

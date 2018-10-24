@@ -19,10 +19,20 @@ public class ConstanteInGame {
 
 	public static readonly Sprite spriteLvl5 = Resources.Load<Sprite>("UI button sample pack 1/Part 1/5");
 
+	public static readonly Sprite spriteCroixCancel = Resources.Load<Sprite>("UI button sample pack 1/Part 1/Close");
+
 	public static readonly Sprite spriteTest = Resources.Load<Sprite>("testImage");
 
 
 	public static readonly Font fontArial = Resources.GetBuiltinResource<Font>("Arial.ttf");
+
+	public static readonly Font fontChintzy = Resources.Load<Font>("Font/chintzy");
+
+
+	public static readonly Material matChintzy = Resources.Load<Material>("Materials/Material Text/Chintzy");
+
+
+
 
 	public static readonly Shader shaderStandart = Shader.Find("Standard");
 
@@ -34,12 +44,25 @@ public class ConstanteInGame {
 	public static readonly Color colorBatiment = new Color (0, 1, 0, .75f);
 
 
+	public static readonly Vector3 rotationImage = new Vector3 (0, 180, 0);
+
 	public static readonly Vector3 tailleCarte = new Vector3 (.1f, 1, .15f);
 
 
 	public static readonly Material materialBackgroundCarte = Resources.Load<Material>("Materials/Material Carte/BackgroundMat");
 
 
+	public static readonly GameObject planePrefab = Resources.Load<GameObject>("Basic/goPlane");
+
+	public static readonly GameObject textPrefab = Resources.Load<GameObject>("Basic/goText");
+
+	public static readonly GameObject emptyPrefab = Resources.Load<GameObject>("Basic/goEmpty");
+
+	public static readonly GameObject carteVaisseauPrefab = Resources.Load<GameObject>("goCard/goVaisseau");
+
+	public static readonly GameObject carteDefensePrefab = Resources.Load<GameObject>("goCard/goDefense");
+
+	public static readonly GameObject carteBatimentPrefab = Resources.Load<GameObject>("goCard/goBatiment");
 
 
 
@@ -51,6 +74,7 @@ public class ConstanteInGame {
 	/******Carte construction ******/
 
 	/******Propriété carte niveau 1****/
+	public static readonly Vector4  propBoutonRetour = new Vector4 (1f, 0f, .20f, .1f);
 	public static readonly Vector4  propDesignTitre = new Vector4 (.5f, .058f, .95f, .083f);
 	public static readonly Vector4  propDesignImage = new Vector4 (.5f, .271f, .95f, .292f);
 	public static readonly Vector4  propDesignRessource = new Vector4 (.5f, .5f, .95f, .083f);

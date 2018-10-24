@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 [CreateAssetMenu(fileName = "CarteVaisseauDTO", menuName = "Mes Objets/Carte/CarteVaisseauDTO")]
 public class CarteVaisseauDTO : CarteConstructionAbstractDTO {
 
