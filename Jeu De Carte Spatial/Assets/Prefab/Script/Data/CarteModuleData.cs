@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CarteModuleDTO", menuName = "Mes Objets/Carte/CarteModuleDTO")]
-public class CarteModuleDTO : CarteAmeliorationDTO {
+[CreateAssetMenu(fileName = "CarteModuleData", menuName = "Mes Objets/Carte/CarteModuleData")]
+public class CarteModuleData : CarteAmeliorationData {
 
 	public int pointBouclier;
 

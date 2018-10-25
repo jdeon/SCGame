@@ -6,41 +6,13 @@ using UnityEngine.Networking;
 
 public class CarteVaisseauMetier : CarteConstructionMetierAbstract {
 
-	//[SyncVar]
-	public CarteVaisseauDTO carteRef;
-
-	public override CarteAbstractDTO getCarteRef ()
-	{
-		return carteRef;
-	}
-
-	public override Color getColorCarte (){
-		return ConstanteInGame.colorVaisseau;
-	}
-
-	public override bool initCarteRef (CarteAbstractDTO initCarteRef){
-		bool initDo = false;
-		if (null == carteRef && initCarteRef is CarteVaisseauDTO) {
-			carteRef = (CarteVaisseauDTO)initCarteRef;
-			initDo = true;
-		}
-
-		return initDo;
-	}
-
 	protected override void initId(){
 		if (null == id || id == "") {
 			id = "VAIS_" + sequenceId;
 			sequenceId++;
 		}
 	}
-
-	public string initCarte (CarteVaisseauDTO carteConstructionDTO){
-		carteRef = carteConstructionDTO;
-
-		return base.initCarte();
-	}
-
+		
 	//Affiche la carte si clique dessus
 	public virtual void OnMouseDown()
 	{
@@ -52,8 +24,8 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract {
 		if (!joueurProprietaire.carteEnVisuel) {
 			base.generateVisualCard ();
 			joueurProprietaire.carteEnVisuel = true;
-			designCarte.setCarburant (carteRef.consommationCarburant);
-			designCarte.setPA (carteRef.pointAttaque);
+			designCarte.setCarburant (carteRef.ConsommationCarburant);
+			designCarte.setPA (carteRef.PointAttaque);
 		}
 	}
 
@@ -71,7 +43,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract {
 		carburant.transform.Rotate(new Vector3(90,0,0));		//Le titre apparait face à z
 		carburant.transform.localScale = new Vector3(.5f,1,1);
 		TextMesh txtCarburant = carburant.AddComponent<TextMesh> ();
-		txtCarburant.text = "C-" + carteRef.consommationCarburant;
+		txtCarburant.text = "C-" + carteRef.ConsommationCarburant;
 		txtCarburant.color = Color.black;
 		txtCarburant.fontSize = 20;
 		txtCarburant.font = ConstanteInGame.fontChintzy;
@@ -97,12 +69,16 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract {
 		pointAttaque.transform.Rotate(new Vector3(90,0,0));		//Le titre apparait face à z
 		pointAttaque.transform.localScale = new Vector3(.5f,1,1);
 		TextMesh txtPA = pointAttaque.AddComponent<TextMesh> ();
-		txtPA.text = "Def-" + carteRef.pointAttaque;	//TODO modif pour getAttaque
+		txtPA.text = "Def-" + carteRef.PointAttaque;	//TODO modif pour getAttaque
 		txtPA.color = Color.black;
 		txtPA.fontSize = 60;
 		txtPA.font = ConstanteInGame.fontChintzy;
 		txtPA.anchor = TextAnchor.MiddleCenter;
 		pointAttaque.GetComponent<Renderer> ().material = ConstanteInGame.matChintzy;
+	}
+
+	public override Color getColorCarte (){
+		return ConstanteInGame.colorVaisseau;
 	}
 
 }

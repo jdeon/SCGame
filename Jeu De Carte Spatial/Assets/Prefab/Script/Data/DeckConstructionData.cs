@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "DeckConstructionDTO", menuName = "Mes Objets/Deck/DeckConstructionDTO")]
-public class DeckConstructionDTO : DeckAbstractDTO {
+[CreateAssetMenu(fileName = "DeckConstructionData", menuName = "Mes Objets/Deck/DeckConstructionData")]
+public class DeckConstructionData : DeckAbstractData {
 
-	public List<CarteConstructionAbstractDTO> listeCarte;
+	public List<CarteConstructionAbstractData> listeCarte;
 
 	/*public override int getNbCarteRestante(){
 		return listeCarte.Count;

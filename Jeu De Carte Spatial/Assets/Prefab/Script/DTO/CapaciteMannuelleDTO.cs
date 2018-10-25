@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CapaciteManuelleDTO", menuName = "Mes Objets/Capacite/CapaciteManuelleDTO")]
-public class CapaciteMannuelleDTO : ScriptableObject {
+[System.Serializable]
+public class CapaciteMannuelleDTO {
 
-	public string titreCarte;
+	public string TitreCarte{get;set;}
 
-	public string libelleCarte;
+	public string LibelleCarte{get;set;}
 
-	public string citationCarte;
+	public string CitationCarte{get;set;}
 
-	public bool remplaceAttaque;
+	public bool RemplaceAttaque{get;set;}
 
-	public List<string> periodeUtilisable;
+	public List<string> PeriodeUtilisable{get;set;}
 
-	public List<CapaciteDTO> capaciteCondition;
+	public List<CapaciteDTO> CapaciteCondition{get;set;}
 
-	public List<CapaciteDTO> capaciteEffet;
+	public List<CapaciteDTO> CapaciteEffet{get;set;}
 }

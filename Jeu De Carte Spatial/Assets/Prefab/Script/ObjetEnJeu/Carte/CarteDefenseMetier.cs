@@ -5,38 +5,12 @@ using UnityEngine.Networking;
 
 public class CarteDefenseMetier : CarteConstructionMetierAbstract {
 
-	//[SyncVar]
-	public CarteDefenseDTO carteRef;
-
-	public override CarteAbstractDTO getCarteRef ()
-	{
-		return carteRef;
-	}
-
-	public override Color getColorCarte (){
-		return ConstanteInGame.colorDefense;
-	}
-
-	public override bool initCarteRef (CarteAbstractDTO initCarteRef){
-		bool initDo = false;
-		if (null == carteRef && initCarteRef is CarteDefenseDTO) {
-			carteRef = (CarteDefenseDTO)initCarteRef;
-			initDo = true;
-		}
-
-		return initDo;
-	}
 
 	protected override void initId(){
 		if (null == id || id == "") {
 			id = "DEF_" + sequenceId;
 			sequenceId++;
 		}
-	}
-
-	public string initCarte (CarteDefenseDTO carteConstructionDTO){
-		carteRef = carteConstructionDTO;
-		return base.initCarte();
 	}
 
 	//Affiche la carte si clique dessus
@@ -50,7 +24,7 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract {
 		if (!joueurProprietaire.carteEnVisuel) {
 			base.generateVisualCard ();
 			joueurProprietaire.carteEnVisuel = true;
-			designCarte.setPA (carteRef.pointAttaque);
+			designCarte.setPA (carteRef.PointAttaque);
 		}
 	}
 
@@ -76,11 +50,15 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract {
 		pointAttaque.transform.Rotate(new Vector3(90,0,0));		//Le titre apparait face à z
 		pointAttaque.transform.localScale = new Vector3(.5f,1,1);
 		TextMesh txtPA = pointAttaque.AddComponent<TextMesh> ();
-		txtPA.text = "Def-" + carteRef.pointAttaque;	//TODO modif pour getAttaque
+		txtPA.text = "Def-" + carteRef.PointAttaque;	//TODO modif pour getAttaque
 		txtPA.color = Color.black;
 		txtPA.fontSize = 60;
 		txtPA.font = ConstanteInGame.fontChintzy;
 		txtPA.anchor = TextAnchor.MiddleCenter;
 		pointAttaque.GetComponent<Renderer> ().material = ConstanteInGame.matChintzy;
+	}
+
+	public override Color getColorCarte (){
+		return ConstanteInGame.colorDefense;
 	}
 }

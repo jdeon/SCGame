@@ -2,34 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NiveauDTO", menuName = "Mes Objets/NiveauDTO")]
-public class NiveauDTO : ScriptableObject {
+[System.Serializable]
+public class NiveauDTO {
 
-	public enum TypeNbCapaciteAuxChoix {
-		Egal,Min,Max
-	}
+	public string TitreNiveau{ get; set; }
 
+	public string DescriptionNiveau{ get; set; }
 
-	public int idNiveau;
+	public string CitationNiveau{ get; set; }
 
-	public string titreNiveau;
+	public int Cout{ get; set; }
 
-	public string descriptionNiveau;
+	public List<CapaciteDTO> Capacite{ get; set; }
 
-	public string citationNiveau;
+	public ConstanteEnum.TypeNbCapaciteAuxChoix NbCapaciteAuxChoix{ get; set; }
 
-	public int numNiveau;
+	public int ValeurTypeCapaciteAuxChoix{ get; set; }
 
-	public int cout;
-
-	public List<CapaciteDTO> capacite;
-
-	public TypeNbCapaciteAuxChoix typeNbCapaciteAuxChoix;
-
-	public int valeurTypeCapaciteAuxChoix;
-
-	public List<CapaciteMannuelleDTO> capaciteManuelle;
-
-
-
+	public List<CapaciteMannuelleDTO> CapaciteManuelle{ get; set; }
 }

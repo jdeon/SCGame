@@ -6,16 +6,20 @@ using UnityEngine.Networking;
 public class DeckConstructionMetier : DeckMetierAbstract {
 
 	[SerializeField]
-	private DeckConstructionDTO deckContructionRef;
+	private DeckConstructionData deckContructionRef;
 
 	public void OnMouseDown(){
-		joueur.CmdTirerCarte ();
+		Debug.Log ("ClickEnregistre");
+
+		if (null != joueur && joueur.getIsLocalJoueur()) {
+			joueur.CmdTirerCarte ();
+		}
 	}
 
 	public override void intiDeck (){
-		List<CarteConstructionAbstractDTO> listCarteConstuctionDTO = deckContructionRef.listeCarte;
-		foreach (CarteConstructionAbstractDTO carteConstructionDTO in listCarteConstuctionDTO) {
-			GameObject carteGO = convertDTOToGO (carteConstructionDTO);
+		List<CarteConstructionAbstractData> listCarteConstuctionData = deckContructionRef.listeCarte;
+		foreach (CarteConstructionAbstractData carteConstructionData in listCarteConstuctionData) {
+			GameObject carteGO = convertDataToGO (carteConstructionData);
 			carteGO.transform.SetParent (transform);
 
 			int cartePlace = Mathf.FloorToInt(Random.Range(0,transform.childCount));
@@ -49,19 +53,19 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		return cartePioche;
 	}
 
-	private GameObject convertDTOToGO(CarteConstructionAbstractDTO carteConstructionDTO){
+	private GameObject convertDataToGO(CarteConstructionAbstractData carteConstructionData){
 		GameObject carteConstructionGO;
 		string idCarte = "";
 
-		if(carteConstructionDTO is CarteBatimentDTO){
+		if(carteConstructionData is CarteBatimentData){
 			carteConstructionGO = Instantiate<GameObject> (ConstanteInGame.carteBatimentPrefab);
-			idCarte = carteConstructionGO.GetComponent<CarteBatimentMetier> ().initCarte((CarteBatimentDTO)carteConstructionDTO);
-		} else if (carteConstructionDTO is CarteDefenseDTO){
+			idCarte = carteConstructionGO.GetComponent<CarteBatimentMetier> ().initCarte(ConvertDataAndDTOUtils.convertCarteConstructionDataToDTO(carteConstructionData));
+		} else if (carteConstructionData is CarteDefenseData){
 			carteConstructionGO = Instantiate<GameObject> (ConstanteInGame.carteDefensePrefab);
-			idCarte = carteConstructionGO.GetComponent<CarteDefenseMetier> ().initCarte((CarteDefenseDTO)carteConstructionDTO);
-		} else if (carteConstructionDTO is CarteVaisseauDTO){
+			idCarte = carteConstructionGO.GetComponent<CarteDefenseMetier> ().initCarte(ConvertDataAndDTOUtils.convertCarteConstructionDataToDTO(carteConstructionData));
+		} else if (carteConstructionData is CarteVaisseauData){
 			carteConstructionGO = Instantiate<GameObject> (ConstanteInGame.carteVaisseauPrefab);
-			idCarte = carteConstructionGO.GetComponent<CarteVaisseauMetier> ().initCarte((CarteVaisseauDTO)carteConstructionDTO);
+			idCarte = carteConstructionGO.GetComponent<CarteVaisseauMetier> ().initCarte(ConvertDataAndDTOUtils.convertCarteConstructionDataToDTO(carteConstructionData));
 		} else {
 			carteConstructionGO = Instantiate<GameObject> (ConstanteInGame.emptyPrefab);
 		}

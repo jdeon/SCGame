@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CarteAmeliorationDTO", menuName = "Mes Objets/Carte/CarteAmeliorationDTO")]
-public class CarteAmeliorationDTO : CarteAbstractDTO {
+[System.Serializable]
+public class CarteAmeliorationDTO : CarteDTO {
 
-	//Un deck amelioration monte a 100point
-	public int pointDeck;
+	public int PointAmelio{ get; set; }
 
-	public List<CapaciteDTO> action;
+	public List<CapaciteData> Action{ get; set; }
 
-	public override string getCarteType(){
-		return "Amelioration";
-	}
 }

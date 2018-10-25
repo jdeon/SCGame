@@ -4,6 +4,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 
 	protected static int sequenceId;
@@ -14,6 +19,8 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 	[SyncVar]
 	protected int PV;
 
+	protected CarteConstructionDTO carteRef;
+
 	/*protected GameObject paternCarteConstruction;
 
 	protected GameObject paternRessourceCarbu;*/
@@ -22,12 +29,24 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 
 	protected List<CapaciteMetier> listEffetCapacite;
 
-	protected string initCarte (){
+
+	public string initCarte (CarteConstructionDTO initCarteRef){
+		carteRef = initCarteRef;
 		initId ();
 		niveauActuel = 1;
-		PV = ((CarteConstructionAbstractDTO) getCarteRef()).pointVieMax;
+		PV = carteRef.PointVieMax;
 
 		return id;
+	}
+
+	public override bool initCarteRef (CarteDTO carteRef){
+		bool initDo = false;
+		if (null == carteRef && carteRef is CarteConstructionDTO) {
+			carteRef = (CarteConstructionDTO) carteRef;
+			initDo = true;
+		}
+
+		return initDo;
 	}
 
 	//Affiche la carte si clique dessus
@@ -38,44 +57,48 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 			float height = panelGO.GetComponent<RectTransform> ().rect.height;
 			float width = panelGO.GetComponent<RectTransform> ().rect.width;
 
-			CarteConstructionAbstractDTO carteSource = (CarteConstructionAbstractDTO)getCarteRef ();
-			int nbNiveau = carteSource.listNiveau.Count;
+			CarteConstructionDTO carteSource = getCarteRef ();
+			int nbNiveau = carteSource.ListNiveau.Count;
 
 			//On supprime le premier niveau s'il est vide
-			if (nbNiveau > 1 && carteSource.listNiveau [0].titreNiveau == "") {
+			if (nbNiveau > 1 && carteSource.ListNiveau [0].TitreNiveau == "") {
 				nbNiveau--;
 			}
 
 			//TODO le joueur envoyé devrait être celui qui clique
 			designCarte = new DesignCarteConstructionV2 (panelGO, height, width, nbNiveau,joueurProprietaire);
 
-			designCarte.setTitre (carteSource.titreCarte);
-			designCarte.setImage (carteSource.image);
-			designCarte.setMetal (carteSource.listNiveau [0].cout);//TODO passer par getCout(qui vérifie s'il y a des capacité malus au bonus vert ou roge)
+			designCarte.setTitre (carteSource.TitreCarte);
+
+			#if UNITY_EDITOR
+			designCarte.setImage (AssetDatabase.LoadAssetAtPath<Sprite>(carteSource.ImagePath));
+			#endif
+
+			designCarte.setMetal (carteSource.ListNiveau [0].Cout);//TODO passer par getCout(qui vérifie s'il y a des capacité malus au bonus vert ou roge)
 			designCarte.setNiveauActuel (niveauActuel);
 			designCarte.setCarburant (0);
 			//designCarte.setDescription ("Ceci est une description de la carte");
 			//designCarte.setCitation ("Il était une fois une carte");
 
 			bool premierNivCache = false;
-			for (int index = 0; index < carteSource.listNiveau.Count; index++) {
-				NiveauDTO niveau = carteSource.listNiveau [index];
+			for (int index = 0; index < carteSource.ListNiveau.Count; index++) {
+				NiveauDTO niveau = carteSource.ListNiveau [index];
 
 				//ne rempie pas le premier titre s'il est vide
-				if (index == 0 && niveau.titreNiveau == "") {
+				if (index == 0 && niveau.TitreNiveau == "") {
 					premierNivCache = true;
 					continue;
 				}
 
 				//On affiche le cout uniquement
-				int cout = niveauActuel < index + 1 ? niveau.cout : 0;
+				int cout = niveauActuel < index + 1 ? niveau.Cout : 0;
 
-				designCarte.setNiveau (premierNivCache ? index : index + 1, niveau.titreNiveau, niveau.descriptionNiveau, niveau.cout);
+				designCarte.setNiveau (premierNivCache ? index : index + 1, niveau.TitreNiveau, niveau.DescriptionNiveau, niveau.Cout);
 			}
 
 			//TODO calcul PA, PD, ...
 			designCarte.setPA (0);
-			designCarte.setPD (carteSource.pointVieMax);
+			designCarte.setPD (carteSource.PointVieMax);
 
 			/*paternCarteConstruction = (GameObject) Instantiate(Resources.Load("Graphique/CarteConstructionPatern"));
 		paternCarteConstruction.transform.SetParent (panelGO.transform);
@@ -97,7 +120,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 		GameObject paternNiveaux = paternCarteConstruction.transform.Find ("Niveaux").gameObject;
 		GameObject paternUtilise = paternCarteConstruction.transform.Find ("Utilise").gameObject;
 
-		CarteConstructionAbstractDTO carteRef = (CarteConstructionAbstractDTO) getCarteRef ();
+		CarteConstructionAbstractData carteRef = (CarteConstructionAbstractData) getCarteRef ();
 
 		paternTitre.GetComponent<Text>().text = carteRef.titreCarte;
 		//paternImage.GetComponent<Image> ().sprite = carteRef.image; //TODO carte Ref doit être un sprite
@@ -114,7 +137,6 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 
 	public virtual void generateGOCard(){
 		base.generateGOCard ();
-		CarteConstructionAbstractDTO carteSource = (CarteConstructionAbstractDTO)getCarteRef ();
 		GameObject faceCarteGO = transform.Find("faceCarte_" + id).gameObject;
 
 		GameObject ressource = GameObject.CreatePrimitive (PrimitiveType.Plane);
@@ -135,7 +157,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 		metal.transform.Rotate(new Vector3(90,0,0));		//Le titre apparait face à z
 		metal.transform.localScale = new Vector3(.5f,1,1);
 		TextMesh txtmetal = metal.AddComponent<TextMesh> ();
-		txtmetal.text = "M-" + carteSource.listNiveau[0].cout;
+		txtmetal.text = "M-" + carteRef.ListNiveau[0].Cout;
 		txtmetal.color = Color.black;
 		txtmetal.fontSize = 20;
 		txtmetal.font = ConstanteInGame.fontChintzy;
@@ -177,14 +199,14 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 		listNiveaux.transform.localScale = new Vector3(.5f,1,1);
 		TextMesh txtNiveaux = listNiveaux.AddComponent<TextMesh> ();
 		string textNiv = "";
-		for(int index = 0 ; index < carteSource.listNiveau.Count; index++){
-				NiveauDTO niveauDTO = carteSource.listNiveau[index];
+		for(int index = 0 ; index < carteRef.ListNiveau.Count; index++){
+			NiveauDTO niveauDTO = carteRef.ListNiveau[index];
 			if (textNiv != "") {
 				textNiv += "\n";
 			}
 
-			if (niveauDTO.titreNiveau != "") {
-				textNiv += niveauDTO.titreNiveau;
+			if (niveauDTO.TitreNiveau != "") {
+				textNiv += niveauDTO.TitreNiveau;
 			}
 		}
 
@@ -213,7 +235,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 		pointDefence.transform.Rotate(new Vector3(90,0,0));		//Le titre apparait face à z
 		pointDefence.transform.localScale = new Vector3(.5f,1,1);
 		TextMesh txtPD = pointDefence.AddComponent<TextMesh> ();
-		txtPD.text = "Def-" + carteSource.pointVieMax;	//TODO modif pour PV reelle
+		txtPD.text = "Def-" + carteRef.PointVieMax;	//TODO modif pour PV reelle
 		txtPD.color = Color.black;
 		txtPD.fontSize = 60;
 		txtPD.font = ConstanteInGame.fontChintzy;
@@ -243,5 +265,15 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 		}
 
 		return result;
+	}
+
+	public CarteConstructionDTO getCarteRef ()
+	{
+		return carteRef;
+	}
+
+	public override CarteDTO getCarteDTORef ()
+	{
+		return carteRef;
 	}
 }

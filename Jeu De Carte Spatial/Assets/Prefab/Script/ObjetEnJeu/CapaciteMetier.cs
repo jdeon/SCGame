@@ -10,7 +10,7 @@ public class CapaciteMetier  {
 
 	private int idVaisseauProvenance;
 
-	//CapaciteDTO
+	//CapaciteData
 	private int idTypeCapacite;
 
 	private int idTypeOperation;

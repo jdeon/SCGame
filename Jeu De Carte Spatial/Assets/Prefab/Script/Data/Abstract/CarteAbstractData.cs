@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public abstract class CarteAbstractDTO : ScriptableObject {
+public abstract class CarteAbstractData : ScriptableObject {
 
 	public int idCarte;
 
@@ -16,6 +15,4 @@ public abstract class CarteAbstractDTO : ScriptableObject {
 	public Sprite image;
 
 	public int nbTourAvantActif;
-
-	public abstract string getCarteType();
 }

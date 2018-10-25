@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class SerializeUtils {
 
-	public static byte[] SerializeToByteArray(Object obj)
+	public static byte[] SerializeToByteArray(object obj)
 	{
 		if (obj == null)
 		{

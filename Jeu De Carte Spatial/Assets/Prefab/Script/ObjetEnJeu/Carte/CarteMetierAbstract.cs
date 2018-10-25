@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public abstract class CarteMetierAbstract : NetworkBehaviour {
 
 	[SyncVar]
@@ -19,14 +23,14 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 	protected GameObject faceCarteGO;
 
 
-	public abstract CarteAbstractDTO getCarteRef ();
+	public abstract CarteDTO getCarteDTORef ();
 
 	public abstract Color getColorCarte ();
 
 	protected abstract void initId ();
 
 	/**Retourne si l'init est faite*/
-	public abstract bool initCarteRef (CarteAbstractDTO carteRef);
+	public abstract bool initCarteRef (CarteDTO carteRef);
 
 	//public abstract string initCarte (); //Besoin carte Ref
 
@@ -63,7 +67,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 
 
 		//TODO pour l'instant on ne fait apparaitre que le text de la carte
-		/*CarteAbstractDTO carteRef = getCarteRef ();
+		/*CarteAbstractData carteRef = getCarteRef ();
 		string strTextCarte = "Titre : " + carteRef.titreCarte;
 		strTextCarte += "\nLibelle : " + carteRef.libelleCarte;
 		strTextCarte += "\nCitation : \"" + carteRef.citationCarte + "\"";
@@ -107,7 +111,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 		titre.transform.Rotate(new Vector3(90,0,0));		//Le titre apparait face à z
 		titre.transform.localScale = new Vector3(.5f,.5f,.5f);
 		TextMesh txtTitre = titre.AddComponent<TextMesh> ();
-		txtTitre.text = getCarteRef ().titreCarte;
+		txtTitre.text = getCarteDTORef ().TitreCarte;
 		txtTitre.color = Color.black;
 		txtTitre.fontSize = 20;
 		txtTitre.font = ConstanteInGame.fontChintzy;
@@ -124,10 +128,15 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 		image.transform.localScale = new Vector3(.9f,1,.25f);
 
 		Material matImage = new Material(ConstanteInGame.shaderStandart);
-		Sprite sprtImage = getCarteRef ().image;
+
+		Sprite sprtImage = null;
+
+		#if UNITY_EDITOR
+		sprtImage = AssetDatabase.LoadAssetAtPath<Sprite>(getCarteDTORef().ImagePath);
+		#endif
 
 		if (null == sprtImage) {
-			Debug.Log (getCarteRef ().titreCarte + " n'a pas d'image");
+			Debug.Log (getCarteDTORef ().TitreCarte + " n'a pas d'image");
 			sprtImage = ConstanteInGame.spriteTest;
 		}
 
