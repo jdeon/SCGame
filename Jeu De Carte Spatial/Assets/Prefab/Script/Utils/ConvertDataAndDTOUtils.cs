@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 public class ConvertDataAndDTOUtils {
 
 	public static CapaciteDTO convertCapaciteDataToDTO(CapaciteData capaciteData){
@@ -104,7 +100,12 @@ public class ConvertDataAndDTOUtils {
 		niveauDTOResult.Capacite = new List<CapaciteDTO> ();
 		if(null != niveauData.capacite){
 			foreach(CapaciteData capaciteData in niveauData.capacite){
-				niveauDTOResult.Capacite.Add (convertCapaciteDataToDTO (capaciteData));
+				if (null != capaciteData) {
+					niveauDTOResult.Capacite.Add (convertCapaciteDataToDTO (capaciteData));
+				} else {
+					Debug.Log (niveauData);
+					Debug.Log (capaciteData);
+				}
 			}
 		}
 
@@ -129,9 +130,7 @@ public class ConvertDataAndDTOUtils {
 		carteConstructionDTO.LibelleCarte = carteConstructionData.libelleCarte;
 		carteConstructionDTO.CitationCarte = carteConstructionData.citationCarte;
 
-		#if UNITY_EDITOR
-		carteConstructionDTO.ImagePath = AssetDatabase.GetAssetPath(carteConstructionData.image);
-		#endif
+		carteConstructionDTO.ImagePath = ConstanteInGame.strImageCartePath + "/" + getDossierCarte(carteConstructionData) + "/" + carteConstructionData.name;
 
 		carteConstructionDTO.NbTourAvantActif = carteConstructionData.nbTourAvantActif;
 		carteConstructionDTO.PointVieMax = carteConstructionData.pointVieMax;
@@ -163,5 +162,23 @@ public class ConvertDataAndDTOUtils {
 	public static CarteAmeliorationDTO convertCarteAmeliorationDataToDTO(CarteAmeliorationData carteAmeliorationData){
 		//TODO methode a faire
 		return null;
+	}
+
+	private static string getDossierCarte(CarteAbstractData carteData){
+		string nomDossier = "";
+
+		if (carteData is CarteVaisseauData) {
+			nomDossier = ConstanteInGame.strVaisseau;
+		} else if (carteData is CarteDefenseData) {
+			nomDossier = ConstanteInGame.strDefense;
+		} else if (carteData is CarteBatimentData) {
+			nomDossier = ConstanteInGame.strBatiment;
+		} else if (carteData is CarteAmeliorationData) {
+			nomDossier = ConstanteInGame.strAmelioration;
+		} else if (carteData is CarteDeteriorationData) {
+			nomDossier = ConstanteInGame.strDeterioration;
+		}
+
+		return nomDossier;
 	}
 }

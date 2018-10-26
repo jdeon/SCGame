@@ -7,6 +7,19 @@ public class ConstanteInGame {
 	public static readonly float coefPlane = 10f;
 
 
+	public static string strImageCartePath = "Sprite/CarteImage";
+
+	public static string strVaisseau = "Vaisseau";
+
+	public static string strDefense = "Defense";
+
+	public static string strBatiment = "Batiment";
+
+	public static string strAmelioration = "Amelioration";
+
+	public static string strDeterioration = "Deterioration";
+
+
 	public static readonly Sprite spriteBackgroundCarte = Resources.Load<Sprite>("Background");
 
 	public static readonly Sprite spriteLvl1 = Resources.Load<Sprite>("UI button sample pack 1/Part 1/1");
@@ -21,7 +34,7 @@ public class ConstanteInGame {
 
 	public static readonly Sprite spriteCroixCancel = Resources.Load<Sprite>("UI button sample pack 1/Part 1/Close");
 
-	public static readonly Sprite spriteTest = Resources.Load<Sprite>("testImage");
+	public static readonly Sprite spriteTest = Resources.Load<Sprite>("Sprite/testImage");
 
 
 	public static readonly Font fontArial = Resources.GetBuiltinResource<Font>("Arial.ttf");

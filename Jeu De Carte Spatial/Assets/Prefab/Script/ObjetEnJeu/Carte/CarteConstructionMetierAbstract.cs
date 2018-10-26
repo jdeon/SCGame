@@ -4,11 +4,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 
 	protected static int sequenceId;
@@ -69,10 +64,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 			designCarte = new DesignCarteConstructionV2 (panelGO, height, width, nbNiveau,joueurProprietaire);
 
 			designCarte.setTitre (carteSource.TitreCarte);
-
-			#if UNITY_EDITOR
-			designCarte.setImage (AssetDatabase.LoadAssetAtPath<Sprite>(carteSource.ImagePath));
-			#endif
+			designCarte.setImage (Resources.Load<Sprite>(carteSource.ImagePath));
 
 			designCarte.setMetal (carteSource.ListNiveau [0].Cout);//TODO passer par getCout(qui vérifie s'il y a des capacité malus au bonus vert ou roge)
 			designCarte.setNiveauActuel (niveauActuel);

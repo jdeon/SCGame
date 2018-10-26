@@ -12,7 +12,7 @@ public abstract class CarteAbstractData : ScriptableObject {
 
 	public string citationCarte;
 
-	public Sprite image;
+	//public Sprite image;
 
 	public int nbTourAvantActif;
 }

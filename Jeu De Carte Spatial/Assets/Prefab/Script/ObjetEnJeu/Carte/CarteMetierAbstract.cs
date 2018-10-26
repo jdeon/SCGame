@@ -4,9 +4,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 public abstract class CarteMetierAbstract : NetworkBehaviour {
 
@@ -129,11 +126,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 
 		Material matImage = new Material(ConstanteInGame.shaderStandart);
 
-		Sprite sprtImage = null;
+		Sprite sprtImage = Resources.Load<Sprite>(getCarteDTORef().ImagePath);
 
-		#if UNITY_EDITOR
-		sprtImage = AssetDatabase.LoadAssetAtPath<Sprite>(getCarteDTORef().ImagePath);
-		#endif
 
 		if (null == sprtImage) {
 			Debug.Log (getCarteDTORef ().TitreCarte + " n'a pas d'image");
