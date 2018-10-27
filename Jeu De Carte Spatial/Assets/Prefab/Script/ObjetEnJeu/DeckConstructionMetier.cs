@@ -32,13 +32,18 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 	}
 
 	public override GameObject tirerCarte(){
+		Debug.Log ("Begin tirerCarte()");
+
 		int indexNextCarte = 0;
 		GameObject cartePioche = null;
+
+
 
 		for (indexNextCarte = 0; indexNextCarte < getNbCarteRestante (); indexNextCarte++) {
 			GameObject carteTeste = transform.GetChild (indexNextCarte).gameObject;
 			if (carteTeste.GetComponent<CarteConstructionMetierAbstract> () != null) {
 				cartePioche = carteTeste;
+				Debug.Log ("Next carte trouvé");
 				break;
 			}
 		}
@@ -50,6 +55,7 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 			carteConstruction.setJoueurProprietaire (joueur);
 		}
 
+		Debug.Log ("End tirerCarte()");
 		return cartePioche;
 	}
 
