@@ -11,6 +11,8 @@ public class Joueur : NetworkBehaviour {
 
 	public DeckConstructionMetier deckConstruction;
 
+	public CartePlaneteMetier cartePlanetJoueur;
+
 	public GameObject main;
 
 	public GameObject ligneSol;
@@ -21,14 +23,31 @@ public class Joueur : NetworkBehaviour {
 
 
 	void Start (){
+		cartePlanetJoueur = new CartePlaneteMetier (this.netId,this.gameObject);
+
 		if (isLocalPlayer) {
 			CmdInitDeck ();
 			deckConstruction.setJoueur (this);
+			initPlateau ();
+
 
 			CmdGenerateCardAlreadyLaid (this.netId);
 		} else {
 			transform.Find ("VueJoueur").gameObject.SetActive(false); //TODO créer en constante
 		}
+	}
+
+	private void initPlateau (){
+		string nomPlateau = transform.localPosition.z < 0 ? "Plateau1" : "Plateau2"; //TODO mettre en constante
+		GameObject goPlateau = GameObject.Find(nomPlateau);
+
+		EmplacementMetierAbstract[] tabEmplacement = goPlateau.GetComponentsInChildren<EmplacementMetierAbstract> ();
+
+		//On met l'id du jour sur tous les emplacement
+		for(int index = 0; index < tabEmplacement.Length; index++){
+			tabEmplacement[index].setIdJoueurPossesseur(this.netId);
+		}
+
 	}
 
 	[Command]

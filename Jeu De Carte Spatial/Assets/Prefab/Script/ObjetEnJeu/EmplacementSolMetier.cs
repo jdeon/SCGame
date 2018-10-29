@@ -1,16 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class EmplacementSolMetier : MonoBehaviour {
+public class EmplacementSolMetier : EmplacementMetierAbstract {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	private static List<string> listNomCarteExeption = new List<string>();
+
+
+	public virtual void OnMouseDown(){
+		GameObject goJoueur = NetworkServer.FindLocalObject (this.idJoueurPossesseur);
+		Joueur joueur = goJoueur.GetComponent<Joueur> ();
+
+		if(null != joueur && null != joueur.carteSelectionne && (joueur.carteSelectionne is CarteBatimentMetier || joueur.carteSelectionne is CarteDefenseMetier || listNomCarteExeption.Contains(joueur.carteSelectionne.name))){
+			base.putCard (joueur.carteSelectionne);
+		}
 	}
 }

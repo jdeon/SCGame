@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 114294583984057286}
   - component: {fileID: 114027188941054642}
   - component: {fileID: 114428898321502924}
-  - component: {fileID: 65642142004018062}
   m_Layer: 0
   m_Name: goBatiment
   m_TagString: Untagged
@@ -43,18 +42,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &65642142004018062
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1833502023468268}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114027188941054642
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -66,7 +53,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7afad78747be54eac4de146ac5c8cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carteRef: {fileID: 0}
 --- !u!114 &114294583984057286
 MonoBehaviour:
   m_ObjectHideFlags: 1

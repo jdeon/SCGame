@@ -31,6 +31,12 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 
 	//public abstract string initCarte (); //Besoin carte Ref
 
+
+	public virtual void OnMouseDown(){
+		joueurProprietaire.carteSelectionne = this;
+	}
+
+
 	public virtual void generateVisualCard(){
 		string pseudo = "pseudo"; //TODO rechercher pseudo dans player pref
 		GameObject canvasGO = GameObject.Find("Canvas_" + pseudo);
@@ -77,7 +83,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 
 		transform.localScale = ConstanteInGame.tailleCarte;
 
-		gameObject.AddComponent<BoxCollider> ().size = new Vector3 (10, .1f, 10);
+		gameObject.AddComponent<BoxCollider> ().size = new Vector3 (10, .025f, 10);
 
 		faceCarteGO = GameObject.CreatePrimitive (PrimitiveType.Plane);
 		//faceCarteGO = Instantiate<GameObject>(ConstanteInGame.planePrefab);

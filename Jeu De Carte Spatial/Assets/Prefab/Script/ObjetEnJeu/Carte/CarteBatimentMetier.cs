@@ -10,14 +10,7 @@ public class CarteBatimentMetier : CarteConstructionMetierAbstract {
 			id = "BAT_" + sequenceId;
 			sequenceId++;
 		}
-	}
-
-	//Affiche la carte si clique dessus
-	public virtual void OnMouseDown()
-	{
-		generateVisualCard ();
-	}
-		
+	}		
 
 	public override Color getColorCarte (){
 		return ConstanteInGame.colorBatiment;

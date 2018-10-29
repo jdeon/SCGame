@@ -180,6 +180,9 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 		cadreListNiveaux.transform.localScale = new Vector3 (0.75f, 1f, 0.25f);
 		cadreListNiveaux.GetComponent<Renderer> ().material = ConstanteInGame.materialBackgroundCarte;
 
+		cadreListNiveaux.AddComponent<ClickableCardPart> ().setCarteMere (this);
+		BoxCollider collCadre = cadreListNiveaux.AddComponent<BoxCollider> ();
+		collCadre.size = new Vector3 (10, .1f, 10);
 
 		GameObject listNiveaux = new GameObject ("TxtListNiv_" + id);
 		//GameObject listNiveaux = Instantiate<GameObject>(ConstanteInGame.textPrefab);

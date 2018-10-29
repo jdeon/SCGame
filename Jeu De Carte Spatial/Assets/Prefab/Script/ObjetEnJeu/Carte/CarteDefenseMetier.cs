@@ -13,12 +13,6 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract {
 		}
 	}
 
-	//Affiche la carte si clique dessus
-	public virtual void OnMouseDown()
-	{
-		generateVisualCard ();
-	}
-
 	public override void generateVisualCard()
 	{
 		if (!joueurProprietaire.carteEnVisuel) {

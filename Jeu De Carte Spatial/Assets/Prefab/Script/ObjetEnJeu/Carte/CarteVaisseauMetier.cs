@@ -12,12 +12,6 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract {
 			sequenceId++;
 		}
 	}
-		
-	//Affiche la carte si clique dessus
-	public virtual void OnMouseDown()
-	{
-		generateVisualCard ();
-	}
 
 	public override void generateVisualCard()
 	{

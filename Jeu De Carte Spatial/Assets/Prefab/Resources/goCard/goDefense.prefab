@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 114160482776809386}
   - component: {fileID: 114536666615900592}
   - component: {fileID: 114425147325001462}
-  - component: {fileID: 65932374651950814}
   m_Layer: 0
   m_Name: goDefense
   m_TagString: Untagged
@@ -43,18 +42,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &65932374651950814
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1582805893208406}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114160482776809386
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -119,4 +106,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f11e383fe67c894a9d26dea04f37bb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carteRef: {fileID: 0}
