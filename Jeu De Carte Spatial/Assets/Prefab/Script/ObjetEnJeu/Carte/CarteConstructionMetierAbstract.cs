@@ -44,6 +44,27 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 		return initDo;
 	}
 
+	public int getCoutMetal(){
+		int coutMetal = 0;
+
+		//La construction n'est pas au niveau maximum
+		if (niveauActuel < carteRef.ListNiveau.Count) {
+			//cout du prochain niveau
+			coutMetal = carteRef.ListNiveau [niveauActuel].Cout;
+		}
+
+		if( null != listEffetCapacite){
+			foreach(CapaciteMetier capaciteCourante in listEffetCapacite){
+				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_COUT_CONSTRUCTION)) {
+					coutMetal = capaciteCourante.getNewValue (coutMetal);
+				}
+			}
+		}
+			
+		return coutMetal;
+	}
+
+
 	//Affiche la carte si clique dessus
 	public virtual void generateVisualCard() {
 		if (!joueurProprietaire.carteEnVisuel) {

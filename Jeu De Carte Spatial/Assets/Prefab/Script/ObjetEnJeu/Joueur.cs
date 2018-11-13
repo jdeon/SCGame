@@ -5,6 +5,8 @@ using UnityEngine.Networking;
 
 public class Joueur : NetworkBehaviour {
 
+	public string pseudo = "Test"; //TODO rechercher autrement
+
 	public CarteMetierAbstract carteSelectionne;
 
 	public bool carteEnVisuel;
@@ -23,11 +25,10 @@ public class Joueur : NetworkBehaviour {
 
 
 	void Start (){
-		cartePlanetJoueur = new CartePlaneteMetier (this.netId,this.gameObject);
-
 		if (isLocalPlayer) {
 			CmdInitDeck ();
 			deckConstruction.setJoueur (this);
+
 			initPlateau ();
 
 
@@ -48,6 +49,8 @@ public class Joueur : NetworkBehaviour {
 			tabEmplacement[index].setIdJoueurPossesseur(this.netId);
 		}
 
+		CmdInitPlanete (this.netId, nomPlateau);
+
 	}
 
 	[Command]
@@ -66,10 +69,13 @@ public class Joueur : NetworkBehaviour {
 
 		if (null != listeCarteDejaPose) {
 			for (int index = 0; index < listeCarteDejaPose.Length; index++) {
-				if (null != listeCarteDejaPose[index]) {
+				if (null != listeCarteDejaPose[index] && ! listeCarteDejaPose[index] is CartePlaneteMetier) {
 					listeCarteDejaPose [index].generateGOCard ();
-					byte[] carteRefData = SerializeUtils.SerializeToByteArray(listeCarteDejaPose [index].getCarteDTORef());
-					RpcGenerate(listeCarteDejaPose [index].gameObject, carteRefData, networkIdJoueur);
+
+					if (!listeCarteDejaPose [index] is CartePlaneteMetier) {//pas besoin de serialisation pour les planete
+						byte[] carteRefData = SerializeUtils.SerializeToByteArray (listeCarteDejaPose [index].getCarteDTORef ());
+						RpcGenerate (listeCarteDejaPose [index].gameObject, carteRefData, networkIdJoueur);
+					}
 				}
 			}
 		}
@@ -77,7 +83,28 @@ public class Joueur : NetworkBehaviour {
 		Debug.Log ("End CmdGenerateCardAlreadyLaid");
 	}
 
+	[Command]
+	public void CmdInitPlanete(NetworkInstanceId networkIdJoueur, string nomPlateau){
+		Debug.Log ("Begin CmdInitPlanete");
+		GameObject goPlateau = GameObject.Find(nomPlateau);
 
+		GameObject carteplaneteGO = Instantiate<GameObject> (ConstanteInGame.cartePlanetePrefab);
+		carteplaneteGO.transform.SetParent (goPlateau.transform);
+		carteplaneteGO.transform.localPosition = new Vector3 (0, 0, -3);
+		carteplaneteGO.transform.localRotation =Quaternion.identity;
+		carteplaneteGO.transform.localScale =Vector3.one;
+
+		cartePlanetJoueur = carteplaneteGO.GetComponent<CartePlaneteMetier> ();
+		if (null != cartePlanetJoueur) {
+			cartePlanetJoueur.initPlanete(this.netId, pseudo);
+		}
+
+		NetworkServer.Spawn (carteplaneteGO);
+
+		RpcGeneratePlanete(carteplaneteGO);
+
+		Debug.Log ("End CmdInitPlanete");
+	}
 
 	[Command]
 	public void CmdTirerCarte(){
@@ -125,6 +152,23 @@ public class Joueur : NetworkBehaviour {
 			carteConstructionScript.initCarte (carteRef);
 			carteConstructionScript.generateGOCard ();
 		}
+	}
+
+	/**
+	 * Genere le visuel de la carte planete chez le client
+	 * goScript : GameObject de prefab avec le script de la carte et quelque variable sync3
+	 * networkIdJoueur : id du jour chez qui générer la carte, si NetworkInstanceId.Invalid alors générer chez tous le monde
+	 * 
+	 * */
+	[ClientRpc]
+	public void RpcGeneratePlanete (GameObject goScript)
+	{
+		Debug.Log ("Begin RpcGeneratePlanete");
+
+		CartePlaneteMetier cartePlaneteScript = goScript.GetComponent<CartePlaneteMetier> ();
+		cartePlaneteScript.generateGOCard ();
+
+		Debug.Log ("End RpcGeneratePlanete");
 	}
 
 	public bool getIsLocalJoueur(){

@@ -77,6 +77,8 @@ public class ConstanteInGame {
 
 	public static readonly GameObject carteBatimentPrefab = Resources.Load<GameObject>("goCard/goBatiment");
 
+	public static readonly GameObject cartePlanetePrefab = Resources.Load<GameObject>("goCard/goPlanete");
+
 
 
 	/*************************Propriété en proportion sur le design des carte

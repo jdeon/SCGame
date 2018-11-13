@@ -8,14 +8,16 @@ public class EmplacementAttaque : EmplacementMetierAbstract {
 	private static List<string> listNomCarteExeption = new List<string>();
 
 
-	public virtual void OnMouseDown(){
+	public void OnMouseDown(){
 		//TODO fonction en cours
 
 		GameObject goJoueur = NetworkServer.FindLocalObject (this.idJoueurPossesseur);
 		Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
 		if(null != joueur && null != joueur.carteSelectionne && (joueur.carteSelectionne is CarteVaisseauMetier || listNomCarteExeption.Contains(joueur.carteSelectionne.name))){
-			base.putCard (joueur.carteSelectionne);
+			if (isCardCostPayable(joueur.cartePlanetJoueur,joueur.carteSelectionne)) {
+				base.putCard (joueur.carteSelectionne);
+			}
 		}
 	}
 }

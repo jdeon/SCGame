@@ -29,6 +29,7 @@ public class CartePlaneteMetier : CarteMetierAbstract {
 	public int stockCarburant;
 
 	private NetworkInstanceId netIdJoueur;
+	private TextMesh txtPointVie;
 	private TextMesh txtProdMetal;
 	private TextMesh txtStockMetal;
 	private TextMesh txtXPActuel;
@@ -36,8 +37,11 @@ public class CartePlaneteMetier : CarteMetierAbstract {
 	private TextMesh txtProdCarburant;
 	private TextMesh txtStockCarburant;
 
-	public CartePlaneteMetier (NetworkInstanceId netIdJoueur, GameObject goParent){
-		initAffichageDonnePlanete (goParent);
+	private string pseudo;
+
+	public void initPlanete (NetworkInstanceId netIdJoueur, string pseudo){
+		this.pseudo = pseudo;
+		initId ();
 
 		this.netIdJoueur = netIdJoueur;
 		pointVie = maxPVPlanete;
@@ -59,7 +63,7 @@ public class CartePlaneteMetier : CarteMetierAbstract {
 	}
 
 	protected override void initId (){
-		//TODO a implementer
+		id = "Planete_" + pseudo;
 	}
 
 	/**Retourne si l'init est faite*/
@@ -68,9 +72,37 @@ public class CartePlaneteMetier : CarteMetierAbstract {
 		return false;
 	}
 
-	public void initAffichageDonnePlanete(GameObject goParent){
+	public override void generateVisualCard()
+	{
+		//TODO 
+	}
+
+	public override void generateGOCard(){
+		GameObject goCartePlanete = new GameObject("CartePlanete_" + id);
+		goCartePlanete.transform.SetParent (gameObject.transform);
+		goCartePlanete.transform.localPosition = new Vector3 (0,0.1f,0);
+		goCartePlanete.transform.localRotation = Quaternion.identity;
+
+		TextMesh txtPseudo = GenerateObjectUtils.createText ("pseudo", new Vector3 (0, 0.01f, .75f), Quaternion.identity, new Vector3 (2f, 1, .5f), 14, goCartePlanete);
+		txtPseudo.text = this.pseudo;
+
+		//TODO remplacer par image
+		GameObject goImage = GameObject.CreatePrimitive (PrimitiveType.Plane);
+		goImage.name = "Avatar_" + id;
+		goImage.transform.SetParent (goCartePlanete.transform);
+		goImage.transform.localPosition = new Vector3 (0, 0.01f,0);
+		goImage.transform.localRotation = Quaternion.identity;
+		goImage.transform.localScale = new Vector3(.2f,1,.1f);
+
+		txtPointVie = GenerateObjectUtils.createText ("pointVie", new Vector3 (0, 0.01f, -.75f), Quaternion.identity, new Vector3 (2f, 1, .5f), 14, goCartePlanete);
+		txtPointVie.text = "PV - " + pointVie;
+
+		initAffichageDonnePlanete ();
+	}
+
+	public void initAffichageDonnePlanete(){
 		GameObject goRessource = new GameObject ("Ressource");
-		goRessource.transform.SetParent (goParent.transform);
+		goRessource.transform.SetParent (gameObject.transform);
 		goRessource.transform.localPosition = new Vector3 (0,0.1f,.5f);
 		goRessource.transform.localRotation = Quaternion.identity;
 
@@ -88,32 +120,66 @@ public class CartePlaneteMetier : CarteMetierAbstract {
 		txtProdCarburant.text = "Prod C - " + prodCarburant;
 		txtStockCarburant.text = "Stock C - " + stockCarburant;
 	}
+
+	public bool isMetalSuffisant (int nbMetalDemand){
+		bool result = false;
+		if (stockMetal >= nbMetalDemand) {
+			stockMetal -= nbMetalDemand;
+			result = true;
+		}
+
+		return result;
+	}
+
+	public bool isCarbuSuffisant (int nbCarbuDemande){
+		bool result = false;
+		if (stockCarburant >= nbCarbuDemande) {
+			stockCarburant -= nbCarbuDemande;
+			result = true;
+		}
+
+		return result;
+	}
 		
 	public void onChangePointVie(int PV){
-		//TODO add txtPointVie
+		if (null != txtPointVie) {
+			txtPointVie.text = "PV - " + PV;
+		}
 	}
 
 	public void onChangeProdMetal(int prodMetal){
-		txtProdMetal.text = "Prod M - " + prodMetal;
+		if (null != txtProdMetal) {
+			txtProdMetal.text = "Prod M - " + prodMetal;
+		}
 	}
 
 	public void onChangeStockMetal(int stockMetal){
-		txtStockMetal.text = "Stock M - " + stockMetal;
+		if (null != txtStockMetal) {
+			txtStockMetal.text = "Stock M - " + stockMetal;
+		}
 	}
 
 	public void onChangeXPActuel(int xp){
-		txtXPActuel.text = "XP - " + xp;
+		if (null != txtXPActuel) {
+			txtXPActuel.text = "XP - " + xp;
+		}
 	}
 
 	public void onChangeStockNiveau(int stockNiveau){
-		txtStockNiveau.text = "Stock niv - " + stockNiveau;
+		if (null != txtStockNiveau) {
+			txtStockNiveau.text = "Stock niv - " + stockNiveau;
+		}
 	}
 
 	public void onChangeProdCarburant(int prodCarburant){
-		txtProdCarburant.text = "Prod C - " + prodCarburant;
+		if (null != txtProdCarburant) {
+			txtProdCarburant.text = "Prod C - " + prodCarburant;
+		}
 	}
 
 	public void onChangeStockCarburant(int stockCarburant){
-		txtStockCarburant.text = "Stock C - " + stockCarburant;
+		if (null != txtStockCarburant) {
+			txtStockCarburant.text = "Stock C - " + stockCarburant;
+		}
 	}
 }
