@@ -17,11 +17,7 @@ public class Joueur : NetworkBehaviour {
 
 	public GameObject main;
 
-	public GameObject ligneSol;
-
-	public GameObject ligneAtmosphere;
-
-	public GameObject ligneAttaque;
+	public GameObject goPlateau;
 
 
 	void Start (){
@@ -30,17 +26,20 @@ public class Joueur : NetworkBehaviour {
 			deckConstruction.setJoueur (this);
 
 			initPlateau ();
-
+			BoutonTour boutonTour = goPlateau.GetComponentInChildren<BoutonTour> ();
+			CmdAddInSystemeTour(boutonTour.netId);
 
 			CmdGenerateCardAlreadyLaid (this.netId);
 		} else {
+			string nomPlateau = transform.localPosition.z < 0 ? "Plateau1" : "Plateau2"; //TODO mettre en constante
+			goPlateau = GameObject.Find(nomPlateau);
 			transform.Find ("VueJoueur").gameObject.SetActive(false); //TODO créer en constante
 		}
 	}
 
 	private void initPlateau (){
 		string nomPlateau = transform.localPosition.z < 0 ? "Plateau1" : "Plateau2"; //TODO mettre en constante
-		GameObject goPlateau = GameObject.Find(nomPlateau);
+		goPlateau = GameObject.Find(nomPlateau);
 
 		EmplacementMetierAbstract[] tabEmplacement = goPlateau.GetComponentsInChildren<EmplacementMetierAbstract> ();
 
@@ -50,7 +49,20 @@ public class Joueur : NetworkBehaviour {
 		}
 
 		CmdInitPlanete (this.netId, nomPlateau);
+	}
 
+	[Command]
+	public void CmdAddInSystemeTour(NetworkInstanceId idNetworkBouton){
+		Debug.Log ("Begin CmdAddInSystemeTour");
+
+		JoueurMinimalDTO joueurMin = new JoueurMinimalDTO ();
+		joueurMin.netIdJoueur = netId;
+		joueurMin.Pseudo = pseudo;
+		joueurMin.netIdBtnTour = idNetworkBouton;
+
+		TourJeuSystem.addJoueur (joueurMin);
+
+		Debug.Log ("End CmdAddInSystemeTour");
 	}
 
 	[Command]

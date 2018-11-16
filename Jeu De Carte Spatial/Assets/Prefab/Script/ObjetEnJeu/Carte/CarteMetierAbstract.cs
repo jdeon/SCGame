@@ -33,7 +33,11 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 
 
 	public virtual void OnMouseDown(){
-		joueurProprietaire.carteSelectionne = this;
+		if (joueurProprietaire.carteSelectionne == this) {
+			joueurProprietaire.carteSelectionne = null;	//On deselectionne au second click
+		} else {
+			joueurProprietaire.carteSelectionne = this;
+		}
 	}
 
 
@@ -150,5 +154,9 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 
 	public void setJoueurProprietaire(Joueur proprietaire){
 		joueurProprietaire = proprietaire;
+	}
+
+	public Joueur getJoueurProprietaire(){
+		return joueurProprietaire;
 	}
 }

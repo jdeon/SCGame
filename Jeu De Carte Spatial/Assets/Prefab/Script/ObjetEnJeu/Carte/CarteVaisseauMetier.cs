@@ -4,13 +4,61 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class CarteVaisseauMetier : CarteConstructionMetierAbstract {
+public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, IDefendre {
+
+	[SyncVar]
+	private bool attaqueEnCours;
 
 	protected override void initId(){
 		if (null == id || id == "") {
 			id = "VAIS_" + sequenceId;
 			sequenceId++;
 		}
+	}
+
+	public override void OnMouseDown(){
+
+		//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
+		if (null != joueurProprietaire.carteSelectionne && joueurProprietaire.carteSelectionne.getJoueurProprietaire () != joueurProprietaire && ! joueurProprietaire.isLocalPlayer 
+			&&  joueurProprietaire.carteSelectionne is IAttaquer && !((IAttaquer) joueurProprietaire.carteSelectionne).isCapableAttaquer()) {
+			//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
+			((IAttaquer) joueurProprietaire.carteSelectionne).attaque (this);
+		} else {
+			base.OnMouseDown ();
+		}
+	}
+
+	public void attaque (CarteConstructionMetierAbstract cible){
+		//TODO 
+	}
+
+	public bool isCapableAttaquer (){
+		bool capableDAttaquer = false;
+
+		if(!isAttaqueEnCours()){
+			capableDAttaquer = true;
+		//TODO recherche dans capacité
+		}
+
+		return capableDAttaquer;
+	}
+		
+	public bool isAttaqueEnCours (){
+		return attaqueEnCours;
+	}
+
+	public int getConsomationCarburant(){
+		int consomationCarburant = carteRef.ConsommationCarburant;
+
+		if( null != listEffetCapacite){
+			foreach(CapaciteMetier capaciteCourante in listEffetCapacite){
+				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_CONSOMATION_CARBURANT)) {
+					consomationCarburant = capaciteCourante.getNewValue (consomationCarburant);
+				}
+			}
+		}
+
+		return consomationCarburant;
 	}
 
 	public override void generateVisualCard()

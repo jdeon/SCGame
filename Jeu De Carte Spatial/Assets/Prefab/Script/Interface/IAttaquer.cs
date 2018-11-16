@@ -4,5 +4,11 @@ using UnityEngine;
 
 public interface IAttaquer  {
 
-	//void attaque (CarteConstructionAbstract cible, int degat);
+	//void goLigneAttaque (EmplacementAttaque cible);
+
+	void attaque (CarteConstructionMetierAbstract cible);
+
+	bool isCapableAttaquer ();
+
+	bool isAttaqueEnCours ();
 }
