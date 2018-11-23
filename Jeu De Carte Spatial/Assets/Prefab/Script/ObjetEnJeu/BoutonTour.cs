@@ -33,7 +33,11 @@ public class BoutonTour : NetworkBehaviour {
 	//Affiche la carte si clique dessus
 	public virtual void OnMouseDown()
 	{
-		//TODO faire evoluer cycle tour
+		if(etatBouton == enumEtatBouton.attaque){
+			TourJeuSystem.progressStep (TourJeuSystem.PHASE_ATTAQUE);
+		} else if (etatBouton == enumEtatBouton.terminerTour){
+			TourJeuSystem.progressStep (TourJeuSystem.FIN_TOUR);
+		}
 	}
 
 	private string etatToText(enumEtatBouton etat){

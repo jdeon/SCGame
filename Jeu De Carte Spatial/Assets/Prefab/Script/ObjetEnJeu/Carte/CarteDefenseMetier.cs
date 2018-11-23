@@ -3,8 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class CarteDefenseMetier : CarteConstructionMetierAbstract {
+public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 
+	[SyncVar]
+	private bool selectionnableDefense;
+
+	[SyncVar]
+	private bool defenseSelectionne;
+
+	[SyncVar]
+	private bool defenduCeTour;
 
 	protected override void initId(){
 		if (null == id || id == "") {
@@ -22,6 +30,18 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract {
 		}
 	}
 
+	public override void OnMouseDown(){
+		Joueur joueurLocal = Joueur.getJoueurLocal ();
+
+		//Selection de la defense lors de la phase attaque adverse
+		if (SelectionnableDefense && TourJeuSystem.getPhase() == TourJeuSystem.PHASE_ATTAQUE
+			&& null != joueurLocal && TourJeuSystem.getPhase(joueurLocal.netId) == TourJeuSystem.EN_ATTENTE) {
+			defenseSelectionne = true;
+			defenduCeTour = true;
+		} else {
+			base.OnMouseDown ();
+		}
+	}
 
 	public override void generateGOCard(){
 		base.generateGOCard ();
@@ -54,5 +74,82 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract {
 
 	public override Color getColorCarte (){
 		return ConstanteInGame.colorDefense;
+	}
+
+	public void preDefense (CarteVaisseauMetier vaisseauAttaquant){
+		vaisseauAttaquant.recevoirDegat (getPointDegat ());
+
+		if (vaisseauAttaquant.OnBoard) {
+			this.recevoirDegat (vaisseauAttaquant.getPointDegat ());
+		}
+	}
+
+	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
+		int degatInfliger = getPointDegat ();
+		int degatRecu = vaisseauAttaquant.getPointDegat ();
+
+		vaisseauAttaquant.recevoirDegat (degatInfliger);
+		this.recevoirDegat (degatRecu);
+	}
+
+	public bool isCapableDefendre (){
+		bool result = true;
+		//TODO check capacite
+		if (defenduCeTour) {
+			result = false;
+		}
+		return result;
+	}
+
+	public bool SelectionnableDefense { 
+		get{ return selectionnableDefense; }
+		set {
+			if (value && isCapableDefendre ()) {
+				selectionnableDefense = true;
+			} else {
+				selectionnableDefense = false;
+			}
+		}
+	}
+
+	public bool DefenseSelectionne{
+		get{return defenseSelectionne;}
+	}
+
+	public void reinitDefenseSelect (){
+		selectionnableDefense = false;
+		defenseSelectionne = false;
+	}
+
+	public void reinitDefenseSelectTour (){
+		defenduCeTour = false;
+	}
+
+	public int getPointAttaque(){
+		int pointAttaqueBase = carteRef.PointAttaque;
+
+		if (null != listEffetCapacite) {
+			foreach (CapaciteMetier capaciteCourante in listEffetCapacite) {
+				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_POINT_ATTAQUE)) {
+					pointAttaqueBase = capaciteCourante.getNewValue (pointAttaqueBase);
+				}
+			}
+		}
+
+		return pointAttaqueBase;
+	}
+
+	public int getPointDegat(){
+		int pointDegatBase = getPointAttaque();
+
+		if( null != listEffetCapacite){
+			foreach(CapaciteMetier capaciteCourante in listEffetCapacite){
+				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_DEGAT_INFLIGE)) {
+					pointDegatBase = capaciteCourante.getNewValue (pointDegatBase);
+				}
+			}
+		}
+
+		return pointDegatBase;
 	}
 }

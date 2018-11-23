@@ -72,6 +72,20 @@ public class CartePlaneteMetier : CarteMetierAbstract {
 		return false;
 	}
 
+	public override void OnMouseDown(){
+		Joueur joueurLocal = Joueur.getJoueurLocal ();
+
+		//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
+		if (null != joueurLocal && TourJeuSystem.getPhase(joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
+			&& null != joueurLocal.carteSelectionne && joueurLocal.carteSelectionne.getJoueurProprietaire () != joueurProprietaire 
+			&&  joueurLocal.carteSelectionne is IAttaquer && !((IAttaquer) joueurLocal.carteSelectionne).isCapableAttaquer()) {
+			//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
+			((IAttaquer) joueurLocal.carteSelectionne).attaquePlanete (this);
+		} else {
+			base.OnMouseDown ();
+		}
+	}
+
 	public override void generateVisualCard()
 	{
 		//TODO 

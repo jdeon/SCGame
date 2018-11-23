@@ -4,5 +4,17 @@ using UnityEngine;
 
 public interface IDefendre {
 
-	//void defend(int degat, CarteVaisseau vaisseauAttaquant);
+	void preDefense (CarteVaisseauMetier vaisseauAttaquant);
+
+	void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant);
+
+	bool isCapableDefendre ();
+
+	bool DefenseSelectionne{ get; }
+
+	void reinitDefenseSelect ();
+
+	void reinitDefenseSelectTour ();
+
+	bool SelectionnableDefense { get; set; }
 }

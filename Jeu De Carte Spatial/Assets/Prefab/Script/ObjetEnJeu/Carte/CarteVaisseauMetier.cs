@@ -7,7 +7,16 @@ using UnityEngine.Networking;
 public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, IDefendre {
 
 	[SyncVar]
-	private bool attaqueEnCours;
+	private bool attaqueCeTours;
+
+	[SyncVar]
+	private bool selectionnableDefense;
+
+	[SyncVar]
+	private bool defenseSelectionne;
+
+	[SyncVar]
+	private bool defenduCeTour;
 
 	protected override void initId(){
 		if (null == id || id == "") {
@@ -16,26 +25,27 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		}
 	}
 
-	public override void OnMouseDown(){
-
-		//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
-		if (null != joueurProprietaire.carteSelectionne && joueurProprietaire.carteSelectionne.getJoueurProprietaire () != joueurProprietaire && ! joueurProprietaire.isLocalPlayer 
-			&&  joueurProprietaire.carteSelectionne is IAttaquer && !((IAttaquer) joueurProprietaire.carteSelectionne).isCapableAttaquer()) {
-			//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
-			((IAttaquer) joueurProprietaire.carteSelectionne).attaque (this);
-		} else {
-			base.OnMouseDown ();
+	/***************************Methode IAttaquer*************************/
+		
+	public void attaqueCarte (CarteConstructionMetierAbstract cible){
+		if (cible is IDefendre) {
+			((IDefendre)cible).defenseSimultanee (this);
+			attaqueCeTours = true;
+		} else if (cible is IVulnerable){
+			((IVulnerable)cible).recevoirDegat (getPointDegat());
+			attaqueCeTours = true;
 		}
 	}
 
-	public void attaque (CarteConstructionMetierAbstract cible){
-		//TODO 
+	public void attaquePlanete (CartePlaneteMetier cible){
+		//TODO
+		StartCoroutine(choixDefensePlanete(cible.getJoueurProprietaire().netId));
 	}
 
 	public bool isCapableAttaquer (){
 		bool capableDAttaquer = false;
 
-		if(!isAttaqueEnCours()){
+		if(!attaqueCeTours){
 			capableDAttaquer = true;
 		//TODO recherche dans capacité
 		}
@@ -43,9 +53,104 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		return capableDAttaquer;
 	}
 		
-	public bool isAttaqueEnCours (){
-		return attaqueEnCours;
+	public bool AttaqueCeTour { get { return attaqueCeTours; } }
+
+	private IEnumerator choixDefensePlanete(NetworkInstanceId idJoueurAttaque){
+		List<IDefendre> listDefenseurPlanete = new List<IDefendre> ();
+
+		List<EmplacementSolMetier> listEmplacementDefenseEnnemie = EmplacementSolMetier.getEmplacementSolJoueur (idJoueurAttaque);
+		foreach(EmplacementSolMetier emplacementDefenseEnnemie in listEmplacementDefenseEnnemie){
+			if (null != emplacementDefenseEnnemie && null != emplacementDefenseEnnemie.NetIdCartePosee && NetworkInstanceId.Invalid != emplacementDefenseEnnemie.NetIdCartePosee) {
+				GameObject goCarte = NetworkServer.FindLocalObject (emplacementDefenseEnnemie.NetIdCartePosee);
+
+				if (null != goCarte && null != goCarte.GetComponent<IDefendre> ()) {
+					IDefendre defenseur = goCarte.GetComponent<IDefendre> ();
+					defenseur.SelectionnableDefense = true;
+					listDefenseurPlanete.Add (defenseur);
+				}
+			}
+		}
+
+		if (listDefenseurPlanete.Count > 0) {
+			float tempsRetant = ConstanteInGame.tempChoixDefense;
+			IDefendre defenseurChoisi = null;
+
+			while (tempsRetant > 0 && null != defenseurChoisi) {
+				foreach(IDefendre defenseurPlanete in listDefenseurPlanete){
+					if (defenseurPlanete.DefenseSelectionne) {
+						defenseurChoisi = defenseurPlanete;
+					}
+				}
+
+				tempsRetant -= .5f;
+				yield return new WaitForSeconds (.5f);
+			}
+
+			if (null != defenseurChoisi) {
+				defenseurChoisi.preDefense (this);
+			}
+
+			foreach(IDefendre defenseurPlanete in listDefenseurPlanete){
+				defenseurPlanete.reinitDefenseSelect();
+			}
+		}
+
+		yield return null;
 	}
+
+
+
+	/*************************Methode IDefendre********************/
+
+	public void preDefense (CarteVaisseauMetier vaisseauAttaquant){
+		vaisseauAttaquant.recevoirDegat (getPointDegat ());
+
+		if (vaisseauAttaquant.OnBoard) {
+			this.recevoirDegat (vaisseauAttaquant.getPointDegat ());
+		}
+	}
+
+	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
+		int degatInfliger = getPointDegat ();
+		int degatRecu = vaisseauAttaquant.getPointDegat ();
+
+		vaisseauAttaquant.recevoirDegat (degatInfliger);
+		this.recevoirDegat (degatRecu);
+	}
+
+	public bool isCapableDefendre (){
+		bool result = true;
+		//TODO check capacite
+		if (defenduCeTour) {
+			result = false;
+		}
+		return result;
+	}
+
+	public bool SelectionnableDefense { 
+		get{ return selectionnableDefense; }
+		set {
+			if (value && isCapableDefendre ()) {
+				selectionnableDefense = true;
+			} else {
+				selectionnableDefense = false;
+			}
+		}
+	}
+
+	public bool DefenseSelectionne{
+		get{return defenseSelectionne;}
+	}
+
+	public void reinitDefenseSelect (){
+		selectionnableDefense = false;
+		defenseSelectionne = false;
+	}
+
+	public void reinitDefenseSelectTour (){
+		defenduCeTour = false;
+	}
+
 
 	public int getConsomationCarburant(){
 		int consomationCarburant = carteRef.ConsommationCarburant;
@@ -59,6 +164,34 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		}
 
 		return consomationCarburant;
+	}
+
+	public int getPointAttaque(){
+		int pointAttaqueBase = carteRef.PointAttaque;
+
+		if( null != listEffetCapacite){
+			foreach(CapaciteMetier capaciteCourante in listEffetCapacite){
+				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_POINT_ATTAQUE)) {
+					pointAttaqueBase = capaciteCourante.getNewValue (pointAttaqueBase);
+				}
+			}
+		}
+
+		return pointAttaqueBase;
+	}
+
+	public int getPointDegat(){
+		int pointDegatBase = getPointAttaque();
+
+		if( null != listEffetCapacite){
+			foreach(CapaciteMetier capaciteCourante in listEffetCapacite){
+				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_DEGAT_INFLIGE)) {
+					pointDegatBase = capaciteCourante.getNewValue (pointDegatBase);
+				}
+			}
+		}
+
+		return pointDegatBase;
 	}
 
 	public override void generateVisualCard()

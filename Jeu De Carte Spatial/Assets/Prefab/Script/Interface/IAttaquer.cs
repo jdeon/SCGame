@@ -6,9 +6,11 @@ public interface IAttaquer  {
 
 	//void goLigneAttaque (EmplacementAttaque cible);
 
-	void attaque (CarteConstructionMetierAbstract cible);
+	void attaqueCarte (CarteConstructionMetierAbstract cible);
+
+	void attaquePlanete (CartePlaneteMetier cible);
 
 	bool isCapableAttaquer ();
 
-	bool isAttaqueEnCours ();
+	bool AttaqueCeTour { get; }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
+public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVulnerable {
 
 	protected static int sequenceId;
 
@@ -13,6 +13,9 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 
 	[SyncVar]
 	protected int PV;
+
+	[SyncVar]
+	protected bool onBoard;
 
 	protected CarteConstructionDTO carteRef;
 
@@ -43,6 +46,22 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 
 		return initDo;
 	}
+
+	public override void OnMouseDown(){
+		Joueur joueurLocal = Joueur.getJoueurLocal ();
+
+		//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
+		if (null != joueurLocal && TourJeuSystem.getPhase(joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
+			&& null != joueurLocal.carteSelectionne && joueurLocal.carteSelectionne.getJoueurProprietaire () != joueurProprietaire 
+			&&  joueurLocal.carteSelectionne is IAttaquer && !((IAttaquer) joueurLocal.carteSelectionne).isCapableAttaquer()) {
+			//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
+			//TODO vérifier l'emplacement sol
+			((IAttaquer) joueurLocal.carteSelectionne).attaqueCarte (this);
+		} else {
+			base.OnMouseDown ();
+		}
+	}
+
 
 	public int getCoutMetal(){
 		int coutMetal = 0;
@@ -283,6 +302,20 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 		return result;
 	}
 
+	//Retourne PV restant
+	public int recevoirDegat (int nbDegat){
+		PV -= nbDegat;
+		if (PV <= 0) {
+			destruction ();
+		}
+
+		return PV;
+	}
+
+	public void destruction (){
+		onBoard = false;
+	}
+
 	public CarteConstructionDTO getCarteRef ()
 	{
 		return carteRef;
@@ -291,5 +324,10 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract {
 	public override CarteDTO getCarteDTORef ()
 	{
 		return carteRef;
+	}
+
+	public bool OnBoard { 
+		get{ return onBoard; }
+		set{ onBoard = value; }
 	}
 }

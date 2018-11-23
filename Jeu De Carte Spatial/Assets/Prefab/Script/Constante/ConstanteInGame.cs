@@ -6,6 +6,8 @@ public class ConstanteInGame {
 
 	public static readonly float coefPlane = 10f;
 
+	public static readonly float tempChoixDefense = 10f;
+
 
 	public static string strImageCartePath = "Sprite/CarteImage";
 

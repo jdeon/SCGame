@@ -19,6 +19,22 @@ public class Joueur : NetworkBehaviour {
 
 	public GameObject goPlateau;
 
+	public static Joueur getJoueurLocal(){
+		Joueur joueurResult = null;
+
+		Joueur[] listJoueur = GameObject.FindObjectsOfType<Joueur> ();
+	
+		if (null != listJoueur && listJoueur.Length > 0) {
+			foreach (Joueur joueur in listJoueur) {
+				if (joueur.isLocalPlayer) {
+					joueurResult = joueur;
+					break;
+				}
+			}
+		}
+
+		return joueurResult;
+	}
 
 	void Start (){
 		if (isLocalPlayer) {

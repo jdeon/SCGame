@@ -21,8 +21,10 @@ public class EmplacementMetierAbstract : NetworkBehaviour {
 		this.idJoueurPossesseur = idJoueurPossesseur;
 	}
 
-	public void putCard(CarteMetierAbstract cartePoser){
+	public void putCard(CarteConstructionMetierAbstract cartePoser){
 		Transform trfmCard = cartePoser.transform;
+
+		cartePoser.OnBoard = true;
 
 		trfmCard.SetParent (transform);
 		trfmCard.localPosition = new Vector3 (0, .01f, 0);
@@ -40,5 +42,17 @@ public class EmplacementMetierAbstract : NetworkBehaviour {
 		}
 
 		return costPayable;
+	}
+
+	/**
+	 * Retourne si la carte est déplaçable par le joueur
+	 * */
+	protected bool isMovableByPlayer(Joueur joueur){
+		return null != joueur && joueur.isLocalPlayer && TourJeuSystem.getPhase (joueur.netId) == TourJeuSystem.PHASE_DEPLACEMENT
+		&& null != joueur.carteSelectionne && joueur.netId == joueur.carteSelectionne.getJoueurProprietaire ().netId;
+	}
+
+	public NetworkInstanceId NetIdCartePosee {
+		get{return idCarte;}
 	}
 }
