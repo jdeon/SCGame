@@ -10,7 +10,9 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 	[SyncVar]
 	protected string id;
 
-	//[SyncVar]
+	[SyncVar  (hook = "onChangeNetIdJoueur")]
+	protected NetworkInstanceId idJoueurProprietaire;
+
 	protected Joueur joueurProprietaire;
 
 
@@ -148,12 +150,21 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 		image.GetComponent<Renderer> ().material = matImage;
 	}
 
+	private void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
+		joueurProprietaire = Joueur.getJoueur (netIdJoueur);
+	}
+
 	public string getId(){
 		return id;
 	}
 
-	public void setJoueurProprietaire(Joueur proprietaire){
-		joueurProprietaire = proprietaire;
+	[Command]
+	public void CmdSetJoueurProprietaire(NetworkInstanceId netIdJoueur){
+		this.idJoueurProprietaire = netIdJoueur;
+	}
+		
+	public void setJoueurProprietaireServer(NetworkInstanceId netIdJoueur){
+		this.idJoueurProprietaire = netIdJoueur;
 	}
 
 	public Joueur getJoueurProprietaire(){

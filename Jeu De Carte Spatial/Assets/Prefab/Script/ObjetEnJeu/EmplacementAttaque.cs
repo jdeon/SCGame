@@ -22,7 +22,7 @@ public class EmplacementAttaque : EmplacementMetierAbstract {
 
 				BoutonTour boutonJoueur = joueur.goPlateau.GetComponentInChildren<BoutonTour> ();
 				if (null != boutonJoueur) {
-					boutonJoueur.etatBouton = BoutonTour.enumEtatBouton.attaque;
+					boutonJoueur.CmdSetEtatBouton(BoutonTour.enumEtatBouton.attaque);
 				}
 			} else if (listNomCarteExeption.Contains(joueur.carteSelectionne.name)){
 				//TODO carte en exception

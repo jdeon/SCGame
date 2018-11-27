@@ -11,19 +11,22 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 	public void OnMouseDown(){
 		Debug.Log ("ClickEnregistre");
 
-		if (null != joueur && joueur.getIsLocalJoueur()) {
-			joueur.CmdTirerCarte ();
+		if (null != joueurProprietaire && joueurProprietaire.getIsLocalJoueur()) {
+			joueurProprietaire.CmdTirerCarte ();
 		}
 	}
 
-	public override void intiDeck (){
+	public override void intiDeck (NetworkInstanceId joueurNetId){
+		this.netIdJoueur = joueurNetId;
+
 		List<CarteConstructionAbstractData> listCarteConstuctionData = deckContructionRef.listeCarte;
 		foreach (CarteConstructionAbstractData carteConstructionData in listCarteConstuctionData) {
 			GameObject carteGO = convertDataToGO (carteConstructionData);
 			carteGO.transform.SetParent (transform);
 
-			int cartePlace = Mathf.FloorToInt(Random.Range(0,transform.childCount));
+			int cartePlace = Mathf.FloorToInt (Random.Range (0, transform.childCount));
 			carteGO.transform.SetSiblingIndex (cartePlace);
+
 		}
 	}
 
@@ -31,6 +34,9 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		return transform.childCount;
 	}
 
+	/**
+	 * Appeler par le server
+	 * */
 	public override GameObject tirerCarte(){
 		Debug.Log ("Begin tirerCarte()");
 
@@ -52,7 +58,7 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 			cartePioche.SetActive (true);
 			CarteConstructionMetierAbstract carteConstruction = cartePioche.GetComponent<CarteConstructionMetierAbstract> ();
 			//carteConstruction.CmdGenerateGOCard ();
-			carteConstruction.setJoueurProprietaire (joueur);
+			carteConstruction.setJoueurProprietaireServer (netIdJoueur);
 		}
 
 		Debug.Log ("End tirerCarte()");

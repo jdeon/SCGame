@@ -6,15 +6,18 @@ using UnityEngine.Networking;
 
 public abstract class DeckMetierAbstract : NetworkBehaviour {
 
-	protected Joueur joueur;
+	protected Joueur joueurProprietaire;
 
-	public abstract void intiDeck ();
+	[SyncVar  (hook = "onChangeNetIdJoueur")]
+	protected NetworkInstanceId netIdJoueur;
+
+	public abstract void intiDeck (NetworkInstanceId joueurNetId);
 
 	public abstract int getNbCarteRestante ();
 
 	public abstract GameObject tirerCarte();
 
-	public void setJoueur (Joueur joueurParent){
-		joueur = joueurParent;
+	private void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
+		joueurProprietaire = Joueur.getJoueur (netIdJoueur);
 	}
 }

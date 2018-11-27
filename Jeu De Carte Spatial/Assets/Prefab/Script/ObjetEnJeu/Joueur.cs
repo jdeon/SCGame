@@ -36,14 +36,30 @@ public class Joueur : NetworkBehaviour {
 		return joueurResult;
 	}
 
+	public static Joueur getJoueur(NetworkInstanceId netIdJoueur){
+		Joueur joueurResult = null;
+
+		Joueur[] listJoueur = GameObject.FindObjectsOfType<Joueur> ();
+
+		if (null != listJoueur && listJoueur.Length > 0) {
+			foreach (Joueur joueur in listJoueur) {
+				if (joueur.netId == netIdJoueur) {
+					joueurResult = joueur;
+					break;
+				}
+			}
+		}
+
+		return joueurResult;
+	}
+
 	void Start (){
 		if (isLocalPlayer) {
 			CmdInitDeck ();
-			deckConstruction.setJoueur (this);
 
 			initPlateau ();
 			BoutonTour boutonTour = goPlateau.GetComponentInChildren<BoutonTour> ();
-			CmdAddInSystemeTour(boutonTour.netId);
+			initSystemeTour(boutonTour.netId);
 
 			CmdGenerateCardAlreadyLaid (this.netId);
 		} else {
@@ -67,25 +83,16 @@ public class Joueur : NetworkBehaviour {
 		CmdInitPlanete (this.netId, nomPlateau);
 	}
 
-	[Command]
-	public void CmdAddInSystemeTour(NetworkInstanceId idNetworkBouton){
-		Debug.Log ("Begin CmdAddInSystemeTour");
-
-		JoueurMinimalDTO joueurMin = new JoueurMinimalDTO ();
-		joueurMin.netIdJoueur = netId;
-		joueurMin.Pseudo = pseudo;
-		joueurMin.netIdBtnTour = idNetworkBouton;
-
-		TourJeuSystem.addJoueur (joueurMin);
-
-		Debug.Log ("End CmdAddInSystemeTour");
+	private void initSystemeTour (NetworkInstanceId idBouton){
+		TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
+		systemTour.CmdAddInSystemeTour (netId, pseudo, idBouton);
 	}
 
 	[Command]
 	public void CmdInitDeck(){
 		Debug.Log ("Begin CmdInitDeck");
 
-		deckConstruction.intiDeck ();
+		deckConstruction.intiDeck (this.netId);
 
 		Debug.Log ("End CmdInitDeck");
 	}
@@ -100,7 +107,9 @@ public class Joueur : NetworkBehaviour {
 				if (null != listeCarteDejaPose[index] && ! listeCarteDejaPose[index] is CartePlaneteMetier) {
 					listeCarteDejaPose [index].generateGOCard ();
 
-					if (!listeCarteDejaPose [index] is CartePlaneteMetier) {//pas besoin de serialisation pour les planete
+					if (listeCarteDejaPose [index] is CartePlaneteMetier) {//pas besoin de serialisation pour les planete
+						RpcGeneratePlanete (listeCarteDejaPose [index].gameObject, networkIdJoueur);
+					} else {
 						byte[] carteRefData = SerializeUtils.SerializeToByteArray (listeCarteDejaPose [index].getCarteDTORef ());
 						RpcGenerate (listeCarteDejaPose [index].gameObject, carteRefData, networkIdJoueur);
 					}
@@ -129,7 +138,7 @@ public class Joueur : NetworkBehaviour {
 
 		NetworkServer.Spawn (carteplaneteGO);
 
-		RpcGeneratePlanete(carteplaneteGO);
+		RpcGeneratePlanete(carteplaneteGO, NetworkInstanceId.Invalid);
 
 		Debug.Log ("End CmdInitPlanete");
 	}
@@ -189,12 +198,16 @@ public class Joueur : NetworkBehaviour {
 	 * 
 	 * */
 	[ClientRpc]
-	public void RpcGeneratePlanete (GameObject goScript)
+	public void RpcGeneratePlanete (GameObject goScript, NetworkInstanceId networkIdJoueur)
 	{
 		Debug.Log ("Begin RpcGeneratePlanete");
 
-		CartePlaneteMetier cartePlaneteScript = goScript.GetComponent<CartePlaneteMetier> ();
-		cartePlaneteScript.generateGOCard ();
+		if (NetworkInstanceId.Invalid == networkIdJoueur || networkIdJoueur == this.netId) {
+
+			CartePlaneteMetier cartePlaneteScript = goScript.GetComponent<CartePlaneteMetier> ();
+			cartePlaneteScript.generateGOCard ();
+
+		}
 
 		Debug.Log ("End RpcGeneratePlanete");
 	}

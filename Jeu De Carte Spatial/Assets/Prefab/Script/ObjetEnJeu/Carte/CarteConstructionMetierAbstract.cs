@@ -50,13 +50,20 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	public override void OnMouseDown(){
 		Joueur joueurLocal = Joueur.getJoueurLocal ();
 
-		//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
-		if (null != joueurLocal && TourJeuSystem.getPhase(joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
-			&& null != joueurLocal.carteSelectionne && joueurLocal.carteSelectionne.getJoueurProprietaire () != joueurProprietaire 
-			&&  joueurLocal.carteSelectionne is IAttaquer && !((IAttaquer) joueurLocal.carteSelectionne).isCapableAttaquer()) {
-			//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
-			//TODO vérifier l'emplacement sol
-			((IAttaquer) joueurLocal.carteSelectionne).attaqueCarte (this);
+		if (null != joueurLocal) {
+			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
+			systemTour.CmdGetPlayerPhase (joueurLocal.netId);
+
+			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
+			if (systemTour.Phase == TourJeuSystem.PHASE_ATTAQUE
+			    && null != joueurLocal.carteSelectionne && joueurLocal.carteSelectionne.getJoueurProprietaire () != joueurProprietaire
+			    && joueurLocal.carteSelectionne is IAttaquer && !((IAttaquer)joueurLocal.carteSelectionne).isCapableAttaquer ()) {
+				//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
+				//TODO vérifier l'emplacement sol
+				((IAttaquer)joueurLocal.carteSelectionne).attaqueCarte (this);
+			} else {
+				base.OnMouseDown ();
+			}
 		} else {
 			base.OnMouseDown ();
 		}

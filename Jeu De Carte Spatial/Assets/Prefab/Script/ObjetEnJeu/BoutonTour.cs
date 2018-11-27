@@ -8,7 +8,7 @@ public class BoutonTour : NetworkBehaviour {
 	public enum enumEtatBouton {terminerTour, attaque, enAttente}
 
 	[SyncVar  (hook = "onChangeEtatBouton")]
-	public enumEtatBouton etatBouton;
+	private enumEtatBouton etatBouton;
 
 	private TextMesh txtEtat;
 
@@ -19,24 +19,20 @@ public class BoutonTour : NetworkBehaviour {
 	public void Start(){
 		txtEtat = GenerateObjectUtils.createText ("boutonEtat", new Vector3 (0, 0.51f, 0), Quaternion.identity, Vector3.one, 14, gameObject);
 
-		etatBouton = enumEtatBouton.enAttente;
+		CmdSetEtatBouton(enumEtatBouton.enAttente);
 	}
 
 	public void onChangeEtatBouton(enumEtatBouton newEtat){
 		txtEtat.text = etatToText (newEtat);
 	}
 
-	public void initTour (){
-		etatBouton = enumEtatBouton.terminerTour;
-	}
-
 	//Affiche la carte si clique dessus
 	public virtual void OnMouseDown()
 	{
 		if(etatBouton == enumEtatBouton.attaque){
-			TourJeuSystem.progressStep (TourJeuSystem.PHASE_ATTAQUE);
+			TourJeuSystem.getTourSystem().CmdProgressStep (TourJeuSystem.PHASE_ATTAQUE);
 		} else if (etatBouton == enumEtatBouton.terminerTour){
-			TourJeuSystem.progressStep (TourJeuSystem.FIN_TOUR);
+			TourJeuSystem.getTourSystem().CmdProgressStep(TourJeuSystem.FIN_TOUR);
 		}
 	}
 
@@ -60,5 +56,16 @@ public class BoutonTour : NetworkBehaviour {
 
 		return result;
 	}
-	
+
+	[Command]
+	public void CmdSetEtatBouton (enumEtatBouton etatBouton){
+		this.etatBouton = etatBouton;
+	}
+		
+	public void setEtatBoutonServer (enumEtatBouton etatBouton){
+		if (isServer) {
+			this.etatBouton = etatBouton;
+		}
+	}
+
 }

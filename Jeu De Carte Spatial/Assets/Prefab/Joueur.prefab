@@ -91,7 +91,7 @@ GameObject:
   - component: {fileID: 4710496579454786}
   - component: {fileID: 114736949039712610}
   - component: {fileID: 114515073281382206}
-  - component: {fileID: 114652024546191212}
+  - component: {fileID: 114044252386574394}
   m_Layer: 0
   m_Name: Joueur
   m_TagString: Untagged
@@ -105,13 +105,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1264812600495032}
-  m_LocalRotation: {x: 0.42261827, y: -0, z: -0, w: 0.9063079}
-  m_LocalPosition: {x: 0, y: 6.16, z: -2.38}
+  m_LocalRotation: {x: 0.60876137, y: 0, z: 0, w: 0.7933534}
+  m_LocalPosition: {x: 0, y: 9.79, z: 1.01}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4710496579454786}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 50, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 75, y: 0, z: 0}
 --- !u!4 &4508391299673702
 Transform:
   m_ObjectHideFlags: 1
@@ -317,25 +317,7 @@ AudioListener:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1264812600495032}
   m_Enabled: 1
---- !u!114 &114515073281382206
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1979252791831326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 118d11049aa66cc42b22afd7778f858c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carteSelectionne: {fileID: 0}
-  carteEnVisuel: 0
-  deckConstruction: {fileID: 114844135531084482}
-  main: {fileID: 1897834683313994}
-  ligneSol: {fileID: 0}
-  ligneAtmosphere: {fileID: 0}
-  ligneAttaque: {fileID: 0}
---- !u!114 &114652024546191212
+--- !u!114 &114044252386574394
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -356,6 +338,24 @@ MonoBehaviour:
   m_SnapThreshold: 5
   m_InterpolateRotation: 1
   m_InterpolateMovement: 1
+--- !u!114 &114515073281382206
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1979252791831326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 118d11049aa66cc42b22afd7778f858c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pseudo: Test
+  carteSelectionne: {fileID: 0}
+  carteEnVisuel: 0
+  deckConstruction: {fileID: 114844135531084482}
+  cartePlanetJoueur: {fileID: 0}
+  main: {fileID: 1897834683313994}
+  goPlateau: {fileID: 0}
 --- !u!114 &114736949039712610
 MonoBehaviour:
   m_ObjectHideFlags: 1

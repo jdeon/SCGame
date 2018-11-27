@@ -3,62 +3,115 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/**
+ * Cette class sera uniquement modifier sur le server pour être sure d'une synchro parfaite
+ * */
 public class TourJeuSystem : NetworkBehaviour {
 
 	public static readonly int EN_ATTENTE = -1;
-	public static readonly int DEBUT_TOUR = 0;
-	public static readonly int PHASE_DEPLACEMENT = 1;
-	public static readonly int PHASE_ATTAQUE = 2;
-	public static readonly int PHASE_DEFENSE = 3;
-	public static readonly int FIN_TOUR = 4;
+	public static readonly int DEBUT_TOUR = 1;
+	public static readonly int PHASE_DEPLACEMENT = 2;
+	public static readonly int PHASE_ATTAQUE = 3;
+	public static readonly int PHASE_DEFENSE = 4;
+	public static readonly int FIN_TOUR = 5;
 
-	private static List<JoueurMinimalDTO> listJoueurs;
+	private List<JoueurMinimalDTO> listJoueurs;
 
-	private static int indexPlayerPlaying;
+	private int indexPlayerPlaying;
 
+	private int phase;
 
-	private static int phase;
+	private int nbTurn;
 
-	private static int nbTurn;
+	[SyncVar]
+	private bool gameBegin;
 
-	private static TourJeuSystemClientRpc transferRPC;
+	public static TourJeuSystem getTourSystem(){
+		return GameObject.FindObjectOfType<TourJeuSystem> ();
+	}
 
-	public static void addJoueur(JoueurMinimalDTO joueur){
+	/**
+	 * Appeler sur server
+	 * */
+	private void addJoueur(JoueurMinimalDTO joueur){
+		if (isServer) {
+			if (null == listJoueurs) {
+				listJoueurs = new List<JoueurMinimalDTO> ();
+			}
 
-		if (null == listJoueurs) {
-			listJoueurs = new List<JoueurMinimalDTO> ();
-			transferRPC = new TourJeuSystemClientRpc ();
+			listJoueurs.Add (joueur);
+
+			//TODO decommenter
+			if (/*listJoueurs.Count >= 2 && */ !gameBegin) {
+				chooseFirstPlayer ();
+			}
 		}
-
-		listJoueurs.Add (joueur);
-
-		//TODO decommenter
-		//if (listJoueurs.Count >= 2) {
-			chooseFirstPlayer ();
-		//}
 	}
 
-	public static void chooseFirstPlayer(){
-		indexPlayerPlaying = Random.Range (0, listJoueurs.Count);
-		nbTurn = 0;
-		phase = 0;
+	/**
+	 * Appeler sur server
+	 * */
+	private void chooseFirstPlayer(){
+		if (isServer) {
+			indexPlayerPlaying = Random.Range (0, listJoueurs.Count);
+			nbTurn = 0;
+			phase = DEBUT_TOUR;
+			gameBegin = true;
 
-		//TODO declencher pioche
+			//TODO declencher pioche
 
-		phase++;
+			phase++;
 
-		transferRPC.RpcReinitBoutonNewTour(listJoueurs[indexPlayerPlaying].netIdBtnTour);
+			GameObject goBtn = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
+
+			if (null != goBtn && null != goBtn.GetComponent<BoutonTour> ()) {
+				BoutonTour boutonTour = goBtn.GetComponent<BoutonTour> ();
+				boutonTour.setEtatBoutonServer(BoutonTour.enumEtatBouton.terminerTour);
+			}
+		}
 	}
 
-	public static void progressStep(int actionPlayer){
-		//TODO
+	private void progressStep(int actionPlayer){
+		if (actionPlayer == PHASE_ATTAQUE) {
+			phase = PHASE_ATTAQUE;
+		} else if (actionPlayer == FIN_TOUR) {
+			phase = FIN_TOUR;
+			//TODO appeler capciter de fin de tour
+
+			GameObject goBtnLastPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
+
+			if (null != goBtnLastPlayer && null != goBtnLastPlayer.GetComponent<BoutonTour> ()) {
+				BoutonTour boutonTour = goBtnLastPlayer.GetComponent<BoutonTour> ();
+				boutonTour.setEtatBoutonServer(BoutonTour.enumEtatBouton.enAttente);
+			}
+				
+
+			if (indexPlayerPlaying < listJoueurs.Count - 1) {
+				indexPlayerPlaying++;
+			} else {
+				indexPlayerPlaying = 0;
+				nbTurn++;
+			}
+			//TODO afficher "debut tour pseudo";
+			phase = DEBUT_TOUR;
+			//TODO appeler capaciter de debut de tour
+			//TODO declencher pioche
+			phase ++;
+
+			GameObject goBtnNewPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
+
+			if (null != goBtnNewPlayer && null != goBtnNewPlayer.GetComponent<BoutonTour> ()) {
+				BoutonTour boutonTour = goBtnNewPlayer.GetComponent<BoutonTour> ();
+				boutonTour.setEtatBoutonServer(BoutonTour.enumEtatBouton.terminerTour);
+			}
+		}
 	}
 
-	public static int getPhase(){
+	private int getPhase(){
 		return phase;
 	}
 
-	public static int getPhase(NetworkInstanceId idJoueur){
+	private int getPhase(NetworkInstanceId idJoueur){
 		int phaseJoueur = EN_ATTENTE;
 
 		if (idJoueur == listJoueurs [indexPlayerPlaying].netIdJoueur) {
@@ -66,5 +119,52 @@ public class TourJeuSystem : NetworkBehaviour {
 		}
 
 		return phaseJoueur;
+	}
+
+	/**********************CLient RPC***********/ 
+
+
+	[ClientRpc]
+	public void RpcSetPhase(int phaseValue)
+	{
+		phase = phaseValue;
+	}
+
+
+	/*******************************Command******************/
+	[Command]
+	public void CmdAddInSystemeTour(NetworkInstanceId idNetworkJoueur, string pseudo, NetworkInstanceId idNetworkBouton){
+		Debug.Log ("Begin CmdAddInSystemeTour");
+
+		JoueurMinimalDTO joueurMin = new JoueurMinimalDTO ();
+		joueurMin.netIdJoueur = idNetworkJoueur;
+		joueurMin.Pseudo = pseudo;
+		joueurMin.netIdBtnTour = idNetworkBouton;
+
+		addJoueur (joueurMin);
+
+		Debug.Log ("End CmdAddInSystemeTour");
+	}
+
+	[Command]
+	public void CmdProgressStep(int actionPlayer){
+		progressStep (actionPlayer);
+	}
+
+	[Command]
+	public void CmdGetPhase(){
+		RpcSetPhase(getPhase());
+	}
+
+	[Command]
+	public void CmdGetPlayerPhase(NetworkInstanceId idJoueur){
+		RpcSetPhase(getPhase(idJoueur));	
+	}
+
+
+	/*************************Getter*******************/
+
+	public int Phase{
+		get { return phase; }
 	}
 }

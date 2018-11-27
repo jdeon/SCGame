@@ -43,14 +43,15 @@ public class CartePlaneteMetier : CarteMetierAbstract {
 		this.pseudo = pseudo;
 		initId ();
 
+		//TODO remettre stocke base à 0
 		this.netIdJoueur = netIdJoueur;
 		pointVie = maxPVPlanete;
 		prodMetal = 1;
-		stockMetal = 0;
+		stockMetal = 20;
 		xpActuel = 0;
 		stockNiveau = 0;
 		prodCarburant = 1;
-		stockCarburant = 0;
+		stockCarburant = 20;
 	}
 
 	public override CarteDTO getCarteDTORef (){
@@ -75,15 +76,22 @@ public class CartePlaneteMetier : CarteMetierAbstract {
 	public override void OnMouseDown(){
 		Joueur joueurLocal = Joueur.getJoueurLocal ();
 
-		//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
-		if (null != joueurLocal && TourJeuSystem.getPhase(joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
-			&& null != joueurLocal.carteSelectionne && joueurLocal.carteSelectionne.getJoueurProprietaire () != joueurProprietaire 
-			&&  joueurLocal.carteSelectionne is IAttaquer && !((IAttaquer) joueurLocal.carteSelectionne).isCapableAttaquer()) {
-			//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
-			((IAttaquer) joueurLocal.carteSelectionne).attaquePlanete (this);
+		if (null != joueurLocal) {
+			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
+			systemTour.CmdGetPlayerPhase (joueurLocal.netId);
+
+			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
+			if (systemTour.Phase == TourJeuSystem.PHASE_ATTAQUE
+			    && null != joueurLocal.carteSelectionne && joueurLocal.carteSelectionne.getJoueurProprietaire () != joueurProprietaire
+			    && joueurLocal.carteSelectionne is IAttaquer && !((IAttaquer)joueurLocal.carteSelectionne).isCapableAttaquer ()) {
+				//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
+				((IAttaquer)joueurLocal.carteSelectionne).attaquePlanete (this);
+			} else {
+				base.OnMouseDown ();
+			}
 		} else {
 			base.OnMouseDown ();
-		}
+		}	
 	}
 
 	public override void generateVisualCard()
