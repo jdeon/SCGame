@@ -17,7 +17,17 @@ public abstract class DeckMetierAbstract : NetworkBehaviour {
 
 	public abstract GameObject tirerCarte();
 
-	private void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
+	protected void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
 		joueurProprietaire = Joueur.getJoueur (netIdJoueur);
+	}
+
+	public void setClientNetIdJoueur(NetworkInstanceId netIdJoueur){
+		this.netIdJoueur = netIdJoueur;
+		joueurProprietaire = Joueur.getJoueur (netIdJoueur);
+	}
+
+	[ClientRpc]
+	public void RpcInitIdJoueur(NetworkInstanceId joueurNetId){
+		onChangeNetIdJoueur (joueurNetId);
 	}
 }

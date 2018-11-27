@@ -9,7 +9,7 @@ public class EmplacementAtomsphereMetier : EmplacementMetierAbstract {
 
 
 	public void OnMouseDown(){
-		GameObject goJoueur = NetworkServer.FindLocalObject (this.idJoueurPossesseur);
+		GameObject goJoueur = ClientScene.FindLocalObject (this.idJoueurPossesseur);
 		Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
 		if(isMovableByPlayer(joueur) && (joueur.carteSelectionne is CarteVaisseauMetier || listNomCarteExeption.Contains(joueur.carteSelectionne.name))){

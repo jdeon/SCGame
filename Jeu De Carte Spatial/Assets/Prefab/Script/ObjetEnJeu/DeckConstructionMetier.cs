@@ -87,5 +87,4 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 
 		return carteConstructionGO;
 	}
-
 }

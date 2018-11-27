@@ -36,13 +36,9 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		//Selection de la defense lors de la phase attaque adverse
 		if (SelectionnableDefense && null != joueurLocal) {
 			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
-			systemTour.CmdGetPhase ();
-			int phaseGeneral = systemTour.Phase;
-			systemTour.CmdGetPlayerPhase (joueurLocal.netId);
-			int phaseLocal =  systemTour.Phase;
 
-			if (phaseGeneral == TourJeuSystem.PHASE_ATTAQUE
-					&& phaseLocal == TourJeuSystem.EN_ATTENTE) {
+			if (systemTour.getPhase () == TourJeuSystem.PHASE_ATTAQUE
+				&& systemTour.getPhase (joueurLocal.netId) == TourJeuSystem.EN_ATTENTE) {
 			defenseSelectionne = true;
 			defenduCeTour = true;
 			} else {

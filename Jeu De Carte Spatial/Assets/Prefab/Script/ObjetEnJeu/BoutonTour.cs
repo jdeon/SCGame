@@ -20,6 +20,7 @@ public class BoutonTour : NetworkBehaviour {
 		txtEtat = GenerateObjectUtils.createText ("boutonEtat", new Vector3 (0, 0.51f, 0), Quaternion.identity, Vector3.one, 14, gameObject);
 
 		CmdSetEtatBouton(enumEtatBouton.enAttente);
+		onChangeEtatBouton (enumEtatBouton.enAttente);
 	}
 
 	public void onChangeEtatBouton(enumEtatBouton newEtat){
@@ -30,9 +31,9 @@ public class BoutonTour : NetworkBehaviour {
 	public virtual void OnMouseDown()
 	{
 		if(etatBouton == enumEtatBouton.attaque){
-			TourJeuSystem.getTourSystem().CmdProgressStep (TourJeuSystem.PHASE_ATTAQUE);
+			CmdProgressStep(TourJeuSystem.PHASE_ATTAQUE);
 		} else if (etatBouton == enumEtatBouton.terminerTour){
-			TourJeuSystem.getTourSystem().CmdProgressStep(TourJeuSystem.FIN_TOUR);
+			CmdProgressStep(TourJeuSystem.FIN_TOUR);
 		}
 	}
 
@@ -67,5 +68,9 @@ public class BoutonTour : NetworkBehaviour {
 			this.etatBouton = etatBouton;
 		}
 	}
-
+		
+	[Command]
+	public void CmdProgressStep(int actionPlayer){
+		TourJeuSystem.getTourSystem ().progressStepServer (actionPlayer);
+	}
 }

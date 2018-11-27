@@ -19,16 +19,39 @@ public class TourJeuSystem : NetworkBehaviour {
 
 	private int indexPlayerPlaying;
 
+	[SyncVar]
 	private int phase;
 
+	[SyncVar]
 	private int nbTurn;
 
 	[SyncVar]
 	private bool gameBegin;
 
+	[SyncVar]
+	private NetworkInstanceId idJoueurTour;
+
+
 	public static TourJeuSystem getTourSystem(){
 		return GameObject.FindObjectOfType<TourJeuSystem> ();
 	}
+
+	public void addInSystemeTour(NetworkInstanceId idNetworkJoueur, string pseudo, NetworkInstanceId idNetworkBouton){
+		
+		Debug.Log ("Begin CmdAddInSystemeTour");
+
+		if (isServer) {
+			JoueurMinimalDTO joueurMin = new JoueurMinimalDTO ();
+			joueurMin.netIdJoueur = idNetworkJoueur;
+			joueurMin.Pseudo = pseudo;
+			joueurMin.netIdBtnTour = idNetworkBouton;
+
+			addJoueur (joueurMin);
+		}
+
+		Debug.Log ("End CmdAddInSystemeTour");
+	}
+
 
 	/**
 	 * Appeler sur server
@@ -62,6 +85,7 @@ public class TourJeuSystem : NetworkBehaviour {
 
 			phase++;
 
+			this.idJoueurTour = listJoueurs [indexPlayerPlaying].netIdJoueur;
 			GameObject goBtn = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
 
 			if (null != goBtn && null != goBtn.GetComponent<BoutonTour> ()) {
@@ -71,100 +95,58 @@ public class TourJeuSystem : NetworkBehaviour {
 		}
 	}
 
-	private void progressStep(int actionPlayer){
-		if (actionPlayer == PHASE_ATTAQUE) {
-			phase = PHASE_ATTAQUE;
-		} else if (actionPlayer == FIN_TOUR) {
-			phase = FIN_TOUR;
-			//TODO appeler capciter de fin de tour
+	public void progressStepServer(int actionPlayer){
+		if (isServer) {
+			if (actionPlayer == PHASE_ATTAQUE) {
+				phase = PHASE_ATTAQUE;
+			} else if (actionPlayer == FIN_TOUR) {
+				phase = FIN_TOUR;
+				//TODO appeler capciter de fin de tour
 
-			GameObject goBtnLastPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
+				GameObject goBtnLastPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
 
-			if (null != goBtnLastPlayer && null != goBtnLastPlayer.GetComponent<BoutonTour> ()) {
-				BoutonTour boutonTour = goBtnLastPlayer.GetComponent<BoutonTour> ();
-				boutonTour.setEtatBoutonServer(BoutonTour.enumEtatBouton.enAttente);
-			}
+				if (null != goBtnLastPlayer && null != goBtnLastPlayer.GetComponent<BoutonTour> ()) {
+					BoutonTour boutonTour = goBtnLastPlayer.GetComponent<BoutonTour> ();
+					boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.enAttente);
+				}
 				
 
-			if (indexPlayerPlaying < listJoueurs.Count - 1) {
-				indexPlayerPlaying++;
-			} else {
-				indexPlayerPlaying = 0;
-				nbTurn++;
-			}
-			//TODO afficher "debut tour pseudo";
-			phase = DEBUT_TOUR;
-			//TODO appeler capaciter de debut de tour
-			//TODO declencher pioche
-			phase ++;
+				if (indexPlayerPlaying < listJoueurs.Count - 1) {
+					indexPlayerPlaying++;
+				} else {
+					indexPlayerPlaying = 0;
+					nbTurn++;
+				}
 
-			GameObject goBtnNewPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
+				this.idJoueurTour = listJoueurs [indexPlayerPlaying].netIdJoueur;
 
-			if (null != goBtnNewPlayer && null != goBtnNewPlayer.GetComponent<BoutonTour> ()) {
-				BoutonTour boutonTour = goBtnNewPlayer.GetComponent<BoutonTour> ();
-				boutonTour.setEtatBoutonServer(BoutonTour.enumEtatBouton.terminerTour);
+				//TODO afficher "debut tour pseudo";
+				phase = DEBUT_TOUR;
+				//TODO appeler capaciter de debut de tour
+				//TODO declencher pioche
+				phase++;
+
+				GameObject goBtnNewPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
+
+				if (null != goBtnNewPlayer && null != goBtnNewPlayer.GetComponent<BoutonTour> ()) {
+					BoutonTour boutonTour = goBtnNewPlayer.GetComponent<BoutonTour> ();
+					boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.terminerTour);
+				}
 			}
 		}
 	}
 
-	private int getPhase(){
+	public int getPhase(){
 		return phase;
 	}
 
-	private int getPhase(NetworkInstanceId idJoueur){
+	public int getPhase(NetworkInstanceId idJoueur){
 		int phaseJoueur = EN_ATTENTE;
 
-		if (idJoueur == listJoueurs [indexPlayerPlaying].netIdJoueur) {
+		if (idJoueur == this.idJoueurTour) {
 			phaseJoueur = getPhase();
 		}
 
 		return phaseJoueur;
-	}
-
-	/**********************CLient RPC***********/ 
-
-
-	[ClientRpc]
-	public void RpcSetPhase(int phaseValue)
-	{
-		phase = phaseValue;
-	}
-
-
-	/*******************************Command******************/
-	[Command]
-	public void CmdAddInSystemeTour(NetworkInstanceId idNetworkJoueur, string pseudo, NetworkInstanceId idNetworkBouton){
-		Debug.Log ("Begin CmdAddInSystemeTour");
-
-		JoueurMinimalDTO joueurMin = new JoueurMinimalDTO ();
-		joueurMin.netIdJoueur = idNetworkJoueur;
-		joueurMin.Pseudo = pseudo;
-		joueurMin.netIdBtnTour = idNetworkBouton;
-
-		addJoueur (joueurMin);
-
-		Debug.Log ("End CmdAddInSystemeTour");
-	}
-
-	[Command]
-	public void CmdProgressStep(int actionPlayer){
-		progressStep (actionPlayer);
-	}
-
-	[Command]
-	public void CmdGetPhase(){
-		RpcSetPhase(getPhase());
-	}
-
-	[Command]
-	public void CmdGetPlayerPhase(NetworkInstanceId idJoueur){
-		RpcSetPhase(getPhase(idJoueur));	
-	}
-
-
-	/*************************Getter*******************/
-
-	public int Phase{
-		get { return phase; }
 	}
 }

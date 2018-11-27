@@ -11,7 +11,7 @@ public class EmplacementAttaque : EmplacementMetierAbstract {
 	public void OnMouseDown(){
 		//TODO fonction en cours
 
-		GameObject goJoueur = NetworkServer.FindLocalObject (this.idJoueurPossesseur);
+		GameObject goJoueur = ClientScene.FindLocalObject (this.idJoueurPossesseur);
 		Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
 		if(isMovableByPlayer(joueur)){

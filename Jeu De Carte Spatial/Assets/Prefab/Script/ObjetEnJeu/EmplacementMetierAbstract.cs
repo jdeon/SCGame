@@ -52,9 +52,8 @@ public class EmplacementMetierAbstract : NetworkBehaviour {
 
 		if (null != joueur && joueur.isLocalPlayer) {
 			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
-			systemTour.CmdGetPlayerPhase (joueur.netId);
 
-			if (systemTour.Phase == TourJeuSystem.PHASE_DEPLACEMENT
+			if (systemTour.getPhase (joueur.netId) == TourJeuSystem.PHASE_DEPLACEMENT
 			   && null != joueur.carteSelectionne && joueur.netId == joueur.carteSelectionne.getJoueurProprietaire ().netId) {
 				movable = true;
 			}

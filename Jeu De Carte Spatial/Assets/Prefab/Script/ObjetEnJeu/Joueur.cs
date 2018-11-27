@@ -56,10 +56,10 @@ public class Joueur : NetworkBehaviour {
 	void Start (){
 		if (isLocalPlayer) {
 			CmdInitDeck ();
+			deckConstruction.setClientNetIdJoueur (netId);
 
 			initPlateau ();
-			BoutonTour boutonTour = goPlateau.GetComponentInChildren<BoutonTour> ();
-			initSystemeTour(boutonTour.netId);
+			CmdInitSystemeTour();
 
 			CmdGenerateCardAlreadyLaid (this.netId);
 		} else {
@@ -83,9 +83,13 @@ public class Joueur : NetworkBehaviour {
 		CmdInitPlanete (this.netId, nomPlateau);
 	}
 
-	private void initSystemeTour (NetworkInstanceId idBouton){
+	[Command]
+	private void CmdInitSystemeTour (){
+		BoutonTour boutonTour = goPlateau.GetComponentInChildren<BoutonTour> ();
+		NetworkUtils.assignObjectToPlayer (boutonTour, GetComponent<NetworkIdentity> ());
+
 		TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
-		systemTour.CmdAddInSystemeTour (netId, pseudo, idBouton);
+		systemTour.addInSystemeTour (netId, pseudo, boutonTour.netId);
 	}
 
 	[Command]
@@ -163,6 +167,8 @@ public class Joueur : NetworkBehaviour {
 		NetworkServer.Spawn (carteTiree);
 
 		CarteConstructionMetierAbstract carteConstructionScript = carteTiree.GetComponent<CarteConstructionMetierAbstract> ();
+
+		NetworkUtils.assignObjectToPlayer (carteConstructionScript, GetComponent<NetworkIdentity> ());
 		byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteConstructionScript.getCarteRef());
 		RpcGenerate(carteTiree, carteRefData, NetworkInstanceId.Invalid);
 	}
@@ -205,6 +211,7 @@ public class Joueur : NetworkBehaviour {
 		if (NetworkInstanceId.Invalid == networkIdJoueur || networkIdJoueur == this.netId) {
 
 			CartePlaneteMetier cartePlaneteScript = goScript.GetComponent<CartePlaneteMetier> ();
+			this.cartePlanetJoueur = cartePlaneteScript;
 			cartePlaneteScript.generateGOCard ();
 
 		}
