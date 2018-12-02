@@ -56,8 +56,8 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
 			if (systemTour.getPhase (joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
 			    && null != joueurLocal.carteSelectionne && joueurLocal.carteSelectionne.getJoueurProprietaire () != joueurProprietaire
-			    && joueurLocal.carteSelectionne is IAttaquer && !((IAttaquer)joueurLocal.carteSelectionne).isCapableAttaquer ()) {
-				//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
+			    && joueurLocal.carteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.carteSelectionne).isCapableAttaquer ()) {
+
 				//TODO vérifier l'emplacement sol
 				((IAttaquer)joueurLocal.carteSelectionne).attaqueCarte (this);
 			} else {
@@ -136,7 +136,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 			//TODO calcul PA, PD, ...
 			designCarte.setPA (0);
-			designCarte.setPD (carteSource.PointVieMax);
+			designCarte.setPD (this.PV);
 
 			/*paternCarteConstruction = (GameObject) Instantiate(Resources.Load("Graphique/CarteConstructionPatern"));
 		paternCarteConstruction.transform.SetParent (panelGO.transform);
@@ -319,7 +319,13 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	}
 
 	public void destruction (){
+		CmdDestuction ();
 		onBoard = false;
+	}
+
+	[Command]
+	public void CmdDestuction(){
+		getJoueurProprietaire ().cimetiereConstruction.addCarte (this);
 	}
 
 	public CarteConstructionDTO getCarteRef ()

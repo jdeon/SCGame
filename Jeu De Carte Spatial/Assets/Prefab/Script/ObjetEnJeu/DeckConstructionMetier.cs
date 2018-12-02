@@ -43,8 +43,6 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		int indexNextCarte = 0;
 		GameObject cartePioche = null;
 
-
-
 		for (indexNextCarte = 0; indexNextCarte < getNbCarteRestante (); indexNextCarte++) {
 			GameObject carteTeste = transform.GetChild (indexNextCarte).gameObject;
 			if (carteTeste.GetComponent<CarteConstructionMetierAbstract> () != null) {
@@ -63,6 +61,15 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 
 		Debug.Log ("End tirerCarte()");
 		return cartePioche;
+	}
+
+	public void addCarte(CarteConstructionMetierAbstract carte){
+		carte.transform.SetParent (transform);
+
+		int cartePlace = Mathf.FloorToInt (Random.Range (0, transform.childCount));
+		carte.transform.SetSiblingIndex (cartePlace);
+		carte.gameObject.SetActive (false);
+		carte.RpcDestroyClientCard ();
 	}
 
 	private GameObject convertDataToGO(CarteConstructionAbstractData carteConstructionData){

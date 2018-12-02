@@ -99,6 +99,13 @@ public class TourJeuSystem : NetworkBehaviour {
 		if (isServer) {
 			if (actionPlayer == PHASE_ATTAQUE) {
 				phase = PHASE_ATTAQUE;
+
+				GameObject goBtnLastPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
+				if (null != goBtnLastPlayer && null != goBtnLastPlayer.GetComponent<BoutonTour> ()) {
+					BoutonTour boutonTour = goBtnLastPlayer.GetComponent<BoutonTour> ();
+					boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.terminerTour);
+				}
+
 			} else if (actionPlayer == FIN_TOUR) {
 				phase = FIN_TOUR;
 				//TODO appeler capciter de fin de tour

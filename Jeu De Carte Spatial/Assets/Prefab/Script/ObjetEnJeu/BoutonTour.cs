@@ -24,6 +24,7 @@ public class BoutonTour : NetworkBehaviour {
 	}
 
 	public void onChangeEtatBouton(enumEtatBouton newEtat){
+		this.etatBouton = newEtat;
 		txtEtat.text = etatToText (newEtat);
 	}
 
@@ -32,6 +33,7 @@ public class BoutonTour : NetworkBehaviour {
 	{
 		if(etatBouton == enumEtatBouton.attaque){
 			CmdProgressStep(TourJeuSystem.PHASE_ATTAQUE);
+			CmdSetEtatBouton(enumEtatBouton.terminerTour);
 		} else if (etatBouton == enumEtatBouton.terminerTour){
 			CmdProgressStep(TourJeuSystem.FIN_TOUR);
 		}

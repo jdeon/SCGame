@@ -31,6 +31,9 @@ public class EmplacementMetierAbstract : NetworkBehaviour {
 		trfmCard.localRotation = Quaternion.identity;
 		trfmCard.localScale = Vector3.one;
 
+		cartePoser.getJoueurProprietaire ().carteSelectionne = null;
+
+		//TODO liberer emplacement
 		libre = false;
 	}
 

@@ -151,7 +151,13 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 	}
 
 	private void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
+		this.idJoueurProprietaire = netIdJoueur;
 		joueurProprietaire = Joueur.getJoueur (netIdJoueur);
+	}
+
+	[ClientRpc]
+	public void RpcDestroyClientCard(){
+		Destroy (gameObject);
 	}
 
 	public string getId(){

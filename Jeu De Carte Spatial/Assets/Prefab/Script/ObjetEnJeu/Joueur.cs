@@ -13,6 +13,8 @@ public class Joueur : NetworkBehaviour {
 
 	public DeckConstructionMetier deckConstruction;
 
+	public DeckConstructionMetier cimetiereConstruction;
+
 	public CartePlaneteMetier cartePlanetJoueur;
 
 	public GameObject main;
@@ -55,13 +57,13 @@ public class Joueur : NetworkBehaviour {
 
 	void Start (){
 		if (isLocalPlayer) {
+			CmdGenerateCardAlreadyLaid (this.netId);
+
 			CmdInitDeck ();
 			deckConstruction.setClientNetIdJoueur (netId);
 
 			initPlateau ();
 			CmdInitSystemeTour();
-
-			CmdGenerateCardAlreadyLaid (this.netId);
 		} else {
 			string nomPlateau = transform.localPosition.z < 0 ? "Plateau1" : "Plateau2"; //TODO mettre en constante
 			goPlateau = GameObject.Find(nomPlateau);
@@ -108,14 +110,15 @@ public class Joueur : NetworkBehaviour {
 
 		if (null != listeCarteDejaPose) {
 			for (int index = 0; index < listeCarteDejaPose.Length; index++) {
-				if (null != listeCarteDejaPose[index] && ! listeCarteDejaPose[index] is CartePlaneteMetier) {
-					listeCarteDejaPose [index].generateGOCard ();
+				CarteMetierAbstract carteDejaPosee = listeCarteDejaPose [index];
+				if (null != carteDejaPosee) {
+					//carteDejaPosee.generateGOCard ();
 
-					if (listeCarteDejaPose [index] is CartePlaneteMetier) {//pas besoin de serialisation pour les planete
-						RpcGeneratePlanete (listeCarteDejaPose [index].gameObject, networkIdJoueur);
+					if (carteDejaPosee is CartePlaneteMetier) {//pas besoin de serialisation pour les planete
+						RpcGeneratePlanete (carteDejaPosee.gameObject, networkIdJoueur);
 					} else {
 						byte[] carteRefData = SerializeUtils.SerializeToByteArray (listeCarteDejaPose [index].getCarteDTORef ());
-						RpcGenerate (listeCarteDejaPose [index].gameObject, carteRefData, networkIdJoueur);
+						RpcGenerate (carteDejaPosee.gameObject, carteRefData, networkIdJoueur);
 					}
 				}
 			}
