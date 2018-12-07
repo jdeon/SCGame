@@ -8,14 +8,6 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 	[SerializeField]
 	private DeckConstructionData deckContructionRef;
 
-	public void OnMouseDown(){
-		Debug.Log ("ClickEnregistre");
-
-		if (null != joueurProprietaire && joueurProprietaire.getIsLocalJoueur()) {
-			joueurProprietaire.CmdTirerCarte ();
-		}
-	}
-
 	public override void intiDeck (NetworkInstanceId joueurNetId){
 		this.netIdJoueur = joueurNetId;
 
@@ -30,8 +22,30 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		}
 	}
 
-	public override int getNbCarteRestante (){
-		return transform.childCount;
+	public void piocheDeckConstructionByServer(GameObject main){
+		if (joueurProprietaire.isServer) {
+			Debug.Log ("taille deck : " + getNbCarteRestante());
+
+			GameObject carteTiree = tirerCarte ();
+
+			Debug.Log ("carteTiree : " + carteTiree);
+			Debug.Log ("carteTiree : " + main);
+
+			carteTiree.transform.SetParent(main.transform);
+
+			int nbCarteEnMains = main.transform.childCount;
+
+			carteTiree.transform.localPosition = new Vector3 (/*ConstanteInGame.coefPlane * */ carteTiree.transform.localScale.x * (nbCarteEnMains - .5f), 0, 0);
+			carteTiree.transform.Rotate (new Vector3 (-60, 0) + main.transform.rotation.eulerAngles);
+
+			NetworkServer.Spawn (carteTiree);
+
+			CarteConstructionMetierAbstract carteConstructionScript = carteTiree.GetComponent<CarteConstructionMetierAbstract> ();
+
+			NetworkUtils.assignObjectToPlayer (carteConstructionScript, joueurProprietaire.GetComponent<NetworkIdentity> ());
+			byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteConstructionScript.getCarteRef());
+			carteConstructionScript.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
+		}
 	}
 
 	/**
@@ -55,7 +69,6 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		if(null != cartePioche){
 			cartePioche.SetActive (true);
 			CarteConstructionMetierAbstract carteConstruction = cartePioche.GetComponent<CarteConstructionMetierAbstract> ();
-			//carteConstruction.CmdGenerateGOCard ();
 			carteConstruction.setJoueurProprietaireServer (netIdJoueur);
 		}
 
@@ -93,5 +106,9 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		carteConstructionGO.SetActive (false);
 
 		return carteConstructionGO;
+	}
+
+	public override int getNbCarteRestante (){
+		return transform.childCount;
 	}
 }

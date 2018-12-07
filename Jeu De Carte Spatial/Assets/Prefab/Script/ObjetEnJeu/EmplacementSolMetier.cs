@@ -7,21 +7,6 @@ public class EmplacementSolMetier : EmplacementMetierAbstract {
 
 	private static List<string> listNomCarteExeption = new List<string>();
 
-	public static List<EmplacementSolMetier> getEmplacementSolJoueur(NetworkInstanceId idJoueur){
-		List<EmplacementSolMetier> listEmplacementSolJoueur = new List<EmplacementSolMetier> ();
-		EmplacementSolMetier[] listAllEmplacementSol = GameObject.FindObjectsOfType<EmplacementSolMetier> ();
-
-		if(null != listAllEmplacementSol && listAllEmplacementSol.Length > 0){
-			foreach(EmplacementSolMetier emplacementSol in listAllEmplacementSol){
-				if (emplacementSol.idJoueurPossesseur == idJoueur) {
-					listEmplacementSolJoueur.Add (emplacementSol);
-				}
-			}
-		}
-
-		return listEmplacementSolJoueur;
-	}
-
 	public void OnMouseDown(){
 		GameObject goJoueur = ClientScene.FindLocalObject (this.idJoueurPossesseur);
 		Joueur joueur = goJoueur.GetComponent<Joueur> ();

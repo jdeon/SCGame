@@ -15,6 +15,8 @@ public class TourJeuSystem : NetworkBehaviour {
 	public static readonly int PHASE_DEFENSE = 4;
 	public static readonly int FIN_TOUR = 5;
 
+	public bool tester;
+
 	private List<JoueurMinimalDTO> listJoueurs;
 
 	private int indexPlayerPlaying;
@@ -30,6 +32,8 @@ public class TourJeuSystem : NetworkBehaviour {
 
 	[SyncVar]
 	private NetworkInstanceId idJoueurTour;
+
+	private string onGUIPseudo;
 
 
 	public static TourJeuSystem getTourSystem(){
@@ -56,16 +60,28 @@ public class TourJeuSystem : NetworkBehaviour {
 	/**
 	 * Appeler sur server
 	 * */
-	private void addJoueur(JoueurMinimalDTO joueur){
+	private void addJoueur(JoueurMinimalDTO joueurToAdd){
 		if (isServer) {
 			if (null == listJoueurs) {
 				listJoueurs = new List<JoueurMinimalDTO> ();
 			}
 
-			listJoueurs.Add (joueur);
+			listJoueurs.Add (joueurToAdd);
 
-			//TODO decommenter
-			if (/*listJoueurs.Count >= 2 && */ !gameBegin) {
+			//TODO chercher mode pour nb joueur
+			if ((listJoueurs.Count >= 2 || tester) &&  !gameBegin) {
+				gameBegin = true;
+
+				//Remplissage de la main initial
+				foreach (JoueurMinimalDTO joueurDTO in listJoueurs) {
+					Joueur joueur = Joueur.getJoueur (joueurDTO.netIdJoueur);
+
+					if (null != joueur) {
+						joueur.deckConstruction.piocheDeckConstructionByServer (joueur.main);
+						joueur.deckConstruction.piocheDeckConstructionByServer (joueur.main);
+					}
+				}
+
 				chooseFirstPlayer ();
 			}
 		}
@@ -79,9 +95,6 @@ public class TourJeuSystem : NetworkBehaviour {
 			indexPlayerPlaying = Random.Range (0, listJoueurs.Count);
 			nbTurn = 0;
 			phase = DEBUT_TOUR;
-			gameBegin = true;
-
-			//TODO declencher pioche
 
 			phase++;
 
@@ -127,10 +140,11 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				this.idJoueurTour = listJoueurs [indexPlayerPlaying].netIdJoueur;
 
-				//TODO afficher "debut tour pseudo";
-				phase = DEBUT_TOUR;
+				RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
+
 				//TODO appeler capaciter de debut de tour
-				//TODO declencher pioche
+				initTour();
+
 				phase++;
 
 				GameObject goBtnNewPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
@@ -142,6 +156,134 @@ public class TourJeuSystem : NetworkBehaviour {
 			}
 		}
 	}
+
+	private void initTour(){
+		Joueur joueurInitTour = Joueur.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
+
+		phase = DEBUT_TOUR;
+		joueurInitTour.cartePlanetJoueur.productionRessourceByServer ();
+		RpcRemiseEnPlaceCarte (joueurInitTour.netId);
+		joueurInitTour.deckConstruction.piocheDeckConstructionByServer (joueurInitTour.main);
+
+	}
+
+	[ClientRpc]
+	public void RpcRemiseEnPlaceCarte(NetworkInstanceId netIdJoueur){
+		List<CarteMetierAbstract> listCarteJoueur = CarteMetierAbstract.getListCarteJoueur (netIdJoueur);
+
+		foreach (CarteMetierAbstract carteJoueur in listCarteJoueur) {
+			if (carteJoueur is IAttaquer) {
+				((IAttaquer)carteJoueur).AttaqueCeTour = false;
+			}
+
+			if (carteJoueur is IDefendre) {
+				((IDefendre)carteJoueur).reinitDefenseSelectTour ();
+			}
+		}
+			
+		List<EmplacementAttaque> listEmplacementAttaqueOccuper = EmplacementMetierAbstract.getListEmplacementOccuperJoueur<EmplacementAttaque> (netIdJoueur);
+
+		if (listEmplacementAttaqueOccuper.Count > 0) {
+			List<EmplacementAtomsphereMetier> listEmplacementAtmosJoueurLibre = EmplacementMetierAbstract.getListEmplacementLibreJoueur <EmplacementAtomsphereMetier> (netIdJoueur);
+				
+			//On essaye d'abord de replacer les vaisseaux au bonne endroit
+			if (listEmplacementAtmosJoueurLibre.Count > 0) {
+				List<EmplacementAttaque> listEmplacementAttaqueToujoursOccuper = new List<EmplacementAttaque> (listEmplacementAttaqueOccuper);
+				List<EmplacementAtomsphereMetier> listEmplacementAtmosToujoursLibre = new List<EmplacementAtomsphereMetier> (listEmplacementAtmosJoueurLibre);
+
+				foreach (EmplacementAttaque emplacementAttaqueJoueur in listEmplacementAttaqueOccuper) {
+					foreach (EmplacementAtomsphereMetier emplacementAtmosJoueur in listEmplacementAtmosJoueurLibre) {
+						if (emplacementAttaqueJoueur.NumColonne == emplacementAtmosJoueur.NumColonne) {
+							CarteConstructionMetierAbstract carteADeplacer = emplacementAttaqueJoueur.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
+							emplacementAtmosJoueur.putCard (carteADeplacer);
+							listEmplacementAttaqueToujoursOccuper.Remove (emplacementAttaqueJoueur);
+							listEmplacementAtmosToujoursLibre.Remove (emplacementAtmosJoueur);
+							break;
+						}
+					}
+				}
+
+
+				listEmplacementAttaqueToujoursOccuper.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
+				listEmplacementAtmosToujoursLibre.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
+				while (0 < listEmplacementAttaqueToujoursOccuper.Count && 0 < listEmplacementAtmosToujoursLibre.Count) {
+					CarteConstructionMetierAbstract carteADeplacer = listEmplacementAttaqueToujoursOccuper [0].gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
+					listEmplacementAtmosToujoursLibre [0].putCard (carteADeplacer);
+					listEmplacementAttaqueToujoursOccuper.RemoveAt (0);
+					listEmplacementAtmosToujoursLibre.RemoveAt (0);
+				}
+
+				if (listEmplacementAttaqueToujoursOccuper.Count > 0) {
+					foreach (EmplacementAttaque emplacementAVider   in listEmplacementAttaqueToujoursOccuper) {
+						CarteConstructionMetierAbstract carteADeplacer = emplacementAVider.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
+
+						if (carteADeplacer is CarteVaisseauMetier) {
+							((CarteVaisseauMetier)carteADeplacer).sacrificeCarte ();
+						} else {
+							//TODO
+						}
+					}
+				}
+
+				//On fait de même avec les emplacement de sol
+				if (listEmplacementAtmosToujoursLibre.Count > 0) {
+					List<EmplacementSolMetier> listEmplacementSolJoueur = EmplacementMetierAbstract.getListEmplacementOccuperJoueur<EmplacementSolMetier> (netIdJoueur);
+
+
+					List<EmplacementSolMetier> listEmplacementSolAvecCarteVaisseau = new List<EmplacementSolMetier> (listEmplacementSolJoueur);
+					List<EmplacementAtomsphereMetier> listEmplacementAtmosToujoursLibre2 = new List<EmplacementAtomsphereMetier> (listEmplacementAtmosJoueurLibre);
+
+					foreach (EmplacementSolMetier emplacementSolJoueur in listEmplacementSolJoueur) {
+						foreach (EmplacementAtomsphereMetier emplacementAtmosJoueur in listEmplacementAtmosJoueurLibre) {
+							if (emplacementSolJoueur.NumColonne == emplacementAtmosJoueur.NumColonne) {
+								CarteConstructionMetierAbstract carteADeplacer = emplacementSolJoueur.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
+								if (null != carteADeplacer && carteADeplacer is CarteVaisseauMetier) {
+									emplacementAtmosJoueur.putCard (carteADeplacer);
+									listEmplacementSolAvecCarteVaisseau.Remove (emplacementSolJoueur);
+									listEmplacementAtmosToujoursLibre2.Remove (emplacementAtmosJoueur);
+								} else {
+									listEmplacementSolAvecCarteVaisseau.Remove (emplacementSolJoueur);
+								}
+									break;
+							}
+						}
+					}
+
+
+					listEmplacementSolAvecCarteVaisseau.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
+					listEmplacementAtmosToujoursLibre.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
+					while (0 < listEmplacementSolAvecCarteVaisseau.Count && 0 < listEmplacementAtmosToujoursLibre.Count) {
+						CarteConstructionMetierAbstract carteADeplacer = listEmplacementSolAvecCarteVaisseau [0].gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
+						listEmplacementAtmosToujoursLibre [0].putCard (carteADeplacer);
+						listEmplacementSolAvecCarteVaisseau.RemoveAt (0);
+						listEmplacementAtmosToujoursLibre.RemoveAt (0);
+					}
+				}
+
+			}
+		}
+	}
+
+	[ClientRpc]
+	public void RpcAffichagePseudo(string pseudoJoueur){
+		StartCoroutine(corroutineAffichagePseudo(pseudoJoueur));
+	}
+		
+	private IEnumerator corroutineAffichagePseudo(string pseudoJoueur){
+		onGUIPseudo = pseudoJoueur;
+		yield return new WaitForSeconds (2);
+		onGUIPseudo = "";
+		yield return null;
+	}
+
+
+	public void OnGUI()	{
+		if (null != onGUIPseudo && onGUIPseudo != "") {
+			Rect rect = new Rect(0, 0, Screen.width, Screen.height / 4);
+			GUI.TextField (rect, "Début du tour : " + onGUIPseudo);
+		}
+	}
+
 
 	public int getPhase(){
 		return phase;

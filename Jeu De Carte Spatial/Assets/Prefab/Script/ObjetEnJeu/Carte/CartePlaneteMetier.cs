@@ -39,6 +39,22 @@ public class CartePlaneteMetier : CarteMetierAbstract {
 
 	private string pseudo;
 
+	public static CartePlaneteMetier getPlaneteEnnemie(NetworkInstanceId idJoueur){
+		CartePlaneteMetier planeteResult = null;
+		CartePlaneteMetier[] listPlanete = GameObject.FindObjectsOfType<CartePlaneteMetier> ();
+
+		if (null != listPlanete && listPlanete.Length > 0) {
+			foreach (CartePlaneteMetier planete in listPlanete) {
+				if (planete.netIdJoueur != idJoueur) {
+					planeteResult = planete;
+					break;
+				}
+			}
+		}
+
+		return planeteResult;
+	}
+
 	public void initPlanete (NetworkInstanceId netIdJoueur, string pseudo){
 		this.pseudo = pseudo;
 		initId ();
@@ -52,6 +68,13 @@ public class CartePlaneteMetier : CarteMetierAbstract {
 		stockNiveau = 0;
 		prodCarburant = 1;
 		stockCarburant = 20;
+	}
+
+	public void productionRessourceByServer(){
+		if (isServer) {
+			stockMetal += prodMetal;
+			stockCarburant += prodCarburant;
+		}
 	}
 
 	public override CarteDTO getCarteDTORef (){

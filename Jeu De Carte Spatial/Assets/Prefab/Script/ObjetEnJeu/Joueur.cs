@@ -116,9 +116,11 @@ public class Joueur : NetworkBehaviour {
 
 					if (carteDejaPosee is CartePlaneteMetier) {//pas besoin de serialisation pour les planete
 						RpcGeneratePlanete (carteDejaPosee.gameObject, networkIdJoueur);
+					} else if (carteDejaPosee is CarteConstructionMetierAbstract) {
+						byte[] carteRefData = SerializeUtils.SerializeToByteArray (carteDejaPosee.getCarteDTORef ());
+						((CarteConstructionMetierAbstract) carteDejaPosee).RpcGenerate (carteRefData, networkIdJoueur);
 					} else {
-						byte[] carteRefData = SerializeUtils.SerializeToByteArray (listeCarteDejaPose [index].getCarteDTORef ());
-						RpcGenerate (carteDejaPosee.gameObject, carteRefData, networkIdJoueur);
+						//TODO carteAmeliration
 					}
 				}
 			}
@@ -151,53 +153,9 @@ public class Joueur : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdTirerCarte(){
+	public void CmdPiocheCarte(){
 		Debug.Log ("command");
-		Debug.Log ("taille deck : " + deckConstruction.getNbCarteRestante());
-
-		GameObject carteTiree = deckConstruction.tirerCarte ();
-
-		Debug.Log ("carteTiree : " + carteTiree);
-		Debug.Log ("carteTiree : " + main);
-
-		carteTiree.transform.SetParent(main.transform);
-
-		int nbCarteEnMains = main.transform.childCount;
-
-		carteTiree.transform.localPosition = new Vector3 (/*ConstanteInGame.coefPlane * */ carteTiree.transform.localScale.x * (nbCarteEnMains - .5f), 0, 0);
-		carteTiree.transform.Rotate (new Vector3 (-60, 0) + main.transform.rotation.eulerAngles);
-
-		NetworkServer.Spawn (carteTiree);
-
-		CarteConstructionMetierAbstract carteConstructionScript = carteTiree.GetComponent<CarteConstructionMetierAbstract> ();
-
-		NetworkUtils.assignObjectToPlayer (carteConstructionScript, GetComponent<NetworkIdentity> ());
-		byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteConstructionScript.getCarteRef());
-		RpcGenerate(carteTiree, carteRefData, NetworkInstanceId.Invalid);
-	}
-
-	/**
-	 * Genere le visuel de la carte chez le client
-	 * goScript : GameObject de prefab avec le script de la carte et quelque variable sync
-	 * dataObject : carteRef sérialize en bytes
-	 * networkIdJoueur : id du jour chez qui générer la carte, si NetworkInstanceId.Invalid alors générer chez tous le monde
-	 * 
-	 * */
-	[ClientRpc]
-	public void RpcGenerate(GameObject goScript, byte[] dataObject, NetworkInstanceId networkIdJoueur)
-	{
-		Debug.Log ("ClientRpc");
-
-		if (NetworkInstanceId.Invalid == networkIdJoueur || networkIdJoueur == this.netId) {
-
-			CarteConstructionDTO carteRef = null;
-
-			carteRef = SerializeUtils.Deserialize<CarteConstructionDTO> (dataObject);
-
-			CarteConstructionMetierAbstract carteConstructionScript = goScript.GetComponent<CarteConstructionMetierAbstract> ();
-			carteConstructionScript.initCarte (carteRef);
-			carteConstructionScript.generateGOCard ();
-		}
+		deckConstruction.piocheDeckConstructionByServer (main);
 	}
 
 	/**

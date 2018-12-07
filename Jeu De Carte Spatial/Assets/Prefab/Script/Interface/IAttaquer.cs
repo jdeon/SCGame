@@ -12,5 +12,5 @@ public interface IAttaquer  {
 
 	bool isCapableAttaquer ();
 
-	bool AttaqueCeTour { get; }
+	bool AttaqueCeTour { get; set;}
 }

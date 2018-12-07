@@ -7,7 +7,6 @@ public class EmplacementAttaque : EmplacementMetierAbstract {
 
 	private static List<string> listNomCarteExeption = new List<string>();
 
-
 	public void OnMouseDown(){
 		//TODO fonction en cours
 

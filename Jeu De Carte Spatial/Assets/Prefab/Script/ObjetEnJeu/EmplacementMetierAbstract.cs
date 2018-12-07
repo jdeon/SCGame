@@ -5,7 +5,6 @@ using UnityEngine.Networking;
 
 public class EmplacementMetierAbstract : NetworkBehaviour {
 
-	[SerializeField]
 	protected int numColone;
 
 	[SyncVar]
@@ -14,12 +13,86 @@ public class EmplacementMetierAbstract : NetworkBehaviour {
 	[SyncVar]
 	protected NetworkInstanceId idCarte;
 
-	[SyncVar]
-	protected bool libre = true;
-
-	public void setIdJoueurPossesseur(NetworkInstanceId idJoueurPossesseur){
-		this.idJoueurPossesseur = idJoueurPossesseur;
+	public void Start(){
+		numColone = transform.GetSiblingIndex () + 1;
 	}
+
+	public static List<T> getListEmplacementJoueur <T> (NetworkInstanceId idJoueur) where T : EmplacementMetierAbstract{
+		List<T> listEmplacementJoueur = new List<T> ();
+
+		T[] listEmplacement = GameObject.FindObjectsOfType<T> ();
+
+		if (null != listEmplacement && listEmplacement.Length > 0) {
+			foreach (T emplacement in listEmplacement) {
+				if (emplacement.idJoueurPossesseur == idJoueur) {
+					listEmplacementJoueur.Add (emplacement);
+				}
+			}
+		}
+		return listEmplacementJoueur;
+	}
+
+	public static List<T> getListEmplacementLibreJoueur <T> (NetworkInstanceId idJoueur) where T : EmplacementMetierAbstract{
+		List<T> listEmplacementLibre = new List<T>();
+
+			T[] listEmplacement = GameObject.FindObjectsOfType<T> ();	
+
+		if (null != listEmplacement && listEmplacement.Length > 0) {
+			foreach (T emplacement in listEmplacement) {
+				if (emplacement.idJoueurPossesseur == idJoueur && ((EmplacementMetierAbstract)emplacement).transform.childCount == 0) {
+					listEmplacementLibre.Add (emplacement);
+				}
+			}
+		}
+		return listEmplacementLibre;
+	}
+
+	public static List<T> getListEmplacementOccuperJoueur <T> (NetworkInstanceId idJoueur) where T : EmplacementMetierAbstract{
+		List<T> listEmplacementLibre = new List<T> ();
+
+		T[] listEmplacement = GameObject.FindObjectsOfType<T> ();	
+
+		if (null != listEmplacement && listEmplacement.Length > 0) {
+			foreach (T emplacement in listEmplacement) {
+				if (emplacement.idJoueurPossesseur == idJoueur && emplacement.transform.childCount > 0
+				     && emplacement.gameObject.GetComponentInChildren<CarteMetierAbstract> ()) {
+					listEmplacementLibre.Add (emplacement);
+				}
+			}
+		}
+
+		return listEmplacementLibre;
+	}
+
+	public static List<T> getListEmplacementLibre <T> (List<EmplacementMetierAbstract> listSource) where T : EmplacementMetierAbstract{
+		List<T> listEmplacementLibre = new List<T> ();
+
+		if (null != listSource && listSource.Count > 0) {
+			foreach (EmplacementMetierAbstract emplacement in listSource) {
+				if (emplacement is T && emplacement.transform.childCount == 0) {
+					listEmplacementLibre.Add ((T)emplacement);
+				}
+			}
+		}
+
+		return listEmplacementLibre;
+	}
+
+	public static List<T> getListEmplacementOccuperJoueur <T> (List<EmplacementMetierAbstract> listSource) where T : EmplacementMetierAbstract{
+		List<T> listEmplacementOccuper = new List<T>();
+
+		if (null != listSource && listSource.Count > 0) {
+			foreach (EmplacementMetierAbstract emplacement in listSource) {
+				if (emplacement is T && emplacement.transform.childCount > 0
+				    && emplacement.gameObject.GetComponentInChildren<CarteMetierAbstract> ()) {
+					listEmplacementOccuper.Add ((T)emplacement);
+				}
+			}
+		}
+
+		return listEmplacementOccuper;
+	}
+
 
 	public void putCard(CarteConstructionMetierAbstract cartePoser){
 		Transform trfmCard = cartePoser.transform;
@@ -32,9 +105,6 @@ public class EmplacementMetierAbstract : NetworkBehaviour {
 		trfmCard.localScale = Vector3.one;
 
 		cartePoser.getJoueurProprietaire ().carteSelectionne = null;
-
-		//TODO liberer emplacement
-		libre = false;
 	}
 
 	public bool isCardCostPayable(CartePlaneteMetier cartePlanetJoueur, CarteMetierAbstract carteSelectionne){
@@ -65,7 +135,16 @@ public class EmplacementMetierAbstract : NetworkBehaviour {
 		return movable;
 	}
 
+
+	public void setIdJoueurPossesseur(NetworkInstanceId idJoueurPossesseur){
+		this.idJoueurPossesseur = idJoueurPossesseur;
+	}
+
 	public NetworkInstanceId NetIdCartePosee {
 		get{return idCarte;}
+	}
+
+	public int NumColonne {
+		get{ return numColone; }
 	}
 }

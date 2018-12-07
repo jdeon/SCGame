@@ -33,6 +33,24 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 
 	//public abstract string initCarte (); //Besoin carte Ref
 
+	public static List<CarteMetierAbstract> getListCarteJoueur(NetworkInstanceId idJoueur){
+		List<CarteMetierAbstract> listCarteJoueur = new List<CarteMetierAbstract>();
+
+		CarteMetierAbstract[] listCarte = GameObject.FindObjectsOfType<CarteMetierAbstract> ();
+
+		if (null != listCarte && listCarte.Length > 0) {
+			foreach (CarteMetierAbstract carte in listCarte) {
+				if (null != carte.getJoueurProprietaire() && carte.getJoueurProprietaire().netId == idJoueur) {
+					listCarteJoueur.Add (carte);
+				}
+			}
+		}
+
+		return listCarteJoueur;
+	}
+
+
+
 
 	public virtual void OnMouseDown(){
 		if (joueurProprietaire.carteSelectionne == this) {

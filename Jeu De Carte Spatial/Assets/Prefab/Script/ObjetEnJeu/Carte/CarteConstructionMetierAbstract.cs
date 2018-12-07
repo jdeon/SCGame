@@ -172,6 +172,28 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		}
 	}
 
+	/**
+	 * Genere le visuel de la carte chez le client
+	 * goScript : GameObject de prefab avec le script de la carte et quelque variable sync
+	 * dataObject : carteRef sérialize en bytes
+	 * networkIdJoueur : id du jour chez qui générer la carte, si NetworkInstanceId.Invalid alors générer chez tous le monde
+	 * 
+	 * */
+	[ClientRpc]
+	public void RpcGenerate(byte[] dataObject, NetworkInstanceId networkIdJoueur)
+	{
+		Debug.Log ("ClientRpc");
+
+		if (NetworkInstanceId.Invalid == networkIdJoueur || networkIdJoueur == this.netId) {
+
+			CarteConstructionDTO carteRef = null;
+
+			carteRef = SerializeUtils.Deserialize<CarteConstructionDTO> (dataObject);
+
+			initCarte (carteRef);
+			generateGOCard ();
+		}
+	}
 
 	public virtual void generateGOCard(){
 		base.generateGOCard ();
@@ -320,11 +342,15 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	public void destruction (){
 		CmdDestuction ();
+		Destroy (gameObject);
 		onBoard = false;
 	}
 
 	[Command]
 	public void CmdDestuction(){
+
+		NetworkUtils.unassignObjectFromPlayer (this, getJoueurProprietaire ().GetComponent<NetworkIdentity> ());
+
 		getJoueurProprietaire ().cimetiereConstruction.addCarte (this);
 	}
 

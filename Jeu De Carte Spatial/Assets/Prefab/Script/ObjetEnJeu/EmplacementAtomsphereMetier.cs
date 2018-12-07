@@ -7,7 +7,6 @@ public class EmplacementAtomsphereMetier : EmplacementMetierAbstract {
 
 	private static List<string> listNomCarteExeption = new List<string>();
 
-
 	public void OnMouseDown(){
 		GameObject goJoueur = ClientScene.FindLocalObject (this.idJoueurPossesseur);
 		Joueur joueur = goJoueur.GetComponent<Joueur> ();

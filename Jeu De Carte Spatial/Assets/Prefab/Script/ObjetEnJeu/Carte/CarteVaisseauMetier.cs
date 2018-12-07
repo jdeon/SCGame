@@ -37,6 +37,14 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		}
 	}
 
+	public void sacrificeCarte (){
+		CartePlaneteMetier cartePlanete = CartePlaneteMetier.getPlaneteEnnemie (getJoueurProprietaire ().netId);
+
+		//TODO crée une méthode
+		cartePlanete.pointVie -= getPointDegat();
+		destruction ();
+	}
+
 	public void attaquePlanete (CartePlaneteMetier cible){
 		//TODO
 		StartCoroutine(choixDefensePlanete(cible.getJoueurProprietaire().netId));
@@ -47,18 +55,26 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 
 		if(!attaqueCeTours){
 			capableDAttaquer = true;
+			//TODO de verification de la position
 		//TODO recherche dans capacité
 		}
 
 		return capableDAttaquer;
 	}
 		
-	public bool AttaqueCeTour { get { return attaqueCeTours; } }
+	public bool AttaqueCeTour { 
+		get { return attaqueCeTours; } 
+		set {
+			if (!value) {
+				attaqueCeTours = value;
+			}
+		}
+	}
 
 	private IEnumerator choixDefensePlanete(NetworkInstanceId idJoueurAttaque){
 		List<IDefendre> listDefenseurPlanete = new List<IDefendre> ();
 
-		List<EmplacementSolMetier> listEmplacementDefenseEnnemie = EmplacementSolMetier.getEmplacementSolJoueur (idJoueurAttaque);
+		List<EmplacementSolMetier> listEmplacementDefenseEnnemie = EmplacementMetierAbstract.getListEmplacementOccuperJoueur<EmplacementSolMetier> (idJoueurAttaque);
 		foreach(EmplacementSolMetier emplacementDefenseEnnemie in listEmplacementDefenseEnnemie){
 			if (null != emplacementDefenseEnnemie && null != emplacementDefenseEnnemie.NetIdCartePosee && NetworkInstanceId.Invalid != emplacementDefenseEnnemie.NetIdCartePosee) {
 				GameObject goCarte = NetworkServer.FindLocalObject (emplacementDefenseEnnemie.NetIdCartePosee);
