@@ -17,24 +17,24 @@ public class ConvertDataAndDTOUtils {
 		capaciteDTOResult.ChoixCible = capaciteData.choixCible;
 		capaciteDTOResult.Duree = capaciteData.duree;
 
-		capaciteDTOResult.ConditionCible = new List<string> ();
+		capaciteDTOResult.ConditionsCible = new List<string> ();
 		if (null != capaciteData.conditionCible) {
 			foreach (string CCData in capaciteData.conditionCible) {
-				capaciteDTOResult.ConditionCible.Add (CCData);
+				capaciteDTOResult.ConditionsCible.Add (CCData);
 			}
 		}
 
-		capaciteDTOResult.ConditionEmplacement = new List<string> ();
+		capaciteDTOResult.ConditionsEmplacement = new List<string> ();
 		if (null != capaciteData.conditionEmplacement) {
 			foreach (string CEData in capaciteData.conditionEmplacement) {
-				capaciteDTOResult.ConditionEmplacement.Add (CEData);
+				capaciteDTOResult.ConditionsEmplacement.Add (CEData);
 			}
 		}
 
-		capaciteDTOResult.ConditionAction = new List<string> ();
+		capaciteDTOResult.ConditionsAction = new List<string> ();
 		if (null != capaciteData.conditionAction) {
 			foreach (string CAData in capaciteData.conditionAction) {
-				capaciteDTOResult.ConditionAction.Add (CAData);
+				capaciteDTOResult.ConditionsAction.Add (CAData);
 			}
 		}
 
@@ -145,12 +145,15 @@ public class ConvertDataAndDTOUtils {
 		if (carteConstructionData is CarteBatimentData) {
 			carteConstructionDTO.PointAttaque = 0;
 			carteConstructionDTO.ConsommationCarburant = 0;
+			carteConstructionDTO.TypeOfCarte = ConstanteInGame.strBatiment;
 		} else if (carteConstructionData is CarteDefenseData) {
 			carteConstructionDTO.PointAttaque = ((CarteDefenseData)carteConstructionData).pointAttaque;
 			carteConstructionDTO.ConsommationCarburant = 0;
+			carteConstructionDTO.TypeOfCarte = ConstanteInGame.strDefense;
 		} else if (carteConstructionData is CarteVaisseauData) {
 			carteConstructionDTO.PointAttaque = ((CarteVaisseauData)carteConstructionData).pointAttaque;
 			carteConstructionDTO.ConsommationCarburant = ((CarteVaisseauData)carteConstructionData).consommationCarburant;
+			carteConstructionDTO.TypeOfCarte = ConstanteInGame.strVaisseau;
 		} else {
 			carteConstructionDTO.PointAttaque = 0;
 			carteConstructionDTO.ConsommationCarburant = 0;

@@ -14,4 +14,6 @@ public class CarteDTO {
 	public string ImagePath{ get; set; }
 
 	public int NbTourAvantActif{ get; set; }
+
+	public string TypeOfCarte{ get; set; }
 }

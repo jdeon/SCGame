@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, IDefendre {
 
 	[SyncVar]
-	private bool attaqueCeTours;
+	private int nbAttaqueCeTours;
 
 	[SyncVar]
 	private bool selectionnableDefense;
@@ -27,54 +27,89 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 
 	/***************************Methode IAttaquer*************************/
 		
-	public void attaqueCarte (CarteConstructionMetierAbstract cible){
-		if (cible is IDefendre) {
-			((IDefendre)cible).defenseSimultanee (this);
-			attaqueCeTours = true;
-		} else if (cible is IVulnerable){
-			((IVulnerable)cible).recevoirDegat (getPointDegat());
-			attaqueCeTours = true;
+	public void attaqueCarte (CarteConstructionMetierAbstract cible, bool dejaReoriente){
+		//EVENT ATTAQUE
+
+		bool attaqueReoriente = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_REORIENTE_ATTAQUE);
+		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
+
+		if (!attaqueEvite) {
+			if (attaqueReoriente && !dejaReoriente) {
+				List<CarteMetierAbstract> listCartes = CarteUtils.getListCarteCibleReorientation (this, cible);
+				CarteMetierAbstract cibleReoriente = listCartes [Random.Range (0, listCartes.Count)];
+
+				if (cibleReoriente is CartePlaneteMetier) {
+					attaquePlanete ((CartePlaneteMetier)cibleReoriente);
+				} else if (cibleReoriente is CarteConstructionMetierAbstract) {
+					cible = (CarteConstructionMetierAbstract)cibleReoriente;
+				}
+			}
+
+			if (cible is IDefendre) {
+				((IDefendre)cible).defenseSimultanee (this);
+				AttaqueCeTour = true;
+			} else if (cible is IVulnerable) {
+				((IVulnerable)cible).recevoirDegat (getPointDegat ());
+				AttaqueCeTour = true;
+			}
 		}
 	}
 
 	public void sacrificeCarte (){
 		CartePlaneteMetier cartePlanete = CartePlaneteMetier.getPlaneteEnnemie (getJoueurProprietaire ().netId);
 
-		//TODO crée une méthode
-		cartePlanete.pointVie -= getPointDegat();
+		//TODO point de degat ou cout carte?
+		cartePlanete.recevoirDegat(getPointDegat ());
 		destruction ();
 	}
 
-	public void attaquePlanete (CartePlaneteMetier cible){
+	public IEnumerator attaquePlanete (CartePlaneteMetier cible){
 		//TODO
-		StartCoroutine(choixDefensePlanete(cible.getJoueurProprietaire().netId));
+		bool modeFurtif = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_FURTIF); 
+
+		if (!modeFurtif) {
+			choixDefensePlanete (cible.getJoueurProprietaire ().netId);
+		} 
+
+		cible.recevoirDegat (getPointDegat ());
+
+		return null;
 	}
 
 	public bool isCapableAttaquer (){
 		bool capableDAttaquer = false;
 
-		if(!attaqueCeTours){
-			capableDAttaquer = true;
+		if(!AttaqueCeTour){
 			//TODO de verification de la position
-		//TODO recherche dans capacité
+			capableDAttaquer = 0 >= CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_DESARME);
+
 		}
 
 		return capableDAttaquer;
 	}
 		
-	public bool AttaqueCeTour { 
-		get { return attaqueCeTours; } 
+	public bool AttaqueCeTour {
+		get { 
+			int nbAttaqueAutorise = CapaciteUtils.valeurAvecCapacite (1, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_NB_ATTAQUE);
+
+			return nbAttaqueCeTours >= nbAttaqueAutorise;
+		} 
 		set {
-			if (!value) {
-				attaqueCeTours = value;
+			if (value) {
+				//une attaque effectuer
+				nbAttaqueCeTours++;
+			} else {
+				//ReinitAttaque
+				nbAttaqueCeTours = 0;
 			}
 		}
 	}
 
+
 	private IEnumerator choixDefensePlanete(NetworkInstanceId idJoueurAttaque){
 		List<IDefendre> listDefenseurPlanete = new List<IDefendre> ();
 
-		List<EmplacementSolMetier> listEmplacementDefenseEnnemie = EmplacementMetierAbstract.getListEmplacementOccuperJoueur<EmplacementSolMetier> (idJoueurAttaque);
+		List<EmplacementSolMetier> listEmplacementDefenseEnnemie = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementSolMetier> (idJoueurAttaque);
 		foreach(EmplacementSolMetier emplacementDefenseEnnemie in listEmplacementDefenseEnnemie){
 			if (null != emplacementDefenseEnnemie && null != emplacementDefenseEnnemie.NetIdCartePosee && NetworkInstanceId.Invalid != emplacementDefenseEnnemie.NetIdCartePosee) {
 				GameObject goCarte = NetworkServer.FindLocalObject (emplacementDefenseEnnemie.NetIdCartePosee);
@@ -127,16 +162,44 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 	}
 
 	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
-		int degatInfliger = getPointDegat ();
-		int degatRecu = vaisseauAttaquant.getPointDegat ();
+		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
 
-		vaisseauAttaquant.recevoirDegat (degatInfliger);
-		this.recevoirDegat (degatRecu);
+		if (!attaqueEvite) {
+
+			bool attaqueReoriente = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_REORIENTE_ATTAQUE);
+			if (attaqueReoriente) {
+				List<CarteMetierAbstract> listCartes = CarteUtils.getListCarteCibleReorientation (vaisseauAttaquant, this);
+				CarteMetierAbstract cible = listCartes [Random.Range (0, listCartes.Count)];
+
+				if (cible is CarteConstructionMetierAbstract) {
+					vaisseauAttaquant.attaqueCarte ((CarteConstructionMetierAbstract)cible, true);
+				} else if (cible is CartePlaneteMetier) {
+					vaisseauAttaquant.attaquePlanete ((CartePlaneteMetier)cible);
+				}
+
+			} else {
+				bool attaquePriorite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ATTAQUE_OPPORTUNITE);
+				int degatInfliger = getPointDegat ();
+				int degatRecu = vaisseauAttaquant.getPointDegat ();
+
+				if (attaquePriorite) {
+					int pvDefenseRestante = this.recevoirDegat (degatRecu);
+
+					if (pvDefenseRestante > 0) {
+						vaisseauAttaquant.recevoirDegat (degatInfliger);
+					}
+				} else {
+					vaisseauAttaquant.recevoirDegat (degatInfliger);
+					this.recevoirDegat (degatRecu);
+				}
+			}
+		}
 	}
 
 	public bool isCapableDefendre (){
-		bool result = true;
-		//TODO check capacite
+		IConteneurCarte conteneur = getConteneur ();
+		bool result = conteneur is EmplacementSolMetier && 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_DESARME);
+
 		if (defenduCeTour) {
 			result = false;
 		}
@@ -169,52 +232,22 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 
 
 	public int getConsomationCarburant(){
-		int consomationCarburant = carteRef.ConsommationCarburant;
-
-		if( null != listEffetCapacite){
-			foreach(CapaciteMetier capaciteCourante in listEffetCapacite){
-				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_CONSOMATION_CARBURANT)) {
-					consomationCarburant = capaciteCourante.getNewValue (consomationCarburant);
-				}
-			}
-		}
-
-		return consomationCarburant;
+		return CapaciteUtils.valeurAvecCapacite (carteRef.ConsommationCarburant, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_CONSOMATION_CARBURANT);
 	}
 
 	public int getPointAttaque(){
-		int pointAttaqueBase = carteRef.PointAttaque;
-
-		if( null != listEffetCapacite){
-			foreach(CapaciteMetier capaciteCourante in listEffetCapacite){
-				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_POINT_ATTAQUE)) {
-					pointAttaqueBase = capaciteCourante.getNewValue (pointAttaqueBase);
-				}
-			}
-		}
-
-		return pointAttaqueBase;
+		return CapaciteUtils.valeurAvecCapacite (carteRef.PointAttaque, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_POINT_ATTAQUE);
 	}
 
 	public int getPointDegat(){
-		int pointDegatBase = getPointAttaque();
-
-		if( null != listEffetCapacite){
-			foreach(CapaciteMetier capaciteCourante in listEffetCapacite){
-				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_DEGAT_INFLIGE)) {
-					pointDegatBase = capaciteCourante.getNewValue (pointDegatBase);
-				}
-			}
-		}
-
-		return pointDegatBase;
+		return CapaciteUtils.valeurAvecCapacite (getPointAttaque(), listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_DEGAT_INFLIGE);
 	}
 
 	public override void generateVisualCard()
 	{
-		if (!joueurProprietaire.carteEnVisuel) {
+		if (!joueurProprietaire.CarteEnVisuel) {
 			base.generateVisualCard ();
-			joueurProprietaire.carteEnVisuel = true;
+			joueurProprietaire.CarteEnVisuel = true;
 			designCarte.setCarburant (carteRef.ConsommationCarburant);
 			designCarte.setPA (carteRef.PointAttaque);
 		}

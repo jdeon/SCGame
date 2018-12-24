@@ -12,11 +12,11 @@ public class EmplacementSolMetier : EmplacementMetierAbstract {
 		Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
 		if(isMovableByPlayer(joueur)){
-			if (joueur.carteSelectionne is CarteBatimentMetier || joueur.carteSelectionne is CarteDefenseMetier || listNomCarteExeption.Contains (joueur.carteSelectionne.name)) {
-				if (isCardCostPayable (joueur.cartePlanetJoueur, joueur.carteSelectionne)) {
-					base.putCard ((CarteConstructionMetierAbstract) joueur.carteSelectionne);
+			if (joueur.CarteSelectionne is CarteBatimentMetier || joueur.CarteSelectionne is CarteDefenseMetier || listNomCarteExeption.Contains (joueur.CarteSelectionne.name)) {
+				if (isCardCostPayable (joueur.RessourceMetal, joueur.CarteSelectionne)) {
+					joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
 				}
-			} else if (joueur.carteSelectionne is CarteVaisseauMetier) {
+			} else if (joueur.CarteSelectionne is CarteVaisseauMetier) {
 				//TODO vaisseau en mode defense
 			}
 		}

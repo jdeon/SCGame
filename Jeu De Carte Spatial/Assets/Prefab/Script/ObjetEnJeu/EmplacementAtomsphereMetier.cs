@@ -11,9 +11,9 @@ public class EmplacementAtomsphereMetier : EmplacementMetierAbstract {
 		GameObject goJoueur = ClientScene.FindLocalObject (this.idJoueurPossesseur);
 		Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
-		if(isMovableByPlayer(joueur) && (joueur.carteSelectionne is CarteVaisseauMetier || listNomCarteExeption.Contains(joueur.carteSelectionne.name))){
-			if (isCardCostPayable(joueur.cartePlanetJoueur,joueur.carteSelectionne)) {
-				base.putCard ((CarteConstructionMetierAbstract) joueur.carteSelectionne);
+		if(isMovableByPlayer(joueur) && (joueur.CarteSelectionne is CarteVaisseauMetier || listNomCarteExeption.Contains(joueur.CarteSelectionne.name))){
+			if (isCardCostPayable(joueur.RessourceMetal,joueur.CarteSelectionne)) {
+				joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
 			}
 		}
 	}

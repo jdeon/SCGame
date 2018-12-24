@@ -3,23 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class Joueur : NetworkBehaviour {
+public class Joueur : NetworkBehaviour, IAvecCapacite {
 
-	public string pseudo = "Test"; //TODO rechercher autrement
+	[SerializeField][SyncVar]
+	private string pseudo = "Test";
 
-	public CarteMetierAbstract carteSelectionne;
+	[SerializeField]
+	private Mains main;
 
-	public bool carteEnVisuel;
 
-	public DeckConstructionMetier deckConstruction;
+	private CartePlaneteMetier cartePlanetJoueur;
 
-	public DeckConstructionMetier cimetiereConstruction;
+	[SerializeField]
+	private RessourceMetier ressourceXP;
 
-	public CartePlaneteMetier cartePlanetJoueur;
+	[SerializeField]
+	private RessourceMetier ressourceMetal;
 
-	public GameObject main;
+	[SerializeField]
+	private RessourceMetier ressourceCarburant;
 
-	public GameObject goPlateau;
+
+	[SerializeField]
+	private DeckConstructionMetier deckConstruction;
+
+	private DeckConstructionMetier cimetiereConstruction;
+
+
+
+	private CarteMetierAbstract carteSelectionne;
+
+	private bool carteEnVisuel;
+
+	private GameObject goPlateau;
+
+	private List<CapaciteMetier> listCapacite = new List<CapaciteMetier>();
 
 	public static Joueur getJoueurLocal(){
 		Joueur joueurResult = null;
@@ -56,6 +74,8 @@ public class Joueur : NetworkBehaviour {
 	}
 
 	void Start (){
+		main.init(netId);
+
 		if (isLocalPlayer) {
 			CmdGenerateCardAlreadyLaid (this.netId);
 
@@ -69,6 +89,11 @@ public class Joueur : NetworkBehaviour {
 			goPlateau = GameObject.Find(nomPlateau);
 			transform.Find ("VueJoueur").gameObject.SetActive(false); //TODO créer en constante
 		}
+
+		if (isServer) {
+			//TODO rechercher autrement
+			pseudo = "Pseudo" + GameObject.FindObjectsOfType<Joueur> ().Length;
+		}
 	}
 
 	private void initPlateau (){
@@ -79,7 +104,7 @@ public class Joueur : NetworkBehaviour {
 
 		//On met l'id du jour sur tous les emplacement
 		for(int index = 0; index < tabEmplacement.Length; index++){
-			tabEmplacement[index].setIdJoueurPossesseur(this.netId);
+			tabEmplacement[index].IdJoueurPossesseur = this.netId;
 		}
 
 		CmdInitPlanete (this.netId, nomPlateau);
@@ -145,6 +170,8 @@ public class Joueur : NetworkBehaviour {
 			cartePlanetJoueur.initPlanete(this.netId, pseudo);
 		}
 
+
+
 		NetworkServer.Spawn (carteplaneteGO);
 
 		RpcGeneratePlanete(carteplaneteGO, NetworkInstanceId.Invalid);
@@ -156,6 +183,29 @@ public class Joueur : NetworkBehaviour {
 	public void CmdPiocheCarte(){
 		Debug.Log ("command");
 		deckConstruction.piocheDeckConstructionByServer (main);
+	}
+
+	public void invoquerCarte(GameObject carteAInvoquer, int niveauInvocation, IConteneurCarte emplacementCible){
+
+		NetworkServer.Spawn (carteAInvoquer);
+
+		CarteMetierAbstract carteScript = carteAInvoquer.GetComponent<CarteMetierAbstract> ();
+
+		if (carteScript is CarteConstructionMetierAbstract) {
+			((CarteConstructionMetierAbstract)carteScript).NiveauActuel = niveauInvocation;
+		}
+
+		emplacementCible.putCard (carteScript);
+
+		NetworkUtils.assignObjectToPlayer (carteScript, GetComponent<NetworkIdentity> ());
+		byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteScript.getCarteDTORef ());
+
+
+		if (carteScript is CarteConstructionMetierAbstract) {
+			((CarteConstructionMetierAbstract)carteScript).RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
+		} //TODO carte amelioration
+
+
 	}
 
 	/**
@@ -175,11 +225,137 @@ public class Joueur : NetworkBehaviour {
 			this.cartePlanetJoueur = cartePlaneteScript;
 			cartePlaneteScript.generateGOCard ();
 
+			//TODO risque de mettre mauvaise instance ID
+			ressourceXP.init (netId);
+			ressourceMetal.init (netId);
+			ressourceCarburant.init (netId);
+
 		}
 
 		Debug.Log ("End RpcGeneratePlanete");
 	}
 
+	[Command]
+	public void CmdProductionRessource(){
+		//TODO XP?
+		ressourceMetal.productionDeRessourceByServer();
+		ressourceCarburant.productionDeRessourceByServer();
+	}
+
+	public int addRessource(string type, int nb){
+		int ressourceAdded = 0;
+
+		if (type == "Metal") {
+			ressourceAdded = -nb > ressourceMetal.Stock ? nb : -ressourceMetal.Stock; //Cas ou le nombre est negatif et plus grand que le stock
+			ressourceMetal.Stock += ressourceAdded;
+		} else if (type == "Carburant") {
+			ressourceAdded = -nb > RessourceCarburant.Stock ? nb : -RessourceCarburant.Stock; //Cas ou le nombre est negatif et plus grand que le stock
+			RessourceCarburant.Stock += ressourceAdded;
+		} else if (type == "XP") {
+			ressourceAdded = -nb > RessourceXP.Stock ? nb : -RessourceXP.Stock; //Cas ou le nombre est negatif et plus grand que le stock
+			RessourceXP.Stock += ressourceAdded;
+		}
+
+
+		return ressourceAdded;
+	}
+
+
+	/*********************************IAvecCapacite*********************/
+	public void addCapacity (CapaciteMetier capaToAdd){
+		listCapacite.Add (capaToAdd);
+		//TODO recalculate visual
+	}
+
+	public void removeLinkCardCapacity (NetworkInstanceId netIdCard){
+		List<CapaciteMetier> capacitesToDelete = new List<CapaciteMetier> ();
+
+		foreach (CapaciteMetier capacite in listCapacite) {
+			if (capacite.Reversible && capacite.IdCarteProvenance == netIdCard) {
+				capacitesToDelete.Add (capacite);
+			}
+		}
+
+		foreach (CapaciteMetier capaciteToDelete in capacitesToDelete) {
+			listCapacite.Remove(capaciteToDelete);
+		}
+		//TODO recalculate visual
+	}
+
+	public void capaciteFinTour (){
+		List<CapaciteMetier> capacitesToDelete = new List<CapaciteMetier> ();
+
+		foreach (CapaciteMetier capacite in listCapacite) {
+			bool existeEncore = capacite.endOfTurn ();
+			if (!existeEncore) {
+				capacitesToDelete.Add (capacite);
+			}
+		}
+
+		foreach (CapaciteMetier capaciteToDelete in capacitesToDelete) {
+			listCapacite.Remove(capaciteToDelete);
+		}
+		//TODO recalculate visual
+	}
+
+	public List<CapaciteMetier>  containCapacity(int idTypCapacity){
+		List<CapaciteMetier> listCapaciteResult = new List<CapaciteMetier> ();
+
+		foreach (CapaciteMetier capacite in listCapacite) {
+			if (capacite.getIdTypeCapacite() == idTypCapacity) {
+				listCapaciteResult.Add (capacite);
+			}
+		}
+		return listCapaciteResult;
+	}
+
+
+	public string Pseudo {
+		get {return pseudo;}
+	}
+
+	public Mains Main{
+		get { return main;}
+	}
+		
+	public RessourceMetier RessourceXP {
+		get { return ressourceXP; }
+	}
+
+	public RessourceMetier RessourceMetal {
+		get { return ressourceMetal; }
+	}
+
+	public RessourceMetier RessourceCarburant {
+		get { return ressourceCarburant; }
+	}
+
+	public DeckConstructionMetier DeckConstruction {
+		get {return deckConstruction; }
+	}
+
+	public CarteMetierAbstract CarteSelectionne {
+		get { return carteSelectionne; }
+		set { carteSelectionne = value; }
+	}
+
+	public bool CarteEnVisuel {
+		get { return carteEnVisuel; }
+		set { carteEnVisuel = value; }
+	}
+
+	public DeckConstructionMetier CimetiereConstruction {
+		get { return cimetiereConstruction; }
+	}
+
+	public CartePlaneteMetier CartePlaneteJoueur{
+		get { return cartePlanetJoueur;}
+	}
+
+	public GameObject GoPlateau {
+		get { return goPlateau; }
+	}
+		
 	public bool getIsLocalJoueur(){
 		return isLocalPlayer;
 	}

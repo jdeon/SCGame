@@ -12,7 +12,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	protected int niveauActuel;
 
 	[SyncVar]
-	protected int PV;
+	protected int pv;
 
 	[SyncVar]
 	protected bool onBoard;
@@ -25,13 +25,10 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	protected DesignCarteConstructionV2 designCarte;
 
-	protected List<CapaciteMetier> listEffetCapacite;
-
-
 	public string initCarte (CarteConstructionDTO initCarteRef){
 		carteRef = initCarteRef;
 		initId ();
-		niveauActuel = 1;
+		NiveauActuel = 1;
 		PV = carteRef.PointVieMax;
 
 		return id;
@@ -55,11 +52,11 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
 			if (systemTour.getPhase (joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
-			    && null != joueurLocal.carteSelectionne && joueurLocal.carteSelectionne.getJoueurProprietaire () != joueurProprietaire
-			    && joueurLocal.carteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.carteSelectionne).isCapableAttaquer ()) {
+			    && null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.getJoueurProprietaire () != joueurProprietaire
+			    && joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 
 				//TODO vérifier l'emplacement sol
-				((IAttaquer)joueurLocal.carteSelectionne).attaqueCarte (this);
+				((IAttaquer)joueurLocal.CarteSelectionne).attaqueCarte (this, false);
 			} else {
 				base.OnMouseDown ();
 			}
@@ -73,28 +70,36 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		int coutMetal = 0;
 
 		//La construction n'est pas au niveau maximum
-		if (niveauActuel < carteRef.ListNiveau.Count) {
+		if (NiveauActuel < carteRef.ListNiveau.Count) {
 			//cout du prochain niveau
-			coutMetal = carteRef.ListNiveau [niveauActuel].Cout;
-		}
-
-		if( null != listEffetCapacite){
-			foreach(CapaciteMetier capaciteCourante in listEffetCapacite){
-				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_COUT_CONSTRUCTION)) {
-					coutMetal = capaciteCourante.getNewValue (coutMetal);
-				}
-			}
+			coutMetal = CapaciteUtils.valeurAvecCapacite (carteRef.ListNiveau [NiveauActuel].Cout, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_COUT_CONSTRUCTION);
 		}
 			
 		return coutMetal;
 	}
 
+	public int getCoutMetal(int numLvl){
+		int coutMetal = 0;
+
+		//La construction n'est pas au niveau maximum
+		if (numLvl < carteRef.ListNiveau.Count) {
+			//cout du prochain niveau
+			coutMetal = CapaciteUtils.valeurAvecCapacite (carteRef.ListNiveau [numLvl].Cout, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_COUT_CONSTRUCTION);
+		}
+			
+		return coutMetal;
+	}
+
+	public int getPVMax(){
+		return CapaciteUtils.valeurAvecCapacite (carteRef.PointVieMax, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_PV_MAX);
+	}
+
 
 	//Affiche la carte si clique dessus
 	public virtual void generateVisualCard() {
-		if (!joueurProprietaire.carteEnVisuel) {
+		if (!joueurProprietaire.CarteEnVisuel) {
 			base.generateVisualCard ();
-			joueurProprietaire.carteEnVisuel = true;
+			joueurProprietaire.CarteEnVisuel = true;
 			float height = panelGO.GetComponent<RectTransform> ().rect.height;
 			float width = panelGO.GetComponent<RectTransform> ().rect.width;
 
@@ -113,7 +118,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 			designCarte.setImage (Resources.Load<Sprite>(carteSource.ImagePath));
 
 			designCarte.setMetal (carteSource.ListNiveau [0].Cout);//TODO passer par getCout(qui vérifie s'il y a des capacité malus au bonus vert ou roge)
-			designCarte.setNiveauActuel (niveauActuel);
+			designCarte.setNiveauActuel (NiveauActuel);
 			designCarte.setCarburant (0);
 			//designCarte.setDescription ("Ceci est une description de la carte");
 			//designCarte.setCitation ("Il était une fois une carte");
@@ -129,7 +134,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 				}
 
 				//On affiche le cout uniquement
-				int cout = niveauActuel < index + 1 ? niveau.Cout : 0;
+				int cout = NiveauActuel < index + 1 ? niveau.Cout : 0;
 
 				designCarte.setNiveau (premierNivCache ? index : index + 1, niveau.TitreNiveau, niveau.DescriptionNiveau, niveau.Cout);
 			}
@@ -235,7 +240,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		niveau.transform.Rotate (ConstanteInGame.rotationImage);
 
 		Material matNiveau = new Material(ConstanteInGame.shaderStandart);
-		matNiveau.SetTexture ("_MainTex", getSpriteNiveau(niveauActuel).texture);
+		matNiveau.SetTexture ("_MainTex", getSpriteNiveau(NiveauActuel).texture);
 		niveau.GetComponent<Renderer> ().material = matNiveau;
 
 
@@ -306,10 +311,10 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		pointDefence.GetComponent<Renderer> ().material = ConstanteInGame.matChintzy;
 	}
 
-	private Sprite getSpriteNiveau(int niveauActuel){
+	private Sprite getSpriteNiveau(int niveau){
 		Sprite result = null;
 
-		switch (niveauActuel) {	
+		switch (niveau) {	
 		case 1: 
 			result = ConstanteInGame.spriteLvl1;
 			break;
@@ -332,18 +337,24 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	//Retourne PV restant
 	public int recevoirDegat (int nbDegat){
-		PV -= nbDegat;
-		if (PV <= 0) {
-			destruction ();
+		bool invulnerable = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_INVULNERABLE);
+
+		if (!invulnerable) {
+			PV -= nbDegat;
+			if (PV <= 0) {
+				destruction ();
+			}
 		}
 
 		return PV;
 	}
 
 	public void destruction (){
-		CmdDestuction ();
-		Destroy (gameObject);
-		onBoard = false;
+		if (!joueurProprietaire.isServer) {
+			CmdDestuction ();
+			Destroy (gameObject);
+			onBoard = false;
+		}
 	}
 
 	[Command]
@@ -351,8 +362,29 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 		NetworkUtils.unassignObjectFromPlayer (this, getJoueurProprietaire ().GetComponent<NetworkIdentity> ());
 
-		getJoueurProprietaire ().cimetiereConstruction.addCarte (this);
+		getJoueurProprietaire ().CimetiereConstruction.addCarte (this);
 	}
+
+	/************************************Envent catcher****/
+	public void useStartTurnCapacity(NetworkInstanceId netIdJoueur){
+		List<CapaciteDTO> capaciteStartTurn = new List<CapaciteDTO> ();
+
+		for (int nivCapacity = 1; nivCapacity <= this.NiveauActuel; nivCapacity++) {
+			foreach (CapaciteDTO capacite in carteRef.ListNiveau[nivCapacity-1].Capacite) {
+				if (CapaciteUtils.isCapaciteCall (capacite,listEffetCapacite, netIdJoueur == this.idJoueurProprietaire, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR)) {
+					capaciteStartTurn.Add (capacite);
+				}
+			}
+		}
+	
+		EmplacementMetierAbstract emplacementActuel = null;
+		if (null != transform.parent) {
+			emplacementActuel = transform.parent.gameObject.GetComponent<EmplacementMetierAbstract> ();
+		}
+
+	}
+
+
 
 	public CarteConstructionDTO getCarteRef ()
 	{
@@ -368,4 +400,19 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		get{ return onBoard; }
 		set{ onBoard = value; }
 	}
+
+	public int NiveauActuel {
+		get{
+			return CapaciteUtils.valeurAvecCapacite (this.niveauActuel, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_LVL); 
+		}
+		set{niveauActuel = value;}
+	}
+
+	public int PV {
+		get {
+			return CapaciteUtils.valeurAvecCapacite (this.pv, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_PV);
+		}
+		set{ pv = value; }
+	}
+
 }

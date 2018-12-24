@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class CapaciteMetier  {
 
@@ -8,21 +9,50 @@ public class CapaciteMetier  {
 
 	private string id;
 
-	private int idVaisseauProvenance;
+	private NetworkInstanceId idCarteProvenance;
 
-	//CapaciteData
+	//CapaciteDTO
 	private int idTypeCapacite;
 
-	private int idTypeOperation;
+	private bool reversible;
+
+	private ConstanteEnum.TypeCalcul idTypeOperation;
 
 	private int valeurOperation;
 
-	public CapaciteMetier(){
+	private float nbTourRestant;
+
+	public CapaciteMetier(int idTypeCapacite,ConstanteEnum.TypeCalcul idTypeOperation, int valeurOperation, NetworkInstanceId idCarteProvenance, bool reversible){
 		id = "Capa_" + sequenceId++;
+		this.idTypeCapacite = idTypeCapacite;
+		this.idCarteProvenance = idCarteProvenance;
+		this.idTypeOperation = idTypeOperation;
+		this.valeurOperation = valeurOperation;
+		this.reversible = reversible;
+	}
+
+
+	public bool endOfTurn(){
+		bool existToujours = true;
+
+		nbTourRestant--;
+		if (nbTourRestant < 0) {
+			existToujours = false;
+		}
+
+		return existToujours;
+	}
+
+	public NetworkInstanceId IdCarteProvenance{
+		get{ return idCarteProvenance; }
 	}
 
 	public int getIdTypeCapacite(){
 		return idTypeCapacite;
+	}
+
+	public bool Reversible {
+		get{ return reversible; }
 	}
 
 	public int getNewValue(int oldValue){
@@ -30,25 +60,25 @@ public class CapaciteMetier  {
 		int newValue;
 
 		switch (idTypeOperation) {
-		case 0: //RemiseA
+		case ConstanteEnum.TypeCalcul.RemiseA:
 			newValue = valeurOperation;
 			break;
-		case 1: //Addition
+		case ConstanteEnum.TypeCalcul.Ajout: 
 			newValue = oldValue + valeurOperation;
 			break;
-		case 2: //Multiply
+		case ConstanteEnum.TypeCalcul.Multiplication :
 			newValue = oldValue * valeurOperation;
 			break;
-		case 3:	//divise
+		case ConstanteEnum.TypeCalcul.Division:	
 			newValue = oldValue / valeurOperation;
 			break;
-		case 4:	//des
+		case ConstanteEnum.TypeCalcul.Des:
 			newValue = (int) Random.Range(0,valeurOperation+1);
 			break;
-		case 5:	//Chance
+		case ConstanteEnum.TypeCalcul.Chance: 
 			newValue = Random.Range(0,valeurOperation+1) >= valeurOperation ? 1 : 0;
 			break;
-		case 6:	//ressourceSuperieurA
+		case ConstanteEnum.TypeCalcul.SuperieurARessource:
 			int ressource = 2;//TODO modifier pour bonne value
 			newValue = valeurOperation >= ressource ? ressource - valeurOperation : 0;
 			break;
@@ -59,5 +89,4 @@ public class CapaciteMetier  {
 
 		return newValue;
 	}
-
 }

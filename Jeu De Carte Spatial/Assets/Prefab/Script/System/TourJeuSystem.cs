@@ -77,8 +77,8 @@ public class TourJeuSystem : NetworkBehaviour {
 					Joueur joueur = Joueur.getJoueur (joueurDTO.netIdJoueur);
 
 					if (null != joueur) {
-						joueur.deckConstruction.piocheDeckConstructionByServer (joueur.main);
-						joueur.deckConstruction.piocheDeckConstructionByServer (joueur.main);
+						joueur.DeckConstruction.piocheDeckConstructionByServer (joueur.Main);
+						joueur.DeckConstruction.piocheDeckConstructionByServer (joueur.Main);
 					}
 				}
 
@@ -130,46 +130,54 @@ public class TourJeuSystem : NetworkBehaviour {
 					boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.enAttente);
 				}
 				
+				Joueur joueurTour = Joueur.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
+				bool tourSupJoueur = 0 < CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacity (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
 
-				if (indexPlayerPlaying < listJoueurs.Count - 1) {
-					indexPlayerPlaying++;
-				} else {
-					indexPlayerPlaying = 0;
-					nbTurn++;
+				if (!tourSupJoueur) { //Pas de tour supplementaire
+
+					if (indexPlayerPlaying < listJoueurs.Count - 1) {
+						indexPlayerPlaying++;
+					} else {
+						indexPlayerPlaying = 0;
+						nbTurn++;
+					}
+
+					this.idJoueurTour = listJoueurs [indexPlayerPlaying].netIdJoueur;
+					joueurTour = Joueur.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
 				}
 
-				this.idJoueurTour = listJoueurs [indexPlayerPlaying].netIdJoueur;
-
 				RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
+			
+				//TODO appeler capaciter de <debut de tour
+				bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacity (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
+				initTour(joueurTour);
 
-				//TODO appeler capaciter de debut de tour
-				initTour();
+				if (perteTour) {//Perte de tour
+					progressStepServer(FIN_TOUR);
+				} else {
+					phase++;
+					GameObject goBtnNewPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
 
-				phase++;
-
-				GameObject goBtnNewPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
-
-				if (null != goBtnNewPlayer && null != goBtnNewPlayer.GetComponent<BoutonTour> ()) {
-					BoutonTour boutonTour = goBtnNewPlayer.GetComponent<BoutonTour> ();
-					boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.terminerTour);
+					if (null != goBtnNewPlayer && null != goBtnNewPlayer.GetComponent<BoutonTour> ()) {
+						BoutonTour boutonTour = goBtnNewPlayer.GetComponent<BoutonTour> ();
+						boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.terminerTour);
+					}
 				}
 			}
 		}
 	}
 
-	private void initTour(){
-		Joueur joueurInitTour = Joueur.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
-
+	private void initTour(Joueur joueurInitTour){
 		phase = DEBUT_TOUR;
-		joueurInitTour.cartePlanetJoueur.productionRessourceByServer ();
+		joueurInitTour.CmdProductionRessource ();
 		RpcRemiseEnPlaceCarte (joueurInitTour.netId);
-		joueurInitTour.deckConstruction.piocheDeckConstructionByServer (joueurInitTour.main);
+		joueurInitTour.DeckConstruction.piocheDeckConstructionByServer (joueurInitTour.Main);
 
 	}
 
 	[ClientRpc]
 	public void RpcRemiseEnPlaceCarte(NetworkInstanceId netIdJoueur){
-		List<CarteMetierAbstract> listCarteJoueur = CarteMetierAbstract.getListCarteJoueur (netIdJoueur);
+		List<CarteMetierAbstract> listCarteJoueur = CarteUtils.getListCarteJoueur (netIdJoueur);
 
 		foreach (CarteMetierAbstract carteJoueur in listCarteJoueur) {
 			if (carteJoueur is IAttaquer) {
@@ -181,10 +189,10 @@ public class TourJeuSystem : NetworkBehaviour {
 			}
 		}
 			
-		List<EmplacementAttaque> listEmplacementAttaqueOccuper = EmplacementMetierAbstract.getListEmplacementOccuperJoueur<EmplacementAttaque> (netIdJoueur);
+		List<EmplacementAttaque> listEmplacementAttaqueOccuper = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementAttaque> (netIdJoueur);
 
 		if (listEmplacementAttaqueOccuper.Count > 0) {
-			List<EmplacementAtomsphereMetier> listEmplacementAtmosJoueurLibre = EmplacementMetierAbstract.getListEmplacementLibreJoueur <EmplacementAtomsphereMetier> (netIdJoueur);
+			List<EmplacementAtomsphereMetier> listEmplacementAtmosJoueurLibre = EmplacementUtils.getListEmplacementLibreJoueur <EmplacementAtomsphereMetier> (netIdJoueur);
 				
 			//On essaye d'abord de replacer les vaisseaux au bonne endroit
 			if (listEmplacementAtmosJoueurLibre.Count > 0) {
@@ -227,7 +235,7 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				//On fait de même avec les emplacement de sol
 				if (listEmplacementAtmosToujoursLibre.Count > 0) {
-					List<EmplacementSolMetier> listEmplacementSolJoueur = EmplacementMetierAbstract.getListEmplacementOccuperJoueur<EmplacementSolMetier> (netIdJoueur);
+					List<EmplacementSolMetier> listEmplacementSolJoueur = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementSolMetier> (netIdJoueur);
 
 
 					List<EmplacementSolMetier> listEmplacementSolAvecCarteVaisseau = new List<EmplacementSolMetier> (listEmplacementSolJoueur);

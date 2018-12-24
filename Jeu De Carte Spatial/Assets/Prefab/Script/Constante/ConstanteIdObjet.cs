@@ -33,20 +33,21 @@ public class ConstanteIdObjet {
 
 	public static readonly int ID_CAPACITE_MODIF_NB_CARTE_PIOCHE = 14;
 
+	//Peut attaquer planete sans activer defense
 	public static readonly int ID_CAPACITE_ETAT_FURTIF = 15;
-
+	//Peut attaquer au retour d'une attaque
 	public static readonly int ID_CAPACITE_ETAT_ATTAQUE_RETOUR = 16;
-
-	public static readonly int ID_CAPACITE_ETAT_DOUBLE_ATTAQUE = 17;
-
+	//Peut attaquer 2 fois ou plus TODO conserne defense aussi?
+	public static readonly int ID_CAPACITE_MODIF_NB_ATTAQUE = 17;
+	//Ne peut plus déplacer carte
 	public static readonly int ID_CAPACITE_ETAT_IMMOBILE =18;
-
+	//Ne peut plus attaquer ou defendre
 	public static readonly int ID_CAPACITE_ETAT_DESARME = 19;
-
+	//Ne peut plus utiliser de capacite
 	public static readonly int ID_CAPACITE_ETAT_SANS_EFFET = 20;
-
+	//Carte effectue une action aleatoire lors du click sur le bouton de tour
 	public static readonly int ID_CAPACITE_ETAT_HORS_DE_CONTROLE = 21;
-
+	//Revele une carte cache
 	public static readonly int ID_CAPACITE_REVELE_CARTE = 22;
 
 	public static readonly int ID_CAPACITE_VOLE_CARTE = 23;
@@ -72,15 +73,15 @@ public class ConstanteIdObjet {
 	public static readonly int ID_CAPACITE_ETAT_INVULNERABLE = 33;
 
 	public static readonly int ID_CAPACITE_EVITE_ATTAQUE = 34;
-
+	//Attaque en premier et subis la défense uniquement si elle survis
 	public static readonly int ID_CAPACITE_ATTAQUE_OPPORTUNITE = 35;
 
 	public static readonly int ID_CAPACITE_VOL_RESSOURCE = 36;
 
 	//public static readonly int ID_CAPACITE_VOL_CARBURANT = 37;
-
+	//Carte non ciblalble
 	public static readonly int ID_CAPACITE_ETAT_INVISIBLE = 38;
-
+	//Capacite au hasard parmis toute la liste
 	public static readonly int ID_CAPACITE_ACTION_HASARD = 39;
 
 	public static readonly int ID_CAPACITE_CONDITION = 100;

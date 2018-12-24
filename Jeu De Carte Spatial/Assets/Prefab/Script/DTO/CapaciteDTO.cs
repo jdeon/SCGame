@@ -27,11 +27,11 @@ public class CapaciteDTO {
 	public int Duree{ get; set; }
 
 	//stocker sous forme id+"_"+{A et/ou E si allier ou ennemie)
-	public List<string> ConditionCible{ get; set; }
+	public List<string> ConditionsCible{ get; set; }
 
-	public List<string> ConditionEmplacement{ get; set; }
+	public List<string> ConditionsEmplacement{ get; set; }
 
-	public List<string> ConditionAction{ get; set; }
+	public List<string> ConditionsAction{ get; set; }
 
 	public CarteDTO CarteInvocation{ get; set; }
 

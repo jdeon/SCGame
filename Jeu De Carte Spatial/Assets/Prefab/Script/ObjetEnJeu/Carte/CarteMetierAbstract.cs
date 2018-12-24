@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 
-public abstract class CarteMetierAbstract : NetworkBehaviour {
+public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite {
 
 	[SyncVar]
 	protected string id;
@@ -15,7 +15,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 
 	protected Joueur joueurProprietaire;
 
-
+	protected List<CapaciteMetier> listEffetCapacite;
 
 	protected GameObject panelGO;
 
@@ -31,38 +31,34 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 	/**Retourne si l'init est faite*/
 	public abstract bool initCarteRef (CarteDTO carteRef);
 
+	public IConteneurCarte getConteneur (){
+		return transform.GetComponentInParent<IConteneurCarte> ();
+	}
+
 	//public abstract string initCarte (); //Besoin carte Ref
 
-	public static List<CarteMetierAbstract> getListCarteJoueur(NetworkInstanceId idJoueur){
-		List<CarteMetierAbstract> listCarteJoueur = new List<CarteMetierAbstract>();
+	public virtual void OnMouseDown(){
+		if (joueurProprietaire.CarteSelectionne == this) {
+			joueurProprietaire.CarteSelectionne = null;	//On deselectionne au second click
+		} else {
+			joueurProprietaire.CarteSelectionne = this;
+		}
+	}
 
-		CarteMetierAbstract[] listCarte = GameObject.FindObjectsOfType<CarteMetierAbstract> ();
+	public void deplacerCarte(IConteneurCarte nouveauEmplacement, NetworkInstanceId netIdNouveauPossesseur){
+		bool deplacementImpossible = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_IMMOBILE);
 
-		if (null != listCarte && listCarte.Length > 0) {
-			foreach (CarteMetierAbstract carte in listCarte) {
-				if (null != carte.getJoueurProprietaire() && carte.getJoueurProprietaire().netId == idJoueur) {
-					listCarteJoueur.Add (carte);
-				}
+		if (!deplacementImpossible) {
+			nouveauEmplacement.putCard (this);
+
+			if (netIdNouveauPossesseur != NetworkInstanceId.Invalid && netIdNouveauPossesseur != idJoueurProprietaire) {
+				this.idJoueurProprietaire = netIdNouveauPossesseur;
 			}
 		}
-
-		return listCarteJoueur;
 	}
-
-
-
-
-	public virtual void OnMouseDown(){
-		if (joueurProprietaire.carteSelectionne == this) {
-			joueurProprietaire.carteSelectionne = null;	//On deselectionne au second click
-		} else {
-			joueurProprietaire.carteSelectionne = this;
-		}
-	}
-
 
 	public virtual void generateVisualCard(){
-		string pseudo = "pseudo"; //TODO rechercher pseudo dans player pref
+		string pseudo = joueurProprietaire.Pseudo;
 		GameObject canvasGO = GameObject.Find("Canvas_" + pseudo);
 		Text text;
 
@@ -167,19 +163,69 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 		matImage.SetTexture ("_MainTex", sprtImage.texture);
 		image.GetComponent<Renderer> ().material = matImage;
 	}
+		
 
+	/*********************************IAvecCapacite*********************/
+	public void addCapacity (CapaciteMetier capaToAdd){
+		listEffetCapacite.Add (capaToAdd);
+		//TODO recalculate visual
+	}
+
+	public void removeLinkCardCapacity (NetworkInstanceId netIdCard){
+		List<CapaciteMetier> capacitesToDelete = new List<CapaciteMetier> ();
+
+		foreach (CapaciteMetier capacite in listEffetCapacite) {
+			if (capacite.Reversible && capacite.IdCarteProvenance == netIdCard) {
+				capacitesToDelete.Add (capacite);
+			}
+		}
+
+		foreach (CapaciteMetier capaciteToDelete in capacitesToDelete) {
+			listEffetCapacite.Remove(capaciteToDelete);
+		}
+		//TODO recalculate visual
+	}
+
+	public void capaciteFinTour (){
+		List<CapaciteMetier> capacitesToDelete = new List<CapaciteMetier> ();
+
+		foreach (CapaciteMetier capacite in listEffetCapacite) {
+			bool existeEncore = capacite.endOfTurn ();
+			if (!existeEncore) {
+				capacitesToDelete.Add (capacite);
+			}
+		}
+
+		foreach (CapaciteMetier capaciteToDelete in capacitesToDelete) {
+			listEffetCapacite.Remove(capaciteToDelete);
+		}
+		//TODO recalculate visual
+	}
+		
+	public List<CapaciteMetier> containCapacity(int idTypCapacity){
+		List<CapaciteMetier> listCapacite = new List<CapaciteMetier> ();
+
+		foreach (CapaciteMetier capacite in listEffetCapacite) {
+			if (capacite.getIdTypeCapacite() == idTypCapacity) {
+				listCapacite.Add (capacite);
+			}
+		}
+		return listCapacite;
+	}
+
+
+
+	/************************Hook***********************************/
 	private void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
 		this.idJoueurProprietaire = netIdJoueur;
 		joueurProprietaire = Joueur.getJoueur (netIdJoueur);
 	}
 
+
+	/********************************Dialogue serveur client**************/
 	[ClientRpc]
 	public void RpcDestroyClientCard(){
 		Destroy (gameObject);
-	}
-
-	public string getId(){
-		return id;
 	}
 
 	[Command]
@@ -187,6 +233,13 @@ public abstract class CarteMetierAbstract : NetworkBehaviour {
 		this.idJoueurProprietaire = netIdJoueur;
 	}
 		
+
+
+	/**********************************Getter Setter***************************/
+	public string getId(){
+		return id;
+	}
+
 	public void setJoueurProprietaireServer(NetworkInstanceId netIdJoueur){
 		this.idJoueurProprietaire = netIdJoueur;
 	}

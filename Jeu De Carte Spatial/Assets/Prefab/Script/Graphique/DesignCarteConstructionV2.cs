@@ -111,7 +111,7 @@ public class DesignCarteConstructionV2 {
 	}
 
 	void deleteVisual(){
-		joueurCliquant.carteEnVisuel = false;
+		joueurCliquant.CarteEnVisuel = false;
 		GameObject.Destroy (goParent);
 	}
 

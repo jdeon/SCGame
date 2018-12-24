@@ -14,16 +14,16 @@ public class EmplacementAttaque : EmplacementMetierAbstract {
 		Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
 		if(isMovableByPlayer(joueur)){
-			if (joueur.carteSelectionne is CarteVaisseauMetier && ((CarteVaisseauMetier)joueur.carteSelectionne).isCapableAttaquer ()
-			    && joueur.cartePlanetJoueur.isCarbuSuffisant (((CarteVaisseauMetier)joueur.carteSelectionne).getConsomationCarburant ())) {
+			if (joueur.CarteSelectionne is CarteVaisseauMetier && ((CarteVaisseauMetier)joueur.CarteSelectionne).isCapableAttaquer ()
+				&& joueur.RessourceCarburant.payerRessource (((CarteVaisseauMetier)joueur.CarteSelectionne).getConsomationCarburant ())) {
 
-				base.putCard ((CarteConstructionMetierAbstract) joueur.carteSelectionne);
+				joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
 
-				BoutonTour boutonJoueur = joueur.goPlateau.GetComponentInChildren<BoutonTour> ();
+				BoutonTour boutonJoueur = joueur.GoPlateau.GetComponentInChildren<BoutonTour> ();
 				if (null != boutonJoueur) {
 					boutonJoueur.CmdSetEtatBouton(BoutonTour.enumEtatBouton.attaque);
 				}
-			} else if (listNomCarteExeption.Contains(joueur.carteSelectionne.name)){
+			} else if (listNomCarteExeption.Contains(joueur.CarteSelectionne.name)){
 				//TODO carte en exception
 			}
 		}
