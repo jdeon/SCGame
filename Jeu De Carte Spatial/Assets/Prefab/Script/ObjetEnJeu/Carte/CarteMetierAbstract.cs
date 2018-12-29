@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 
-public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite {
+public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 
 	[SyncVar]
 	protected string id;
@@ -38,17 +38,24 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite {
 	//public abstract string initCarte (); //Besoin carte Ref
 
 	public virtual void OnMouseDown(){
-		if (joueurProprietaire.CarteSelectionne == this) {
-			joueurProprietaire.CarteSelectionne = null;	//On deselectionne au second click
-		} else {
-			joueurProprietaire.CarteSelectionne = this;
-		}
+		if (this is CartePlaneteMetier) {
+			((CartePlaneteMetier)this).onClick ();
+		} else if (this is CarteBatimentMetier) {
+			((CarteBatimentMetier)this).onClick ();
+		} else if (this is CarteDefenseMetier) {
+			((CarteDefenseMetier)this).onClick ();
+		} else if (this is CarteVaisseauMetier) {
+			((CarteVaisseauMetier)this).onClick ();
+		} 
 	}
 
 	public void deplacerCarte(IConteneurCarte nouveauEmplacement, NetworkInstanceId netIdNouveauPossesseur){
 		bool deplacementImpossible = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_IMMOBILE);
 
-		if (!deplacementImpossible) {
+		//TODO que faire pour deplacement vers la mains
+		if (!deplacementImpossible && nouveauEmplacement is ISelectionnable) {
+			PhaseEventManager.CardDeplacement (joueurProprietaire.netId, this, (ISelectionnable) nouveauEmplacement);
+
 			nouveauEmplacement.putCard (this);
 
 			if (netIdNouveauPossesseur != NetworkInstanceId.Invalid && netIdNouveauPossesseur != idJoueurProprietaire) {
@@ -213,7 +220,18 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite {
 		return listCapacite;
 	}
 
+	/*******************ISelectionnable****************/
+	public virtual void onClick (){
+		if (joueurProprietaire.CarteSelectionne == this) {
+			joueurProprietaire.CarteSelectionne = null;	//On deselectionne au second click
+		} else {
+			joueurProprietaire.CarteSelectionne = this;
+		}
+	}
 
+	public void miseEnBrillance(){
+		//TODO mise en brillance
+	}
 
 	/************************Hook***********************************/
 	private void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){

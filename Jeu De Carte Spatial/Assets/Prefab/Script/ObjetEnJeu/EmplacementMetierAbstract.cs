@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCarte {
+public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCarte, ISelectionnable {
 
 	protected int numColone;
 
@@ -17,8 +17,16 @@ public class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCarte {
 		numColone = transform.GetSiblingIndex () + 1;
 	}
 		
+	public void OnMouseDown(){
+		onClick ();
+	}
 
 	public void putCard(CarteMetierAbstract cartePoser){
+		if (cartePoser.getConteneur () is Mains) {
+			PhaseEventManager.PoseCarte (idJoueurPossesseur, cartePoser, this);
+		}
+
+
 		Transform trfmCard = cartePoser.transform;
 
 		if (cartePoser is CarteConstructionMetierAbstract) {
@@ -72,6 +80,14 @@ public class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCarte {
 	}
 
 
+	/*******************ISelectionnable****************/
+	public abstract void onClick ();
+
+	public void miseEnBrillance(){
+		//TODO mise en brillance
+	}
+
+	/************************Getter Setter ***************/
 	public NetworkInstanceId IdJoueurPossesseur {
 		get{return this.idJoueurPossesseur;}
 		set{this.idJoueurPossesseur = value;}

@@ -83,14 +83,16 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 	}
 
 	public void preDefense (CarteVaisseauMetier vaisseauAttaquant){
-		vaisseauAttaquant.recevoirDegat (getPointDegat ());
+		vaisseauAttaquant.recevoirDegat (getPointDegat (), this);
 
 		if (vaisseauAttaquant.OnBoard) {
-			this.recevoirDegat (vaisseauAttaquant.getPointDegat ());
+			this.recevoirDegat (vaisseauAttaquant.getPointDegat (), vaisseauAttaquant);
 		}
 	}
 
 	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
+		PhaseEventManager.Defense (joueurProprietaire.netId, this, vaisseauAttaquant);
+
 		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
 
 		if (!attaqueEvite) {
@@ -111,14 +113,14 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 				int degatRecu = vaisseauAttaquant.getPointDegat ();
 
 				if (attaquePriorite) {
-					int pvDefenseRestante = this.recevoirDegat (degatRecu);
+					int pvDefenseRestante = this.recevoirDegat (degatRecu,vaisseauAttaquant);
 
 					if (pvDefenseRestante > 0) {
-						vaisseauAttaquant.recevoirDegat (degatInfliger);
+						vaisseauAttaquant.recevoirDegat (degatInfliger,this);
 					}
 				} else {
-					vaisseauAttaquant.recevoirDegat (degatInfliger);
-					this.recevoirDegat (degatRecu);
+					vaisseauAttaquant.recevoirDegat (degatInfliger, this);
+					this.recevoirDegat (degatRecu, vaisseauAttaquant);
 				}
 			}
 		}

@@ -39,6 +39,8 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 			NetworkUtils.assignObjectToPlayer (carteConstructionScript, joueurProprietaire.GetComponent<NetworkIdentity> ());
 			byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteConstructionScript.getCarteRef());
 			carteConstructionScript.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
+
+			PhaseEventManager.PiocheConstruction (netIdJoueur);
 		}
 	}
 

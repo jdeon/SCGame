@@ -28,7 +28,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 	/***************************Methode IAttaquer*************************/
 		
 	public void attaqueCarte (CarteConstructionMetierAbstract cible, bool dejaReoriente){
-		//EVENT ATTAQUE
+		PhaseEventManager.Attaque (joueurProprietaire.netId, this, cible);
 
 		bool attaqueReoriente = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_REORIENTE_ATTAQUE);
 		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
@@ -49,7 +49,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 				((IDefendre)cible).defenseSimultanee (this);
 				AttaqueCeTour = true;
 			} else if (cible is IVulnerable) {
-				((IVulnerable)cible).recevoirDegat (getPointDegat ());
+				((IVulnerable)cible).recevoirDegat (getPointDegat (), this);
 				AttaqueCeTour = true;
 			}
 		}
@@ -59,7 +59,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		CartePlaneteMetier cartePlanete = CartePlaneteMetier.getPlaneteEnnemie (getJoueurProprietaire ().netId);
 
 		//TODO point de degat ou cout carte?
-		cartePlanete.recevoirDegat(getPointDegat ());
+		cartePlanete.recevoirDegat(getPointDegat (),this);
 		destruction ();
 	}
 
@@ -71,7 +71,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 			choixDefensePlanete (cible.getJoueurProprietaire ().netId);
 		} 
 
-		cible.recevoirDegat (getPointDegat ());
+		cible.recevoirDegat (getPointDegat (),this);
 
 		return null;
 	}
@@ -154,14 +154,16 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 	/*************************Methode IDefendre********************/
 
 	public void preDefense (CarteVaisseauMetier vaisseauAttaquant){
-		vaisseauAttaquant.recevoirDegat (getPointDegat ());
+		vaisseauAttaquant.recevoirDegat (getPointDegat (), this);
 
 		if (vaisseauAttaquant.OnBoard) {
-			this.recevoirDegat (vaisseauAttaquant.getPointDegat ());
+			this.recevoirDegat (vaisseauAttaquant.getPointDegat (), vaisseauAttaquant);
 		}
 	}
 
 	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
+		PhaseEventManager.Defense (joueurProprietaire.netId, this, vaisseauAttaquant);
+
 		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
 
 		if (!attaqueEvite) {
@@ -183,14 +185,14 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 				int degatRecu = vaisseauAttaquant.getPointDegat ();
 
 				if (attaquePriorite) {
-					int pvDefenseRestante = this.recevoirDegat (degatRecu);
+					int pvDefenseRestante = this.recevoirDegat (degatRecu, vaisseauAttaquant);
 
 					if (pvDefenseRestante > 0) {
-						vaisseauAttaquant.recevoirDegat (degatInfliger);
+						vaisseauAttaquant.recevoirDegat (degatInfliger, this);
 					}
 				} else {
-					vaisseauAttaquant.recevoirDegat (degatInfliger);
-					this.recevoirDegat (degatRecu);
+					vaisseauAttaquant.recevoirDegat (degatInfliger, this);
+					this.recevoirDegat (degatRecu, vaisseauAttaquant);
 				}
 			}
 		}

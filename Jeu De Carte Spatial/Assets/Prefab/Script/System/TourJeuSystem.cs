@@ -120,8 +120,13 @@ public class TourJeuSystem : NetworkBehaviour {
 				}
 
 			} else if (actionPlayer == FIN_TOUR) {
+				Joueur joueurTour = Joueur.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
+
+				int phasePrecedente = phase;
+
 				phase = FIN_TOUR;
-				//TODO appeler capciter de fin de tour
+
+				PhaseEventManager.EndTurn (joueurTour.netId, phasePrecedente);
 
 				GameObject goBtnLastPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
 
@@ -130,7 +135,7 @@ public class TourJeuSystem : NetworkBehaviour {
 					boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.enAttente);
 				}
 				
-				Joueur joueurTour = Joueur.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
+
 				bool tourSupJoueur = 0 < CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacity (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
 
 				if (!tourSupJoueur) { //Pas de tour supplementaire
@@ -148,7 +153,8 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
 			
-				//TODO appeler capaciter de <debut de tour
+				PhaseEventManager.StartTurn (joueurTour.netId);
+
 				bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacity (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
 				initTour(joueurTour);
 

@@ -58,7 +58,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 	/****************** IVulnerable **********************/
 
 	//Retourne PV restant
-	public int recevoirDegat (int nbDegat){
+	public int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat){
 		pointVie -= nbDegat;
 
 		if (pointVie <= 0) {

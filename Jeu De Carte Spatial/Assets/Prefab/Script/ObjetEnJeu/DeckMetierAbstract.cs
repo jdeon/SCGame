@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IAvecCapacite {
+public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IAvecCapacite, ISelectionnable {
 
 	protected Joueur joueurProprietaire;
 
@@ -98,6 +98,17 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 			}
 		}
 		return listCapacite;
+	}
+
+
+	/*******************ISelectionnable****************/
+	public void onClick (){
+		//TODO selectionne
+
+	}
+
+	public void miseEnBrillance(){
+		//TODO mise en brillance
 	}
 
 

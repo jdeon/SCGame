@@ -7,7 +7,7 @@ public class EmplacementAttaque : EmplacementMetierAbstract {
 
 	private static List<string> listNomCarteExeption = new List<string>();
 
-	public void OnMouseDown(){
+	public override void onClick(){
 		//TODO fonction en cours
 
 		GameObject goJoueur = ClientScene.FindLocalObject (this.idJoueurPossesseur);

@@ -378,3 +378,12 @@ public class CapaciteUtils : MonoBehaviour {
 	public static readonly int ID_CAPACITE_ETAT_INVISIBLE = 38;
 	public static readonly int ID_CAPACITE_CONDITION = 100;
 */
+
+/** Action non implemente 
+
+public static readonly int ID_CONDITION_ACTION_PIOCHE_AMELIORATION = 2;
+public static readonly int ID_CONDITION_ACTION_POSE_AMELIORATION = 4;
+public static readonly int ID_CONDITION_ACTION_UTILISE = 9;
+public static readonly int ID_CONDITION_ACTION_GAIN_XP = 12;
+
+*/

@@ -44,28 +44,6 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		return initDo;
 	}
 
-	public override void OnMouseDown(){
-		Joueur joueurLocal = Joueur.getJoueurLocal ();
-
-		if (null != joueurLocal) {
-			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
-
-			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
-			if (systemTour.getPhase (joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
-			    && null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.getJoueurProprietaire () != joueurProprietaire
-			    && joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
-
-				//TODO vérifier l'emplacement sol
-				((IAttaquer)joueurLocal.CarteSelectionne).attaqueCarte (this, false);
-			} else {
-				base.OnMouseDown ();
-			}
-		} else {
-			base.OnMouseDown ();
-		}
-	}
-
-
 	public int getCoutMetal(){
 		int coutMetal = 0;
 
@@ -335,11 +313,16 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		return result;
 	}
 
+	/***********************IVulnerable*****************/
+
 	//Retourne PV restant
-	public int recevoirDegat (int nbDegat){
+	public int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat){
 		bool invulnerable = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_INVULNERABLE);
 
-		if (!invulnerable) {
+		if (!invulnerable && nbDegat > 0) {
+			PhaseEventManager.RecoitDegat (joueurProprietaire.netId, this, sourceDegat);
+
+
 			PV -= nbDegat;
 			if (PV <= 0) {
 				destruction ();
@@ -351,6 +334,8 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	public void destruction (){
 		if (!joueurProprietaire.isServer) {
+			PhaseEventManager.Destruction (joueurProprietaire.netId, this, null);
+
 			CmdDestuction ();
 			Destroy (gameObject);
 			onBoard = false;
@@ -365,27 +350,152 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		getJoueurProprietaire ().CimetiereConstruction.addCarte (this);
 	}
 
-	/************************************Envent catcher****/
-	public void useStartTurnCapacity(NetworkInstanceId netIdJoueur){
-		List<CapaciteDTO> capaciteStartTurn = new List<CapaciteDTO> ();
+	/*****************ISelectionnable*****************/
+	public override void onClick(){
+		Joueur joueurLocal = Joueur.getJoueurLocal ();
 
-		for (int nivCapacity = 1; nivCapacity <= this.NiveauActuel; nivCapacity++) {
-			foreach (CapaciteDTO capacite in carteRef.ListNiveau[nivCapacity-1].Capacite) {
-				if (CapaciteUtils.isCapaciteCall (capacite,listEffetCapacite, netIdJoueur == this.idJoueurProprietaire, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR)) {
-					capaciteStartTurn.Add (capacite);
-				}
+		if (null != joueurLocal) {
+			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
+
+			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
+			if (systemTour.getPhase (joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
+				&& null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.getJoueurProprietaire () != joueurProprietaire
+				&& joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
+
+				//TODO vérifier l'emplacement sol
+				((IAttaquer)joueurLocal.CarteSelectionne).attaqueCarte (this, false);
+			} else {
+				base.onClick ();
 			}
+		} else {
+			base.onClick ();
 		}
-	
-		EmplacementMetierAbstract emplacementActuel = null;
-		if (null != transform.parent) {
-			emplacementActuel = transform.parent.gameObject.GetComponent<EmplacementMetierAbstract> ();
-		}
-
 	}
 
 
+	/************************************Envent catcher****/
+	private void initEvent(){
+		PhaseEventManager.onStartTurn += useStartTurnCapacity;
+		PhaseEventManager.onPiocheConstruction += usePiocheConstructionPhaseCapacity;
+		PhaseEventManager.onFinPhaseAttaque += useEndPhaseAttaqueCapacity;
+		PhaseEventManager.onEndTurn += useEndTurnCapacity;
 
+		PhaseEventManager.onPoseConstruction += usePoseConstructionCapacity;
+		PhaseEventManager.onAttaque += useAttaqueCapacity;
+		PhaseEventManager.onDefense += useDefenseCapacity;
+		PhaseEventManager.onDestruction += useDestructionCapacity;
+		PhaseEventManager.onInvocation += useInvocationCapacity;
+		PhaseEventManager.onRecoitDegat += useRecoitDegatCapacity;
+		PhaseEventManager.onCardDeplacement += useDeplacementCapacity;
+	}
+
+
+	public void useStartTurnCapacity(NetworkInstanceId netIdJoueur){
+		List<CapaciteDTO> capaciteStartTurn = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR);
+
+		foreach (CapaciteDTO capacite in capaciteStartTurn) {
+			CapaciteUtils.callCapacite (this, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, 0);
+		}
+	}
+
+	public void usePiocheConstructionPhaseCapacity(NetworkInstanceId netIdJoueur){
+		List<CapaciteDTO> capacitePicheConstr = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION);
+
+		foreach (CapaciteDTO capacite in capacitePicheConstr) {
+			CapaciteUtils.callCapacite (this, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION, 0);
+		}
+	}
+
+	public void useEndPhaseAttaqueCapacity(NetworkInstanceId netIdJoueur){
+		List<CapaciteDTO> capaciteEndAttaque  = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE);
+
+		foreach (CapaciteDTO capacite in capaciteEndAttaque) {
+			CapaciteUtils.callCapacite (this, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE, 0);
+		}
+	}
+
+	public void useEndTurnCapacity(NetworkInstanceId netIdJoueur){
+		List<CapaciteDTO> capaciteEndTurn = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR);
+
+		foreach (CapaciteDTO capacite in capaciteEndTurn) {
+			CapaciteUtils.callCapacite (this, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, 0);
+		}
+	}
+
+
+	public void usePoseConstructionCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+		List<CapaciteDTO> capacitePoseConstruction = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION);
+
+		foreach (CapaciteDTO capacite in capacitePoseConstruction) {
+			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION, 0);
+		}
+	}
+
+	public void useAttaqueCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+		List<CapaciteDTO> capaciteAttaque = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE);
+
+		foreach (CapaciteDTO capacite in capaciteAttaque) {
+			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, 0);
+		}
+	}
+
+	public void useDefenseCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+		List<CapaciteDTO> capaciteDefense = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND);
+
+		foreach (CapaciteDTO capacite in capaciteDefense) {
+			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, 0);
+		}
+	}
+
+	public void useDestructionCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+		List<CapaciteDTO> capaciteDestruction = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE);
+
+		foreach (CapaciteDTO capacite in capaciteDestruction) {
+			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, 0);
+		}
+	}
+
+	public void useInvocationCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+		List<CapaciteDTO> capaciteInvocation = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION);
+
+		foreach (CapaciteDTO capacite in capaciteInvocation) {
+			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION, 0);
+		}
+	}
+
+	public void useRecoitDegatCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+		List<CapaciteDTO> capaciteDegatRecu = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT);
+
+		foreach (CapaciteDTO capacite in capaciteDegatRecu) {
+			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, 0);
+		}
+	}
+
+	public void useDeplacementCapacity (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+		if (cible is EmplacementAttaque) {
+			List<CapaciteDTO> capaciteDeplacementAttaque = getListCapaciteToCall (netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE);
+
+			foreach (CapaciteDTO capacite in capaciteDeplacementAttaque) {
+				CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE, 0);
+			}
+		}
+	}
+
+	private List<CapaciteDTO> getListCapaciteToCall(NetworkInstanceId netIdJoueur, int idTypActionCapacite){
+		List<CapaciteDTO> capaciteToCall = new List<CapaciteDTO> ();
+
+		for (int nivCapacity = 1; nivCapacity <= this.NiveauActuel; nivCapacity++) {
+			foreach (CapaciteDTO capacite in carteRef.ListNiveau[nivCapacity-1].Capacite) {
+				if (CapaciteUtils.isCapaciteCall (capacite,listEffetCapacite, netIdJoueur == this.idJoueurProprietaire, idTypActionCapacite)) {
+					capaciteToCall.Add (capacite);
+				}
+			}
+		}
+
+		return capaciteToCall;
+	}
+
+	/******************************Getter et Setter ************************/
 	public CarteConstructionDTO getCarteRef ()
 	{
 		return carteRef;

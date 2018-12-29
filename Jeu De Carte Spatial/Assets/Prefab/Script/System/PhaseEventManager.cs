@@ -42,7 +42,7 @@ public class PhaseEventManager : MonoBehaviour {
 	}
 
 
-	public delegate void CardEventHandler(NetworkInstanceId netIdJoueur);
+	public delegate void CardEventHandler(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible);
 
 	public static event CardEventHandler onPoseConstruction;
 	public static event CardEventHandler onPoseAmelioration;
@@ -55,60 +55,61 @@ public class PhaseEventManager : MonoBehaviour {
 	public static event CardEventHandler onRecoitDegat;
 	public static event CardEventHandler onCardDeplacement;
 
-	public static void PoseCarte (NetworkInstanceId netIdJoueur, CarteMetierAbstract carte){
-		if (carte is CarteConstructionMetierAbstract && null != onPoseConstruction) {
-			onPoseConstruction (netIdJoueur);
+	public static void PoseCarte (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible){
+		if (carteOrigineAction is CarteConstructionMetierAbstract && null != onPoseConstruction) {
+			onPoseConstruction (netIdJoueur, carteOrigineAction, cible);
 		}
 
 		//TODO carteAmeliration
-		/*if (carte is CarteAmeliorationMetier && null != onPoseConstruction) {
+		/*if (carteOrigineAction is CarteAmeliorationMetier && null != onPoseConstruction) {
 			onPoseConstruction (netIdJoueur);
 		}*/
 
 		if (null != onInvocation) {
-			onInvocation (netIdJoueur);
+			//TODO carteInvoque?
+			onInvocation (netIdJoueur, carteOrigineAction, cible);
 		}
 	}
 
-	public static void Attaque (NetworkInstanceId netIdJoueur){
+	public static void Attaque (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible){
 		if (null != onAttaque) {
-			onAttaque (netIdJoueur);
+			onAttaque (netIdJoueur, carteOrigineAction, cible);
 		}
 	}
 
-	public static void Defense (NetworkInstanceId netIdJoueur){
+	public static void Defense (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible){
 		if (null != onDefense) {
-			onDefense (netIdJoueur);
+			onDefense (netIdJoueur, carteOrigineAction, cible);
 		}
 	}
 
-	public static void Utilise (NetworkInstanceId netIdJoueur){
+	public static void Utilise (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible){
 		if (null != onUtilise) {
-			onUtilise (netIdJoueur);
+			onUtilise (netIdJoueur, carteOrigineAction, cible);
 		}
 	}
 
-	public static void Destruction (NetworkInstanceId netIdJoueur){
+	public static void Destruction (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible){
 		if (null != onDestruction) {
-			onDestruction (netIdJoueur);
+			onDestruction (netIdJoueur, carteOrigineAction, cible);
 		}
 	}
 
-	public static void XPGain (NetworkInstanceId netIdJoueur){
+	public static void XPGain (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible){
 		if (null != onXPGain) {
-			onXPGain (netIdJoueur);
+			onXPGain (netIdJoueur, carteOrigineAction, cible);
 		}
 	}
 
-	public static void RecoitDegat (NetworkInstanceId netIdJoueur){
+	public static void RecoitDegat (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible){
 		if (null != onRecoitDegat) {
-			onRecoitDegat(netIdJoueur);
+			onRecoitDegat(netIdJoueur, carteOrigineAction, cible);
 		}
 	}
 
-	public static void CardDeplacement (NetworkInstanceId netIdJoueur){
+	public static void CardDeplacement (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible){
 		if (null != onCardDeplacement) {
-			onCardDeplacement (netIdJoueur);
+			onCardDeplacement (netIdJoueur, carteOrigineAction, cible);
 		}
 	}
 }

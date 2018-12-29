@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class RessourceMetier : NetworkBehaviour {
+public class RessourceMetier : NetworkBehaviour, ISelectionnable {
 
 	[SerializeField]
 	private string typeRessource;
@@ -93,6 +93,17 @@ public class RessourceMetier : NetworkBehaviour {
 
 		return result;
 	}
+
+	/*******************ISelectionnable****************/
+	public void onClick (){
+		//TODO selectionne
+
+	}
+
+	public void miseEnBrillance(){
+		//TODO mise en brillance
+	}
+
 
 	/*************************Hook*********************/
 	public void onChangeProd(int prod){
