@@ -19,10 +19,11 @@ MonoBehaviour:
   appelUnique: 1
   lierACarte: 1
   choixCible: 0
-  duree: 1000
+  duree: 100
+  nbCible: 1
   conditionCible:
-  - 14-A
+  - 9-A
   conditionEmplacement:
-  - 1-A
+  - 16-A
   conditionAction:
   - 9-P

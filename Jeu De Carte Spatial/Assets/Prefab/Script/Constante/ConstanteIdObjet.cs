@@ -117,7 +117,7 @@ public class ConstanteIdObjet {
 
 	public static readonly int ID_CONDITION_CIBLE_VAISSEAU = 8;
 
-	//public static readonly int ID_CONDITION_CIBLE_RESSOURCE = 9;
+	public static readonly int ID_CONDITION_CIBLE_RESSOURCE = 9;
 
 	public static readonly int ID_CONDITION_CIBLE_MODULE = 10;
 
@@ -127,9 +127,9 @@ public class ConstanteIdObjet {
 
 	public static readonly int ID_CONDITION_CIBLE_DETERIORATION = 13;
 
-	public static readonly int ID_CONDITION_CIBLE_METAL = 14;
+	//public static readonly int ID_CONDITION_CIBLE_METAUX = 14;
 
-	public static readonly int ID_CONDITION_CIBLE_CARBURANT = 15;
+	//public static readonly int ID_CONDITION_CIBLE_CARBURANT = 15;
 
 
 	/*********************************ID_CONDTION_EMPLACEMENT**********************/
@@ -166,7 +166,11 @@ public class ConstanteIdObjet {
 
 	public static readonly int ID_CONDITION_EMPLACEMENT_CARTE_PLANETE = 15;
 
+	public static readonly int ID_CONDITION_EMPLACEMENT_RESSOURCE_METAL = 16;
 
+	public static readonly int ID_CONDITION_EMPLACEMENT_RESSOURCE_CARBURANT = 17;
+
+	public static readonly int ID_CONDITION_EMPLACEMENT_RESSOURCE_XP = 18;
 
 
 	/**********************************ID_CONDITION_ACTION*************************/
@@ -200,4 +204,6 @@ public class ConstanteIdObjet {
 	public static readonly int ID_CONDITION_ACTION_RECOIT_DEGAT = 14;
 
 	public static readonly int ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE = 15;
+
+	public static readonly int ID_CONDITION_ACTION_EVOLUTION_CARTE = 16;
 }

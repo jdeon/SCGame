@@ -209,15 +209,27 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		//TODO recalculate visual
 	}
 		
-	public List<CapaciteMetier> containCapacity(int idTypCapacity){
+	public List<CapaciteMetier> containCapacityOfType(int idTypCapacity){
 		List<CapaciteMetier> listCapacite = new List<CapaciteMetier> ();
 
 		foreach (CapaciteMetier capacite in listEffetCapacite) {
-			if (capacite.getIdTypeCapacite() == idTypCapacity) {
+			if (capacite.IdTypeCapacite == idTypCapacity) {
 				listCapacite.Add (capacite);
 			}
 		}
 		return listCapacite;
+	}
+
+	public bool containCapacityWithId (int idCapacityDTO){
+		bool contain = false;
+
+		foreach (CapaciteMetier capacite in listEffetCapacite) {
+			if (capacite.IdCapaciteProvenance == idCapacityDTO) {
+				contain = true;
+				break;
+			}
+		}
+		return contain;
 	}
 
 	/*******************ISelectionnable****************/

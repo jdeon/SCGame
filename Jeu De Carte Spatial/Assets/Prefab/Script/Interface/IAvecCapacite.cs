@@ -13,5 +13,7 @@ public interface IAvecCapacite {
 
 	void capaciteFinTour ();
 
-	List<CapaciteMetier> containCapacity(int idTypCapacity);
+	List<CapaciteMetier> containCapacityOfType(int idTypCapacity);
+
+	bool containCapacityWithId (int idCapacityDTO);
 }

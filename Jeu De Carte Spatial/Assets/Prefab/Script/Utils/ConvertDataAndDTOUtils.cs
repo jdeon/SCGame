@@ -16,6 +16,7 @@ public class ConvertDataAndDTOUtils {
 		capaciteDTOResult.LierACarte = capaciteData.lierACarte;
 		capaciteDTOResult.ChoixCible = capaciteData.choixCible;
 		capaciteDTOResult.Duree = capaciteData.duree;
+		capaciteDTOResult.NbCible = capaciteData.nbCible;
 
 		capaciteDTOResult.ConditionsCible = new List<string> ();
 		if (null != capaciteData.conditionCible) {

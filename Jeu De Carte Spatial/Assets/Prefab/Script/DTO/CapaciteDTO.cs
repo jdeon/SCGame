@@ -5,6 +5,14 @@ using UnityEngine;
 [System.Serializable]
 public class CapaciteDTO {
 
+	public static int idSequence = 0;
+
+	public CapaciteDTO (){
+		Id = ++idSequence;
+	}
+
+	public int Id { get; }
+
 	public string Nom{ get; set; }
 
 	public int Capacite{ get; set; }
@@ -23,8 +31,10 @@ public class CapaciteDTO {
 
 	public bool ChoixCible{ get; set; }
 
-	//L effet ce dissipe au bout de n tour (-1 pour infini)
+	//L effet ce dissipe au bout de n tour
 	public int Duree{ get; set; }
+
+	public int NbCible{ get; set; }
 
 	//stocker sous forme id+"_"+{A et/ou E si allier ou ennemie)
 	public List<string> ConditionsCible{ get; set; }

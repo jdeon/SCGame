@@ -20,9 +20,10 @@ MonoBehaviour:
   lierACarte: 1
   choixCible: 0
   duree: 100
+  nbCible: 1
   conditionCible:
-  - 15-A
+  - 9-A
   conditionEmplacement:
-  - 1-A
+  - 17-A
   conditionAction:
   - 9-P

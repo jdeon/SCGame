@@ -24,7 +24,7 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 
 		if( null != ListCapaciteDeck){
 			foreach(CapaciteMetier capaciteCourante in ListCapaciteDeck){
-				if (capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_NB_CARTE_PIOCHE)) {
+				if (capaciteCourante.IdTypeCapacite.Equals (ConstanteIdObjet.ID_CAPACITE_MODIF_NB_CARTE_PIOCHE)) {
 					nbCartePioche = capaciteCourante.getNewValue (nbCartePioche);
 				}
 			}
@@ -89,15 +89,27 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 		//TODO recalculate visual
 	}
 		
-	public List<CapaciteMetier>  containCapacity(int idTypCapacity){
+	public List<CapaciteMetier>  containCapacityOfType(int idTypCapacity){
 		List<CapaciteMetier> listCapacite = new List<CapaciteMetier> ();
 
 		foreach (CapaciteMetier capacite in listCapaciteDeck) {
-			if (capacite.getIdTypeCapacite() == idTypCapacity) {
+			if (capacite.IdTypeCapacite == idTypCapacity) {
 				listCapacite.Add (capacite);
 			}
 		}
 		return listCapacite;
+	}
+
+	public bool containCapacityWithId (int idCapacityDTO){
+		bool contain = false;
+
+		foreach (CapaciteMetier capacite in listCapaciteDeck) {
+			if (capacite.IdCapaciteProvenance == idCapacityDTO) {
+				contain = true;
+				break;
+			}
+		}
+		return contain;
 	}
 
 

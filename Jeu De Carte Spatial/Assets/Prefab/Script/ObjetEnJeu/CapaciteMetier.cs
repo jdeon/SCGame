@@ -11,6 +11,8 @@ public class CapaciteMetier  {
 
 	private NetworkInstanceId idCarteProvenance;
 
+	private int idCapaciteProvenance;
+
 	//CapaciteDTO
 	private int idTypeCapacite;
 
@@ -22,8 +24,9 @@ public class CapaciteMetier  {
 
 	private float nbTourRestant;
 
-	public CapaciteMetier(int idTypeCapacite,ConstanteEnum.TypeCalcul idTypeOperation, int valeurOperation, NetworkInstanceId idCarteProvenance, bool reversible){
+	public CapaciteMetier(int idTypeCapacite,int idCapaciteDTO, ConstanteEnum.TypeCalcul idTypeOperation, int valeurOperation, NetworkInstanceId idCarteProvenance, bool reversible){
 		id = "Capa_" + sequenceId++;
+		this.idCapaciteProvenance = idCapaciteDTO;
 		this.idTypeCapacite = idTypeCapacite;
 		this.idCarteProvenance = idCarteProvenance;
 		this.idTypeOperation = idTypeOperation;
@@ -47,8 +50,12 @@ public class CapaciteMetier  {
 		get{ return idCarteProvenance; }
 	}
 
-	public int getIdTypeCapacite(){
-		return idTypeCapacite;
+	public int IdCapaciteProvenance{
+		get {return idCapaciteProvenance;}
+	}
+
+	public int IdTypeCapacite{
+		get {return idTypeCapacite;}
 	}
 
 	public bool Reversible {

@@ -298,15 +298,27 @@ public class Joueur : NetworkBehaviour, IAvecCapacite {
 		//TODO recalculate visual
 	}
 
-	public List<CapaciteMetier>  containCapacity(int idTypCapacity){
+	public List<CapaciteMetier>  containCapacityOfType(int idTypCapacity){
 		List<CapaciteMetier> listCapaciteResult = new List<CapaciteMetier> ();
 
 		foreach (CapaciteMetier capacite in listCapacite) {
-			if (capacite.getIdTypeCapacite() == idTypCapacity) {
+			if (capacite.IdTypeCapacite == idTypCapacity) {
 				listCapaciteResult.Add (capacite);
 			}
 		}
 		return listCapaciteResult;
+	}
+
+	public bool containCapacityWithId (int idCapacityDTO){
+		bool contain = false;
+
+		foreach (CapaciteMetier capacite in listCapacite) {
+			if (capacite.IdCapaciteProvenance == idCapacityDTO) {
+				contain = true;
+				break;
+			}
+		}
+		return contain;
 	}
 
 

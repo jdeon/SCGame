@@ -8,21 +8,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: b79f9f8ea1ae0874dbc228fd26071104, type: 3}
   m_Name: InvocationBouclierRegenerantPlaneteSolAtmosphereMajeur
-  m_EditorClassIdentifier: Assembly-CSharp::CapaciteInvocationModuleCible
+  m_EditorClassIdentifier: 
   nom: InvocationBouclierRegenerantPlaneteSolAtmosphereMajeur
   capacite: 28
   quantite: 1
   typeCalcul: 0
+  specification: 
   appelUnique: 1
+  lierACarte: 0
   choixCible: 0
   duree: 100
+  nbCible: 1
   conditionCible:
   - 11-A
   conditionEmplacement:
-  - 1-A
+  - 1-P
   conditionAction:
-  - 9-A
+  - 9-P
   moduleAInvoquer: {fileID: 11400000, guid: 04749fda0e0408641b79a793841fc339, type: 2}
   comportementSiModulSimilaire: 1

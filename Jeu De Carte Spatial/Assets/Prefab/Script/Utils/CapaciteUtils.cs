@@ -13,9 +13,9 @@ public class CapaciteUtils : MonoBehaviour {
 
 		if( null != listCapaciteCarte){
 			foreach(CapaciteMetier capaciteCourante in listCapaciteCarte){
-				if(capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_ETAT_SANS_EFFET)){
+				if(capaciteCourante.IdTypeCapacite ==ConstanteIdObjet.ID_CAPACITE_ETAT_SANS_EFFET){
 					valeurIncapacite = capaciteCourante.getNewValue (valeurIncapacite);
-				} else if (capaciteCourante.getIdTypeCapacite ().Equals (idTypCapacite)) {
+				} else if (capaciteCourante.IdTypeCapacite == idTypCapacite) {
 					valeurAvecCapacite = capaciteCourante.getNewValue (valeurAvecCapacite);
 				}
 			}
@@ -40,7 +40,7 @@ public class CapaciteUtils : MonoBehaviour {
 				int valeurIncapacite = 0;
 				if( null != listCapaciteCarteSource){
 					foreach(CapaciteMetier capaciteCourante in listCapaciteCarteSource){
-						if(capaciteCourante.getIdTypeCapacite ().Equals (ConstanteIdObjet.ID_CAPACITE_ETAT_SANS_EFFET)){
+						if(capaciteCourante.IdTypeCapacite.Equals (ConstanteIdObjet.ID_CAPACITE_ETAT_SANS_EFFET)){
 							valeurIncapacite = capaciteCourante.getNewValue (valeurIncapacite);
 						} 
 					}
@@ -54,7 +54,7 @@ public class CapaciteUtils : MonoBehaviour {
 		return capable;
 	}
 
-	public static void callCapacite(CarteMetierAbstract carteSource, ISelectionnable cible, CapaciteDTO capacite, NetworkInstanceId netIdJoueur, int actionAppelante, int nbCibleMax){
+	public static void callCapacite(CarteMetierAbstract carteSourceCapacite, CarteMetierAbstract carteSourceAction, ISelectionnable cible, CapaciteDTO capacite, NetworkInstanceId netIdJoueur, int actionAppelante){
 
 		int idCapacite = capacite.Capacite; 
 
@@ -64,8 +64,10 @@ public class CapaciteUtils : MonoBehaviour {
 
 
 		if (ConditionCarteUtils.listIdCapacitePourCarte.Contains (idCapacite) && (null == cible || cible is CarteMetierAbstract)) {
-			List<CarteMetierAbstract> cartesCible = getCartesCible (carteSource, (CarteMetierAbstract)cible, capacite, netIdJoueur);
+			List<CarteMetierAbstract> cartesCible = getCartesCible (carteSourceCapacite, (CarteMetierAbstract)cible, capacite, netIdJoueur);
 			//TODO use ConstanteIdObjet.ID_CAPACITE_CONDITION
+
+			int nbCibleMax = capacite.NbCible;
 			while (nbCibleMax > 0 && cartesCible.Count > 0) {
 				CarteMetierAbstract carteCible = cartesCible [Random.Range (0, cartesCible.Count)];
 
@@ -73,7 +75,7 @@ public class CapaciteUtils : MonoBehaviour {
 					//TODO Effet immediat
 				} else {
 				
-					CapaciteMetier capaciteMetier = convertCapaciteDTOToMetier (capacite,idCapacite, carteSource.netId);
+					CapaciteMetier capaciteMetier = convertCapaciteDTOToMetier (capacite,idCapacite, carteSourceCapacite.netId);
 					carteCible.addCapacity (capaciteMetier);
 				}
 
@@ -82,37 +84,37 @@ public class CapaciteUtils : MonoBehaviour {
 
 			}
 		} else {
-			traitementSpeciaux (idCapacite , capacite, carteSource, netIdJoueur, NetworkInstanceId.Invalid /*TODO cible.netIdJoueurCible*/);
+			traitementSpeciaux (idCapacite , capacite, carteSourceCapacite, carteSourceCapacite, netIdJoueur, NetworkInstanceId.Invalid /*TODO cible.netIdJoueurCible*/, actionAppelante);
 
 		}
 	}
 
-	public static int getNewValue(int oldValue, CapaciteDTO capacite){
+	public static int getNewValue(int oldValue, int quantite, ConstanteEnum.TypeCalcul typeCalcul){
 
 		int newValue;
 
-		switch (capacite.ModeCalcul) {
+		switch (typeCalcul) {
 		case ConstanteEnum.TypeCalcul.RemiseA:
-			newValue = capacite.Quantite;
+			newValue = quantite;
 			break;
 		case ConstanteEnum.TypeCalcul.Ajout: 
-			newValue = oldValue + capacite.Quantite;
+			newValue = oldValue + quantite;
 			break;
 		case ConstanteEnum.TypeCalcul.Multiplication :
-			newValue = oldValue * capacite.Quantite;
+			newValue = oldValue * quantite;
 			break;
 		case ConstanteEnum.TypeCalcul.Division:	
-			newValue = oldValue / capacite.Quantite;
+			newValue = oldValue / quantite;
 			break;
 		case ConstanteEnum.TypeCalcul.Des:
-			newValue = (int) Random.Range(0,capacite.Quantite+1);
+			newValue = (int) Random.Range(0,quantite+1);
 			break;
 		case ConstanteEnum.TypeCalcul.Chance: 
-			newValue = Random.Range(0,capacite.Quantite+1) >= capacite.Quantite ? 1 : 0;
+			newValue = Random.Range(0,quantite+1) >= quantite ? 1 : 0;
 			break;
 		case ConstanteEnum.TypeCalcul.SuperieurARessource:
 			int ressource = 2;//TODO modifier pour bonne value
-			newValue = capacite.Quantite >= ressource ? ressource - capacite.Quantite : 0;
+			newValue = quantite >= ressource ? ressource - quantite : 0;
 			break;
 		default :
 			newValue = oldValue;
@@ -124,7 +126,7 @@ public class CapaciteUtils : MonoBehaviour {
 
 	public static CapaciteMetier convertCapaciteDTOToMetier(CapaciteDTO capaciteDTO,int idTypeCapacite, NetworkInstanceId netIdCard){
 		//TODO prendre en compte module
-		return new CapaciteMetier (idTypeCapacite,capaciteDTO.ModeCalcul,capaciteDTO.Quantite,netIdCard, capaciteDTO.LierACarte);
+		return new CapaciteMetier (idTypeCapacite,capaciteDTO.Id,capaciteDTO.ModeCalcul,capaciteDTO.Quantite,netIdCard, capaciteDTO.LierACarte);
 	}
 		
 	public static List<CarteMetierAbstract> getCartesCible (CarteMetierAbstract carteOrigin, CarteMetierAbstract carteCible,CapaciteDTO capacite, NetworkInstanceId netIdJoueur){
@@ -145,8 +147,18 @@ public class CapaciteUtils : MonoBehaviour {
 			string[] tabConditionCible = conditionCible.Split (char.Parse("-"));
 			if (tabConditionCible.Length >= 2) {
 				int idCible = int.Parse (tabConditionCible [0]);
+				List<CarteMetierAbstract> listCartesCibleProbable = ConditionCarteUtils.getMethodeCarteCible(idCible, tabConditionCible[1],listEmplacementsCible,carteOrigin,netIdJoueur);
 
-				listCartesCible.AddRange(ConditionCarteUtils.getMethodeCarteCible(idCible, tabConditionCible[1],listEmplacementsCible,carteOrigin,netIdJoueur));
+				if (capacite.AppelUnique) {
+					foreach (CarteMetierAbstract carteProbable in listCartesCibleProbable) {
+						//On vérifie que la carte ne possède pas déjà l'effet
+						if(! carteProbable.containCapacityWithId(capacite.Id)){
+							listCartesCible.Add (carteProbable);
+						}
+					}
+				} else {
+					listCartesCible.AddRange(listCartesCibleProbable);
+				}
 			}
 		}
 			
@@ -184,50 +196,70 @@ public class CapaciteUtils : MonoBehaviour {
 		}
 	}
 
-	private static void traitementSpeciaux (int idTypeCapacite, CapaciteDTO capacite, CarteMetierAbstract carteSource, NetworkInstanceId netIdJoueurAction, NetworkInstanceId netIdJoueurCible){
-
+	private static void traitementSpeciaux (int idTypeCapacite, CapaciteDTO capacite, CarteMetierAbstract carteSourceCapacite, CarteMetierAbstract carteSourceAction, NetworkInstanceId netIdJoueurAction, NetworkInstanceId netIdJoueurCible, int actionAppelante){
+		//TODO utilisation de nbCible
 		if (idTypeCapacite == ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE) {
-			List<RessourceMetier> ressourcesCible = getRessourceCible (capacite.ConditionsCible, netIdJoueurAction, netIdJoueurCible, carteSource);
+			List<RessourceMetier> ressourcesCible = getRessourceCible (capacite.ConditionsEmplacement, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
 
-			foreach (RessourceMetier ressource in ressourcesCible) {
+			CarteMetierAbstract carte;
+			//En cas de destruction ou d invocation la carte rechercher pour les ressource est la carte d action
+			if (null == carteSourceCapacite || actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE || actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION) {
+				carte = carteSourceAction;
+			} else {
+				carte = carteSourceCapacite;
+			}
+
+			foreach (RessourceMetier ressource in ressourcesCible) {	
 				int productionActuel = ressource.Production;
-				int gain = getNewValue (productionActuel, capacite);
 
-				if (-gain > productionActuel) {	//Cas ou les gain son negatif et superieur à la produciton
-					gain = -productionActuel;
-				}
+				int newProd = getQuantiteForRessource(capacite,ressource,carte,false);
 
-				ressource.Production = gain;
+				ressource.Production = newProd > 0 ? newProd : 0;
 			}
 
 		} else if (idTypeCapacite == ConstanteIdObjet.ID_CAPACITE_MODIF_STOCK_RESSOURCE) {
-			List<RessourceMetier> ressourcesCible = getRessourceCible (capacite.ConditionsCible, netIdJoueurAction, netIdJoueurCible, carteSource);
+			List<RessourceMetier> ressourcesCible = getRessourceCible (capacite.ConditionsEmplacement, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
+
+			CarteMetierAbstract carte;
+			//En cas de destruction ou d invocation la carte rechercher pour les ressource est la carte d action
+			if (null == carteSourceCapacite || actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE || actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION) {
+				carte = carteSourceAction;
+			} else {
+				carte = carteSourceCapacite;
+			}
 
 			foreach (RessourceMetier ressource in ressourcesCible) {
 				int stockActuel = ressource.Stock;
-				int gain = getNewValue (stockActuel, capacite);
 
-				if (-gain > stockActuel) {	//Cas ou les gain son negatif et superieur à la stock
-					gain = -stockActuel;
-				}
+				int newStock = getQuantiteForRessource(capacite,ressource,carte,true);
 
-				ressource.Stock = gain;
+				ressource.Stock = newStock > 0 ? newStock : 0;
 			}
 
-		} else if (idTypeCapacite == ConstanteIdObjet.ID_CAPACITE_VOL_RESSOURCE && null != carteSource && null != carteSource.getJoueurProprietaire()) {
-			List<RessourceMetier> ressourcesCible = getRessourceCible (capacite.ConditionsCible, netIdJoueurAction, netIdJoueurCible, carteSource);
+		} else if (idTypeCapacite == ConstanteIdObjet.ID_CAPACITE_VOL_RESSOURCE && null != carteSourceCapacite && null != carteSourceCapacite.getJoueurProprietaire()) {
+			List<RessourceMetier> ressourcesCible = getRessourceCible (capacite.ConditionsEmplacement, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
+
+			CarteMetierAbstract carte;
+			//En cas de destruction ou d invocation la carte rechercher pour les ressource est la carte d action
+			if (null == carteSourceCapacite || actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE || actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION) {
+				carte = carteSourceAction;
+			} else {
+				carte = carteSourceCapacite;
+			}
 
 			foreach (RessourceMetier ressource in ressourcesCible) {
-				if (ressource.NetIdJoueur != carteSource.getJoueurProprietaire ().netId) { //on ne peut se voler soit même
+				if (ressource.NetIdJoueur != carteSourceCapacite.getJoueurProprietaire ().netId) { //on ne peut se voler soit même
 					int stockActuel = ressource.Stock;
-					int montantVoler = getNewValue (stockActuel, capacite);
+
+					int newStock = getQuantiteForRessource(capacite,ressource,carte,true);
+					int montantVoler = newStock - stockActuel;
 
 					if (ressource.Stock < montantVoler) {
 						montantVoler = ressource.Stock;
 					}
 
 					ressource.Stock -= montantVoler;
-					int montantReelVole = carteSource.getJoueurProprietaire ().addRessource (ressource.TypeRessource, montantVoler);
+					int montantReelVole = carteSourceCapacite.getJoueurProprietaire ().addRessource (ressource.TypeRessource, montantVoler);
 
 					if (montantReelVole != montantVoler) {
 						ressource.Stock += montantVoler - montantReelVole;
@@ -235,11 +267,21 @@ public class CapaciteUtils : MonoBehaviour {
 				}
 			}
 		} else if (idTypeCapacite == ConstanteIdObjet.ID_CAPACITE_MODIF_TYPE_RESSOURCE) {
-			List<RessourceMetier> ressourcesCible = getRessourceCible (capacite.ConditionsCible, netIdJoueurAction, netIdJoueurCible, carteSource);
+			List<RessourceMetier> ressourcesCible = getRessourceCible (capacite.ConditionsEmplacement, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
+
+			CarteMetierAbstract carte;
+			//En cas de destruction ou d invocation la carte rechercher pour les ressource est la carte d action
+			if (null == carteSourceCapacite || actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE || actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION) {
+				carte = carteSourceAction;
+			} else {
+				carte = carteSourceCapacite;
+			}
 
 			foreach (RessourceMetier ressource in ressourcesCible) {
-					int stockActuel = ressource.Stock;
-					int montantEchange = getNewValue (stockActuel, capacite);
+				int stockActuel = ressource.Stock;
+
+				int newStock = getQuantiteForRessource(capacite,ressource,carte,true);
+				int montantEchange = newStock - stockActuel;
 
 				if (ressource.Stock < montantEchange) {
 					montantEchange = ressource.Stock;
@@ -263,8 +305,8 @@ public class CapaciteUtils : MonoBehaviour {
 					}
 			}
 		} else if (idTypeCapacite == ConstanteIdObjet.ID_CAPACITE_MODIF_NB_CARTE_PIOCHE) {
-			CapaciteMetier capaciteMetier = convertCapaciteDTOToMetier (capacite,idTypeCapacite, carteSource.netId);
-			List<DeckMetierAbstract> decksCible = getDecksCibles (capacite.ConditionsCible, netIdJoueurAction, netIdJoueurCible, carteSource);
+			CapaciteMetier capaciteMetier = convertCapaciteDTOToMetier (capacite,idTypeCapacite, carteSourceCapacite.netId);
+			List<DeckMetierAbstract> decksCible = getDecksCibles (capacite.ConditionsCible, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
 			foreach (DeckMetierAbstract deck in decksCible) {
 				deck.ListCapaciteDeck.Add (capaciteMetier);
 			}
@@ -274,8 +316,8 @@ public class CapaciteUtils : MonoBehaviour {
 			List<DeckMetierAbstract> listDeckCible = new List<DeckMetierAbstract>();
 
 			foreach (string conditionCible in capacite.ConditionsCible) {
-				HashSet<Joueur> joueursCible = getJoueursCible (conditionCible, netIdJoueurAction, netIdJoueurCible, carteSource);
-				CapaciteMetier capaciteMetier = convertCapaciteDTOToMetier (capacite,idTypeCapacite, carteSource.netId);
+				HashSet<Joueur> joueursCible = getJoueursCible (conditionCible, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
+				CapaciteMetier capaciteMetier = convertCapaciteDTOToMetier (capacite,idTypeCapacite, carteSourceCapacite.netId);
 				foreach (Joueur joueurCible in joueursCible) {
 					joueurCible.addCapacity (capaciteMetier);
 				}
@@ -288,22 +330,52 @@ public class CapaciteUtils : MonoBehaviour {
 		}
 	}
 
-	private static List<RessourceMetier> getRessourceCible (List<string> listConditionsCible, NetworkInstanceId netIdJoueurSource, NetworkInstanceId netIdJoueurCible, CarteMetierAbstract carteSouce){
+	private static List<RessourceMetier> getRessourceCible (List<string> listConditionsEmplacement, NetworkInstanceId netIdJoueurSource, NetworkInstanceId netIdJoueurCible, CarteMetierAbstract carteSouce){
 		List<RessourceMetier> listRessourceCible = new List<RessourceMetier>();
 
-		foreach (string conditionCible in listConditionsCible) {
-			HashSet<Joueur> joueursCible = getJoueursCible (conditionCible, netIdJoueurSource, netIdJoueurCible, carteSouce);
+		foreach (string conditionEmplacement in listConditionsEmplacement) {
+			HashSet<Joueur> joueursCible = getJoueursCible (conditionEmplacement, netIdJoueurSource, netIdJoueurCible, carteSouce);
 
 			foreach (Joueur joueurRessource in joueursCible) {
-				if (conditionCible.Contains (ConstanteIdObjet.ID_CONDITION_CIBLE_METAL.ToString ())) {
+				if (conditionEmplacement.Contains (ConstanteIdObjet.ID_CONDITION_EMPLACEMENT_RESSOURCE_METAL.ToString ())) {
 					listRessourceCible.Add (joueurRessource.RessourceMetal);
-				} else if (conditionCible.Contains (ConstanteIdObjet.ID_CONDITION_CIBLE_CARBURANT.ToString ())) {
+				} else if (conditionEmplacement.Contains (ConstanteIdObjet.ID_CONDITION_EMPLACEMENT_RESSOURCE_CARBURANT.ToString ())) {
 					listRessourceCible.Add (joueurRessource.RessourceCarburant);
 				}
 			}
 		}
-
 		return listRessourceCible;
+	}
+
+	private static int getQuantiteForRessource (CapaciteDTO capaciteSoutce, RessourceMetier ressource, CarteMetierAbstract carte, bool isStock){
+		int result = isStock ? ressource.Stock : ressource.Production;
+
+		foreach (string conditionCible in capaciteSoutce.ConditionsCible) {
+			if (conditionCible.Contains (ConstanteIdObjet.ID_CONDITION_CIBLE_RESSOURCE.ToString ())) {
+				if (isStock) {
+					result = getNewValue (ressource.Stock, capaciteSoutce.Quantite, capaciteSoutce.ModeCalcul);
+				} else {
+					result = getNewValue (ressource.Production, capaciteSoutce.Quantite, capaciteSoutce.ModeCalcul);
+				}
+
+			} else if ((conditionCible.Contains (ConstanteIdObjet.ID_CONDITION_CIBLE_BATIMENT.ToString ()) && carte is CarteBatimentMetier) 
+				|| (conditionCible.Contains (ConstanteIdObjet.ID_CONDITION_CIBLE_DEFENSE.ToString ()) && carte is CarteDefenseMetier)
+				||(conditionCible.Contains (ConstanteIdObjet.ID_CONDITION_CIBLE_VAISSEAU.ToString ()) && carte is CarteVaisseauMetier)){
+				int ajouterAuRessource = 0;
+				if (ressource.TypeRessource == "Metal") {
+					ajouterAuRessource = getNewValue (((CarteConstructionMetierAbstract) carte).getCoutMetalReelCarte (), capaciteSoutce.Quantite, capaciteSoutce.ModeCalcul);
+				} else if (carte is CarteVaisseauMetier && ressource.TypeRessource == "Carburant") {
+					ajouterAuRessource = getNewValue (((CarteVaisseauMetier)carte).getConsomationCarburant (), capaciteSoutce.Quantite, capaciteSoutce.ModeCalcul);
+				} else if (ressource.TypeRessource == "XP") {
+					ajouterAuRessource = getNewValue (((CarteConstructionMetierAbstract)carte).NiveauActuel, capaciteSoutce.Quantite, capaciteSoutce.ModeCalcul);
+				}
+				//TODO autre cible ?
+
+				result += ajouterAuRessource;
+			}
+		}
+
+		return result;
 	}
 
 	private static List<DeckMetierAbstract> getDecksCibles (List<string> listConditionsCible, NetworkInstanceId netIdJoueurSource, NetworkInstanceId netIdJoueurCible, CarteMetierAbstract carteSouce){
@@ -385,5 +457,6 @@ public static readonly int ID_CONDITION_ACTION_PIOCHE_AMELIORATION = 2;
 public static readonly int ID_CONDITION_ACTION_POSE_AMELIORATION = 4;
 public static readonly int ID_CONDITION_ACTION_UTILISE = 9;
 public static readonly int ID_CONDITION_ACTION_GAIN_XP = 12;
+ID_CONDITION_ACTION_EVOLUTION_CARTE = 16
 
 */

@@ -15,10 +15,12 @@ MonoBehaviour:
   capacite: 10
   quantite: -1
   typeCalcul: 1
-  specification: 
+  specification: 1
   appelUnique: 0
+  lierACarte: 0
   choixCible: 0
   duree: 0
+  nbCible: 0
   conditionCible:
   - 6-AE
   - 7-AE

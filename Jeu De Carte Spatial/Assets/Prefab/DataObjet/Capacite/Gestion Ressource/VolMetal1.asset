@@ -11,17 +11,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bdf8ce15a2aac74c817133c61e9dd97, type: 3}
   m_Name: VolMetal1
   m_EditorClassIdentifier: 
-  nom: "Vol au 2 m\xE9tal \xE0 l'\xE9nemie"
+  nom: "Vol au 1 m\xE9tal \xE0 l'\xE9nemie"
   capacite: 36
   quantite: 1
   typeCalcul: 0
   specification: 
   appelUnique: 0
+  lierACarte: 0
   choixCible: 0
   duree: 100
+  nbCible: 1
   conditionCible:
-  - 14-E
+  - 9-E
   conditionEmplacement:
-  - 1-A
+  - 16-E
   conditionAction:
   - 9-P

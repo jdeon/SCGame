@@ -15,9 +15,12 @@ MonoBehaviour:
   capacite: 12
   quantite: 5
   typeCalcul: 6
+  specification: 
   appelUnique: 0
+  lierACarte: 0
   choixCible: 0
   duree: 100
+  nbCible: 100
   conditionCible:
   - 8-E
   conditionEmplacement:

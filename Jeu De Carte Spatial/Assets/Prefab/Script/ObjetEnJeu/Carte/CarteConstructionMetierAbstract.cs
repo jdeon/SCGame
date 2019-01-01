@@ -68,6 +68,19 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		return coutMetal;
 	}
 
+	/**Renvoi le coup de la carte et de ses evolution construite*/
+	public int getCoutMetalReelCarte (){
+		int coutMetal = 0;
+
+		//La construction n'est pas au niveau maximum
+		for(int niv = 1 ; niv <= NiveauActuel; niv++) {
+			//cout du prochain niveau
+			coutMetal += carteRef.ListNiveau [niv].Cout;
+		}
+
+		return coutMetal;
+	}
+
 	public int getPVMax(){
 		return CapaciteUtils.valeurAvecCapacite (carteRef.PointVieMax, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_PV_MAX);
 	}
@@ -394,7 +407,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capaciteStartTurn = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR);
 
 		foreach (CapaciteDTO capacite in capaciteStartTurn) {
-			CapaciteUtils.callCapacite (this, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, 0);
+			CapaciteUtils.callCapacite (this,null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR);
 		}
 	}
 
@@ -402,7 +415,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capacitePicheConstr = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION);
 
 		foreach (CapaciteDTO capacite in capacitePicheConstr) {
-			CapaciteUtils.callCapacite (this, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION, 0);
+			CapaciteUtils.callCapacite (this,null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION);
 		}
 	}
 
@@ -410,7 +423,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capaciteEndAttaque  = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE);
 
 		foreach (CapaciteDTO capacite in capaciteEndAttaque) {
-			CapaciteUtils.callCapacite (this, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE, 0);
+			CapaciteUtils.callCapacite (this,null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE);
 		}
 	}
 
@@ -418,7 +431,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capaciteEndTurn = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR);
 
 		foreach (CapaciteDTO capacite in capaciteEndTurn) {
-			CapaciteUtils.callCapacite (this, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, 0);
+			CapaciteUtils.callCapacite (this,null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR);
 		}
 	}
 
@@ -427,7 +440,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capacitePoseConstruction = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION);
 
 		foreach (CapaciteDTO capacite in capacitePoseConstruction) {
-			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION, 0);
+			CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION);
 		}
 	}
 
@@ -435,7 +448,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capaciteAttaque = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE);
 
 		foreach (CapaciteDTO capacite in capaciteAttaque) {
-			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, 0);
+			CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE);
 		}
 	}
 
@@ -443,7 +456,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capaciteDefense = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND);
 
 		foreach (CapaciteDTO capacite in capaciteDefense) {
-			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, 0);
+			CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND);
 		}
 	}
 
@@ -451,7 +464,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capaciteDestruction = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE);
 
 		foreach (CapaciteDTO capacite in capaciteDestruction) {
-			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, 0);
+			CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE);
 		}
 	}
 
@@ -459,7 +472,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capaciteInvocation = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION);
 
 		foreach (CapaciteDTO capacite in capaciteInvocation) {
-			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION, 0);
+			CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION);
 		}
 	}
 
@@ -467,7 +480,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capaciteDegatRecu = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT);
 
 		foreach (CapaciteDTO capacite in capaciteDegatRecu) {
-			CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, 0);
+			CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT);
 		}
 	}
 
@@ -476,7 +489,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 			List<CapaciteDTO> capaciteDeplacementAttaque = getListCapaciteToCall (netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE);
 
 			foreach (CapaciteDTO capacite in capaciteDeplacementAttaque) {
-				CapaciteUtils.callCapacite (this, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE, 0);
+				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE);
 			}
 		}
 	}

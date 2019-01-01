@@ -17,8 +17,10 @@ MonoBehaviour:
   typeCalcul: 0
   specification: 
   appelUnique: 0
+  lierACarte: 0
   choixCible: 0
   duree: 2
+  nbCible: 1
   conditionCible:
   - 6-AE
   - 7-AE

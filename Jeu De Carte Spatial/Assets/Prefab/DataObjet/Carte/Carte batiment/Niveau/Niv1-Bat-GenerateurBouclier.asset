@@ -17,6 +17,8 @@ MonoBehaviour:
   citationNiveau: 
   numNiveau: 1
   cout: 4
-  manuelle: 0
   capacite:
-  - {fileID: 11400000, guid: 6043272a82aa6f448b20c44d8d0a53d1, type: 2}
+  - {fileID: 11400000, guid: 1dfab1c2e56c4324291d3efbc02a15cb, type: 2}
+  typeNbCapaciteAuxChoix: 0
+  valeurTypeCapaciteAuxChoix: 0
+  capaciteManuelle: []

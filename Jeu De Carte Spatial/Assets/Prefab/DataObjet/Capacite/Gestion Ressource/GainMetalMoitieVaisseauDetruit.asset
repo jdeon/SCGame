@@ -15,17 +15,17 @@ MonoBehaviour:
   capacite: 4
   quantite: 2
   typeCalcul: 3
-  specification: Metal
+  specification: 
   appelUnique: 0
+  lierACarte: 0
   choixCible: 0
-  duree: 0
+  duree: 100
+  nbCible: 100
   conditionCible:
   - 6-E
   - 7-E
   - 8-E
   conditionEmplacement:
-  - 8-E
-  - 9-E
-  - 10-E
+  - 16-A
   conditionAction:
   - 10-E

@@ -17,11 +17,14 @@ MonoBehaviour:
   typeCalcul: 0
   specification: 
   appelUnique: 0
+  lierACarte: 0
   choixCible: 0
   duree: 11
+  nbCible: 1
   conditionCible:
   - 10-A
   conditionEmplacement:
   - 1-P
   conditionAction:
   - 13-P
+  - 16-P

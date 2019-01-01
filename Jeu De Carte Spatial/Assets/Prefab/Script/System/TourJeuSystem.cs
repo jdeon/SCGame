@@ -136,7 +136,7 @@ public class TourJeuSystem : NetworkBehaviour {
 				}
 				
 
-				bool tourSupJoueur = 0 < CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacity (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
+				bool tourSupJoueur = 0 < CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
 
 				if (!tourSupJoueur) { //Pas de tour supplementaire
 
@@ -155,7 +155,7 @@ public class TourJeuSystem : NetworkBehaviour {
 			
 				PhaseEventManager.StartTurn (joueurTour.netId);
 
-				bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacity (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
+				bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
 				initTour(joueurTour);
 
 				if (perteTour) {//Perte de tour
