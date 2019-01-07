@@ -23,7 +23,7 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 
 	public void putCard(CarteMetierAbstract cartePoser){
 		if (cartePoser.getConteneur () is Mains) {
-			PhaseEventManager.PoseCarte (idJoueurPossesseur, cartePoser, this);
+			ActionEventManager.EventActionManager.CmdPoseCarte (idJoueurPossesseur, cartePoser, this);
 		}
 
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class Joueur : NetworkBehaviour, IAvecCapacite {
+public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 
 	[SerializeField][SyncVar]
 	private string pseudo = "Test";
@@ -320,6 +320,19 @@ public class Joueur : NetworkBehaviour, IAvecCapacite {
 		}
 		return contain;
 	}
+
+
+	/*******************ISelectionnable****************/
+	public virtual void onClick (){
+		//TODO pass par le terrain
+	}
+
+	public void miseEnBrillance(){
+		//TODO mise en brillance
+	}
+
+
+	/*******************Getter et setter***************/
 
 
 	public string Pseudo {

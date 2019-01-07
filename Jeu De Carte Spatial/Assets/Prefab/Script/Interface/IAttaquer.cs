@@ -6,9 +6,9 @@ public interface IAttaquer  {
 
 	//void goLigneAttaque (EmplacementAttaque cible);
 
-	void attaqueCarte (CarteConstructionMetierAbstract cible, bool dejaReoriente);
+	IEnumerator attaqueCarte (CarteConstructionMetierAbstract cible, int idCoroutine);
 
-	IEnumerator attaquePlanete (CartePlaneteMetier cible);
+	IEnumerator attaquePlanete (CartePlaneteMetier cible, int idCoroutine);
 
 	bool isCapableAttaquer ();
 

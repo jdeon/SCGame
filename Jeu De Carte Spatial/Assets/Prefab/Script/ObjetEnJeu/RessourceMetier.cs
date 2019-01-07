@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class RessourceMetier : NetworkBehaviour, ISelectionnable {
+public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite {
 
 	[SerializeField]
 	private string typeRessource;
@@ -24,6 +24,8 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable {
 	private string prefixeRessourceProd;
 
 	private string prefixeRessourceStock;
+
+	private List<CapaciteMetier> listCapaciteRessource = new List<CapaciteMetier> ();
 
 	//TODO cree des constante
 	private static string getPrefixeProd(string typeRessource){
@@ -104,6 +106,66 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable {
 		//TODO mise en brillance
 	}
 
+	/*******************IAvecCapacity*****************/
+
+	public void addCapacity (CapaciteMetier capaToAdd){
+		listCapaciteRessource.Add (capaToAdd);
+		//TODO recalculate visual
+	}
+
+	public void removeLinkCardCapacity (NetworkInstanceId netIdCard){
+		List<CapaciteMetier> capacitesToDelete = new List<CapaciteMetier> ();
+
+		foreach (CapaciteMetier capacite in listCapaciteRessource) {
+			if (capacite.Reversible && capacite.IdCarteProvenance == netIdCard) {
+				capacitesToDelete.Add (capacite);
+			}
+		}
+
+		foreach (CapaciteMetier capaciteToDelete in capacitesToDelete) {
+			listCapaciteRessource.Remove(capaciteToDelete);
+		}
+		//TODO recalculate visual
+	}
+
+	public void capaciteFinTour (){
+		List<CapaciteMetier> capacitesToDelete = new List<CapaciteMetier> ();
+
+		foreach (CapaciteMetier capacite in listCapaciteRessource) {
+			bool existeEncore = capacite.endOfTurn ();
+			if (!existeEncore) {
+				capacitesToDelete.Add (capacite);
+			}
+		}
+
+		foreach (CapaciteMetier capaciteToDelete in capacitesToDelete) {
+			listCapaciteRessource.Remove(capaciteToDelete);
+		}
+		//TODO recalculate visual
+	}
+
+	public List<CapaciteMetier> containCapacityOfType(int idTypCapacity){
+		List<CapaciteMetier> listCapacite = new List<CapaciteMetier> ();
+
+		foreach (CapaciteMetier capacite in listCapaciteRessource) {
+			if (capacite.IdTypeCapacite == idTypCapacity) {
+				listCapacite.Add (capacite);
+			}
+		}
+		return listCapacite;
+	}
+
+	public bool containCapacityWithId (int idCapacityDTO){
+		bool contain = false;
+
+		foreach (CapaciteMetier capacite in listCapaciteRessource) {
+			if (capacite.IdCapaciteProvenance == idCapacityDTO) {
+				contain = true;
+				break;
+			}
+		}
+		return contain;
+	}
 
 	/*************************Hook*********************/
 	public void onChangeProd(int prod){

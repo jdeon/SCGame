@@ -15,6 +15,7 @@ public class TourJeuSystem : NetworkBehaviour {
 	public static readonly int PHASE_DEFENSE = 4;
 	public static readonly int FIN_TOUR = 5;
 
+
 	public bool tester;
 
 	private List<JoueurMinimalDTO> listJoueurs;
@@ -126,7 +127,7 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				phase = FIN_TOUR;
 
-				PhaseEventManager.EndTurn (joueurTour.netId, phasePrecedente);
+				ActionEventManager.EventActionManager.CmdEndTurn (joueurTour.netId, phasePrecedente);
 
 				GameObject goBtnLastPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
 
@@ -153,7 +154,7 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
 			
-				PhaseEventManager.StartTurn (joueurTour.netId);
+				ActionEventManager.EventActionManager.CmdStartTurn (joueurTour.netId);
 
 				bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
 				initTour(joueurTour);
@@ -298,7 +299,7 @@ public class TourJeuSystem : NetworkBehaviour {
 		}
 	}
 
-
+	/************************Getter et Setter****************/
 	public int getPhase(){
 		return phase;
 	}

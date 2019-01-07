@@ -54,7 +54,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 		//TODO que faire pour deplacement vers la mains
 		if (!deplacementImpossible && nouveauEmplacement is ISelectionnable) {
-			PhaseEventManager.CardDeplacement (joueurProprietaire.netId, this, (ISelectionnable) nouveauEmplacement);
+			ActionEventManager.EventActionManager.CmdCardDeplacement (joueurProprietaire.netId, this, (ISelectionnable) nouveauEmplacement);
 
 			nouveauEmplacement.putCard (this);
 

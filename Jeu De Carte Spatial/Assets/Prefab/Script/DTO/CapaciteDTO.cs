@@ -11,6 +11,11 @@ public class CapaciteDTO {
 		Id = ++idSequence;
 	}
 
+	//Utilise pour clone
+	public CapaciteDTO (int id){
+		Id = id;
+	}
+
 	public int Id { get; }
 
 	public string Nom{ get; set; }
@@ -48,4 +53,43 @@ public class CapaciteDTO {
 	public ConstanteEnum.TypeInvocation ComportementSiModulSimilaire{ get; set; }
 
 	public int NiveauInvocation{ get; set; }
+
+	public CapaciteDTO Clone(){
+		CapaciteDTO clone = new CapaciteDTO (this.Id);
+		clone.Nom = this.Nom;
+		clone.Capacite = this.Capacite;
+		clone.Quantite = this.Quantite;
+		clone.ModeCalcul = this.ModeCalcul;  //TODO clone enum obligatoire?
+		clone.Specification = this.Specification;
+		clone.AppelUnique = this.AppelUnique;
+		clone.LierACarte = this.LierACarte;
+		clone.ChoixCible = this.ChoixCible;
+		clone.Duree = this.Duree;
+		clone.NbCible = this.NbCible;
+
+		clone.ConditionsCible = new List<string>();
+		foreach (string conditionCible in this.ConditionsCible){
+			clone.ConditionsCible.Add(conditionCible);
+		}
+
+
+		clone.ConditionsEmplacement = new List<string>();
+		foreach (string conditionEmplacement in this.ConditionsEmplacement){
+			clone.ConditionsEmplacement.Add(conditionEmplacement);
+		}
+
+		clone.ConditionsAction = new List<string>();
+		foreach (string conditionAction in this.ConditionsAction){
+			clone.ConditionsAction.Add(conditionAction);
+		}
+			
+		//TODO Clone carte?
+		clone.CarteInvocation = this.CarteInvocation;
+
+		clone.ComportementSiModulSimilaire = this.ComportementSiModulSimilaire;   //TODO clone enum obligatoire?
+
+		clone.NiveauInvocation = this.NiveauInvocation;
+
+		return clone;
+	}
 }

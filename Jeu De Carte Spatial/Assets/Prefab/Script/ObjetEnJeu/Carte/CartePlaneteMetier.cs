@@ -57,19 +57,21 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 
 	/****************** IVulnerable **********************/
 
-	//Retourne PV restant
-	public int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat){
+
+	public IEnumerator recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat){
 		pointVie -= nbDegat;
 
 		if (pointVie <= 0) {
 			destruction ();
 		}
 
-		return pointVie;
+		yield return null;
 	}
 
-	public void destruction (){
+	public IEnumerator destruction (){
 		//TODO fonction victoire
+
+		yield return null;
 	}
 
 
@@ -106,7 +108,8 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 			    && null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.getJoueurProprietaire () != joueurProprietaire
 			    && joueurLocal.CarteSelectionne is IAttaquer && !((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 				//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
-				((IAttaquer)joueurLocal.CarteSelectionne).attaquePlanete (this);
+				ActionEventManager.EventActionManager.CmdAddNewCoroutine();
+				StartCoroutine(((IAttaquer)joueurLocal.CarteSelectionne).attaquePlanete (this, ActionEventManager.EventActionManager.nextIdCoroutine));
 			} else {
 				base.OnMouseDown ();
 			}

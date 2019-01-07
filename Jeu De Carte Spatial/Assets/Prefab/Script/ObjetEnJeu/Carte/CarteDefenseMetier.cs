@@ -82,16 +82,18 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		return ConstanteInGame.colorDefense;
 	}
 
-	public void preDefense (CarteVaisseauMetier vaisseauAttaquant){
+	public IEnumerator preDefense (CarteVaisseauMetier vaisseauAttaquant){
 		vaisseauAttaquant.recevoirDegat (getPointDegat (), this);
 
 		if (vaisseauAttaquant.OnBoard) {
 			this.recevoirDegat (vaisseauAttaquant.getPointDegat (), vaisseauAttaquant);
 		}
+
+		yield return null;
 	}
 
-	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
-		PhaseEventManager.Defense (joueurProprietaire.netId, this, vaisseauAttaquant);
+	public IEnumerator defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
+		ActionEventManager.EventActionManager.CmdDefense (joueurProprietaire.netId, this, vaisseauAttaquant);
 
 		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
 
@@ -103,9 +105,9 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 				CarteMetierAbstract cible = listCartes [Random.Range (0, listCartes.Count)];
 
 				if (cible is CarteConstructionMetierAbstract) {
-					vaisseauAttaquant.attaqueCarte ((CarteConstructionMetierAbstract)cible, true);
+					vaisseauAttaquant.attaqueCarte ((CarteConstructionMetierAbstract)cible, -1);
 				} else if (cible is CartePlaneteMetier) {
-					vaisseauAttaquant.attaquePlanete ((CartePlaneteMetier)cible);
+					vaisseauAttaquant.attaquePlanete ((CartePlaneteMetier)cible, -1);
 				}
 			} else {
 				bool attaquePriorite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ATTAQUE_OPPORTUNITE);
@@ -113,9 +115,9 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 				int degatRecu = vaisseauAttaquant.getPointDegat ();
 
 				if (attaquePriorite) {
-					int pvDefenseRestante = this.recevoirDegat (degatRecu,vaisseauAttaquant);
+					this.recevoirDegat (degatRecu,vaisseauAttaquant);
 
-					if (pvDefenseRestante > 0) {
+					if (this.PV > 0) {
 						vaisseauAttaquant.recevoirDegat (degatInfliger,this);
 					}
 				} else {
@@ -124,6 +126,8 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 				}
 			}
 		}
+
+		yield return null;
 	}
 
 	public bool isCapableDefendre (){

@@ -5,6 +5,9 @@ using UnityEngine.Networking;
 
 public class EmplacementUtils {
 
+	/**
+	 * Si idJoueur égal idInvalid alors on regarde chez tous les joueur
+	 * */
 	public static List<T> getListEmplacementJoueur <T> (NetworkInstanceId idJoueur) where T : EmplacementMetierAbstract{
 		List<T> listEmplacementJoueur = new List<T> ();
 
@@ -12,7 +15,7 @@ public class EmplacementUtils {
 
 		if (null != listEmplacement && listEmplacement.Length > 0) {
 			foreach (T emplacement in listEmplacement) {
-				if (emplacement.IdJoueurPossesseur == idJoueur) {
+				if (idJoueur == NetworkInstanceId.Invalid ||  emplacement.IdJoueurPossesseur == idJoueur) {
 					listEmplacementJoueur.Add (emplacement);
 				}
 			}
@@ -20,6 +23,9 @@ public class EmplacementUtils {
 		return listEmplacementJoueur;
 	}
 
+	/**
+	 * Si idJoueur égal idInvalid alors on regarde chez tous les joueur
+	 * */
 	public static List<T> getListEmplacementLibreJoueur <T> (NetworkInstanceId idJoueur) where T : EmplacementMetierAbstract{
 		List<T> listEmplacementLibre = new List<T>();
 
@@ -27,7 +33,7 @@ public class EmplacementUtils {
 
 		if (null != listEmplacement && listEmplacement.Length > 0) {
 			foreach (T emplacement in listEmplacement) {
-				if (emplacement.IdJoueurPossesseur == idJoueur && ((EmplacementMetierAbstract)emplacement).transform.childCount == 0) {
+				if ((idJoueur == NetworkInstanceId.Invalid ||  emplacement.IdJoueurPossesseur == idJoueur) && ((EmplacementMetierAbstract)emplacement).transform.childCount == 0) {
 					listEmplacementLibre.Add (emplacement);
 				}
 			}
@@ -35,6 +41,9 @@ public class EmplacementUtils {
 		return listEmplacementLibre;
 	}
 
+	/**
+	 * Si idJoueur égal idInvalid alors on regarde chez tous les joueur
+	 * */
 	public static List<T> getListEmplacementOccuperJoueur <T> (NetworkInstanceId idJoueur) where T : EmplacementMetierAbstract{
 		List<T> listEmplacementLibre = new List<T> ();
 
@@ -42,7 +51,7 @@ public class EmplacementUtils {
 
 		if (null != listEmplacement && listEmplacement.Length > 0) {
 			foreach (T emplacement in listEmplacement) {
-				if (emplacement.IdJoueurPossesseur == idJoueur && emplacement.transform.childCount > 0
+				if ((idJoueur == NetworkInstanceId.Invalid ||  emplacement.IdJoueurPossesseur == idJoueur) && emplacement.transform.childCount > 0
 					&& emplacement.gameObject.GetComponentInChildren<CarteMetierAbstract> ()) {
 					listEmplacementLibre.Add (emplacement);
 				}

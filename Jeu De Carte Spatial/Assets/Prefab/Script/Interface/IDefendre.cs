@@ -4,9 +4,9 @@ using UnityEngine;
 
 public interface IDefendre {
 
-	void preDefense (CarteVaisseauMetier vaisseauAttaquant);
+	IEnumerator preDefense (CarteVaisseauMetier vaisseauAttaquant);
 
-	void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant);
+	IEnumerator defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant);
 
 	bool isCapableDefendre ();
 

@@ -26,20 +26,32 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 	}
 
 	/***************************Methode IAttaquer*************************/
-		
-	public void attaqueCarte (CarteConstructionMetierAbstract cible, bool dejaReoriente){
-		PhaseEventManager.Attaque (joueurProprietaire.netId, this, cible);
+
+	public IEnumerator attaqueCarte (CarteConstructionMetierAbstract cible, int idCoroutine){
+		bool provenanceAutreCoroutine = idCoroutine < 0;
+
+		if (! provenanceAutreCoroutine) {
+			TourJeuSystem tourJeu = TourJeuSystem.getTourSystem ();
+			while (null != tourJeu && idCoroutine != ActionEventManager.EventActionManager.IdCoroutineEnCours) {
+				yield return null;
+			}
+
+			ActionEventManager.EventActionManager.CmdAttaque (joueurProprietaire.netId, this, cible);
+		}
+
+
+
 
 		bool attaqueReoriente = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_REORIENTE_ATTAQUE);
 		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
 
 		if (!attaqueEvite) {
-			if (attaqueReoriente && !dejaReoriente) {
+			if (attaqueReoriente && !provenanceAutreCoroutine) { //Si idCoroutine est null alors ce n'est pas une action appeler diretement mais une action rappelé par
 				List<CarteMetierAbstract> listCartes = CarteUtils.getListCarteCibleReorientation (this, cible);
 				CarteMetierAbstract cibleReoriente = listCartes [Random.Range (0, listCartes.Count)];
 
 				if (cibleReoriente is CartePlaneteMetier) {
-					attaquePlanete ((CartePlaneteMetier)cibleReoriente);
+					attaquePlanete ((CartePlaneteMetier)cibleReoriente, -1);
 				} else if (cibleReoriente is CarteConstructionMetierAbstract) {
 					cible = (CarteConstructionMetierAbstract)cibleReoriente;
 				}
@@ -52,6 +64,13 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 				((IVulnerable)cible).recevoirDegat (getPointDegat (), this);
 				AttaqueCeTour = true;
 			}
+		} else {
+			//TODO anim evite
+		}
+
+		if (idCoroutine != null) {
+			TourJeuSystem tourJeu = TourJeuSystem.getTourSystem ();
+			ActionEventManager.EventActionManager.CmdEndOfCoroutine ();
 		}
 	}
 
@@ -63,7 +82,19 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		destruction ();
 	}
 
-	public IEnumerator attaquePlanete (CartePlaneteMetier cible){
+	public IEnumerator attaquePlanete (CartePlaneteMetier cible, int idCoroutine){
+		bool provenanceAutreCoroutine = idCoroutine < 0;
+
+		if (! provenanceAutreCoroutine) {
+			TourJeuSystem tourJeu = TourJeuSystem.getTourSystem ();
+			while (null != tourJeu && idCoroutine != ActionEventManager.EventActionManager.IdCoroutineEnCours) {
+				yield return null;
+			}
+
+			ActionEventManager.EventActionManager.CmdAttaque (joueurProprietaire.netId, this, cible);
+		}
+
+
 		//TODO
 		bool modeFurtif = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_FURTIF); 
 
@@ -73,7 +104,12 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 
 		cible.recevoirDegat (getPointDegat (),this);
 
-		return null;
+		if (idCoroutine != null) {
+			TourJeuSystem tourJeu = TourJeuSystem.getTourSystem ();
+			ActionEventManager.EventActionManager.CmdEndOfCoroutine ();
+		}
+
+		yield return null;
 	}
 
 	public bool isCapableAttaquer (){
@@ -153,16 +189,18 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 
 	/*************************Methode IDefendre********************/
 
-	public void preDefense (CarteVaisseauMetier vaisseauAttaquant){
+	public IEnumerator preDefense (CarteVaisseauMetier vaisseauAttaquant){
 		vaisseauAttaquant.recevoirDegat (getPointDegat (), this);
 
 		if (vaisseauAttaquant.OnBoard) {
 			this.recevoirDegat (vaisseauAttaquant.getPointDegat (), vaisseauAttaquant);
 		}
+
+		yield return null;
 	}
 
-	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
-		PhaseEventManager.Defense (joueurProprietaire.netId, this, vaisseauAttaquant);
+	public IEnumerator defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
+		ActionEventManager.EventActionManager.CmdDefense (joueurProprietaire.netId, this, vaisseauAttaquant);
 
 		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
 
@@ -174,9 +212,9 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 				CarteMetierAbstract cible = listCartes [Random.Range (0, listCartes.Count)];
 
 				if (cible is CarteConstructionMetierAbstract) {
-					vaisseauAttaquant.attaqueCarte ((CarteConstructionMetierAbstract)cible, true);
+					vaisseauAttaquant.attaqueCarte ((CarteConstructionMetierAbstract)cible, -1);
 				} else if (cible is CartePlaneteMetier) {
-					vaisseauAttaquant.attaquePlanete ((CartePlaneteMetier)cible);
+					vaisseauAttaquant.attaquePlanete ((CartePlaneteMetier)cible,-1);
 				}
 
 			} else {
@@ -185,9 +223,8 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 				int degatRecu = vaisseauAttaquant.getPointDegat ();
 
 				if (attaquePriorite) {
-					int pvDefenseRestante = this.recevoirDegat (degatRecu, vaisseauAttaquant);
-
-					if (pvDefenseRestante > 0) {
+					
+					if (this.PV > 0) {
 						vaisseauAttaquant.recevoirDegat (degatInfliger, this);
 					}
 				} else {
@@ -196,6 +233,8 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 				}
 			}
 		}
+
+		yield return null;
 	}
 
 	public bool isCapableDefendre (){

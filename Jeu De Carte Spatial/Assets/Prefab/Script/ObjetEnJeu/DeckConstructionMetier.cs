@@ -40,7 +40,7 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 			byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteConstructionScript.getCarteRef());
 			carteConstructionScript.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
 
-			PhaseEventManager.PiocheConstruction (netIdJoueur);
+			ActionEventManager.EventActionManager.CmdPiocheConstruction (netIdJoueur);
 		}
 	}
 

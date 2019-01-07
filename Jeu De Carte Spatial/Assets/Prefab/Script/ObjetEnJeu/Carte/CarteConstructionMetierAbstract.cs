@@ -329,12 +329,11 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	/***********************IVulnerable*****************/
 
 	//Retourne PV restant
-	public int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat){
+	public IEnumerator recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat){
 		bool invulnerable = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_INVULNERABLE);
 
 		if (!invulnerable && nbDegat > 0) {
-			PhaseEventManager.RecoitDegat (joueurProprietaire.netId, this, sourceDegat);
-
+			ActionEventManager.EventActionManager.CmdRecoitDegat (joueurProprietaire.netId, this, sourceDegat);
 
 			PV -= nbDegat;
 			if (PV <= 0) {
@@ -342,17 +341,19 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 			}
 		}
 
-		return PV;
+		yield return null;
 	}
 
-	public void destruction (){
+	public IEnumerator destruction (){
 		if (!joueurProprietaire.isServer) {
-			PhaseEventManager.Destruction (joueurProprietaire.netId, this, null);
+			ActionEventManager.EventActionManager.CmdDestruction (joueurProprietaire.netId, this, null);
 
 			CmdDestuction ();
 			Destroy (gameObject);
 			onBoard = false;
 		}
+
+		yield return null;
 	}
 
 	[Command]
@@ -376,7 +377,8 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 				&& joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 
 				//TODO vérifier l'emplacement sol
-				((IAttaquer)joueurLocal.CarteSelectionne).attaqueCarte (this, false);
+				ActionEventManager.EventActionManager.CmdAddNewCoroutine();
+				StartCoroutine(((IAttaquer)joueurLocal.CarteSelectionne).attaqueCarte (this, ActionEventManager.EventActionManager.nextIdCoroutine));
 			} else {
 				base.onClick ();
 			}
@@ -388,18 +390,18 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	/************************************Envent catcher****/
 	private void initEvent(){
-		PhaseEventManager.onStartTurn += useStartTurnCapacity;
-		PhaseEventManager.onPiocheConstruction += usePiocheConstructionPhaseCapacity;
-		PhaseEventManager.onFinPhaseAttaque += useEndPhaseAttaqueCapacity;
-		PhaseEventManager.onEndTurn += useEndTurnCapacity;
+		ActionEventManager.onStartTurn += useStartTurnCapacity;
+		ActionEventManager.onPiocheConstruction += usePiocheConstructionPhaseCapacity;
+		ActionEventManager.onFinPhaseAttaque += useEndPhaseAttaqueCapacity;
+		ActionEventManager.onEndTurn += useEndTurnCapacity;
 
-		PhaseEventManager.onPoseConstruction += usePoseConstructionCapacity;
-		PhaseEventManager.onAttaque += useAttaqueCapacity;
-		PhaseEventManager.onDefense += useDefenseCapacity;
-		PhaseEventManager.onDestruction += useDestructionCapacity;
-		PhaseEventManager.onInvocation += useInvocationCapacity;
-		PhaseEventManager.onRecoitDegat += useRecoitDegatCapacity;
-		PhaseEventManager.onCardDeplacement += useDeplacementCapacity;
+		ActionEventManager.onPoseConstruction += usePoseConstructionCapacity;
+		ActionEventManager.onAttaque += useAttaqueCapacity;
+		ActionEventManager.onDefense += useDefenseCapacity;
+		ActionEventManager.onDestruction += useDestructionCapacity;
+		ActionEventManager.onInvocation += useInvocationCapacity;
+		ActionEventManager.onRecoitDegat += useRecoitDegatCapacity;
+		ActionEventManager.onCardDeplacement += useDeplacementCapacity;
 	}
 
 
@@ -407,7 +409,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		List<CapaciteDTO> capaciteStartTurn = getListCapaciteToCall(netIdJoueur,ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR);
 
 		foreach (CapaciteDTO capacite in capaciteStartTurn) {
-			CapaciteUtils.callCapacite (this,null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR);
+			CapaciteUtils.callCapacite (this, null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR);
 		}
 	}
 
