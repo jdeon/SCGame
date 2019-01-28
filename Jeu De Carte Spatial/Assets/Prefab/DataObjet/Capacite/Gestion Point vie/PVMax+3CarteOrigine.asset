@@ -28,4 +28,5 @@ MonoBehaviour:
   conditionEmplacement:
   - 1-P
   conditionAction:
-  - 13-P
+  - 3-P
+  - 16-P

@@ -93,7 +93,7 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 	}
 
 	public IEnumerator defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
-		ActionEventManager.EventActionManager.CmdDefense (joueurProprietaire.netId, this, vaisseauAttaquant);
+		ActionEventManager.EventActionManager.CmdDefense (joueurProprietaire.netId, this.netId, vaisseauAttaquant.netId);
 
 		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
 

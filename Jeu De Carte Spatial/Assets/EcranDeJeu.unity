@@ -445,6 +445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9545e165109760046a94cbfdfa34a730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  etatSelectionne: 0
 --- !u!4 &106286655
 Transform:
   m_ObjectHideFlags: 0
@@ -531,6 +532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26f42734a6d66ac4bb17b6b101657b6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nextIdCoroutine: -1
 --- !u!114 &142161090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -575,6 +577,7 @@ GameObject:
   - component: {fileID: 183781932}
   - component: {fileID: 183781931}
   - component: {fileID: 183781930}
+  - component: {fileID: 183781934}
   m_Layer: 0
   m_Name: EmplacementSol
   m_TagString: Untagged
@@ -661,6 +664,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 183781928}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &183781934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 183781928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &212394761
 GameObject:
   m_ObjectHideFlags: 0
@@ -837,6 +872,7 @@ GameObject:
   - component: {fileID: 213000146}
   - component: {fileID: 213000145}
   - component: {fileID: 213000148}
+  - component: {fileID: 213000149}
   m_Layer: 0
   m_Name: EmplacementSol
   m_TagString: Untagged
@@ -923,6 +959,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd50065830805346a2f3dc80c0f71bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &213000149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 213000143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &230522533
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,6 +1003,7 @@ GameObject:
   - component: {fileID: 230522536}
   - component: {fileID: 230522535}
   - component: {fileID: 230522538}
+  - component: {fileID: 230522539}
   m_Layer: 0
   m_Name: EmplacementSol
   m_TagString: Untagged
@@ -1021,6 +1090,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd50065830805346a2f3dc80c0f71bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &230522539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 230522533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &287471256
 GameObject:
   m_ObjectHideFlags: 0
@@ -1240,6 +1341,7 @@ GameObject:
   - component: {fileID: 355848557}
   - component: {fileID: 355848556}
   - component: {fileID: 355848555}
+  - component: {fileID: 355848559}
   m_Layer: 0
   m_Name: EmplacementAtmosphere
   m_TagString: Untagged
@@ -1326,6 +1428,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 355848553}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &355848559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 355848553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1001 &426811968
 Prefab:
   m_ObjectHideFlags: 0
@@ -1548,6 +1682,7 @@ GameObject:
   - component: {fileID: 585077651}
   - component: {fileID: 585077650}
   - component: {fileID: 585077649}
+  - component: {fileID: 585077653}
   m_Layer: 0
   m_Name: EmplacementAtmosphere
   m_TagString: Untagged
@@ -1634,6 +1769,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 585077647}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &585077653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 585077647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &663607937
 GameObject:
   m_ObjectHideFlags: 0
@@ -1842,6 +2009,7 @@ GameObject:
   - component: {fileID: 769386203}
   - component: {fileID: 769386202}
   - component: {fileID: 769386201}
+  - component: {fileID: 769386205}
   m_Layer: 0
   m_Name: EmplacementAtmosphere
   m_TagString: Untagged
@@ -1928,6 +2096,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 769386199}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &769386205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 769386199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &797718549
 GameObject:
   m_ObjectHideFlags: 0
@@ -2071,6 +2271,7 @@ GameObject:
   - component: {fileID: 839014607}
   - component: {fileID: 839014606}
   - component: {fileID: 839014609}
+  - component: {fileID: 839014610}
   m_Layer: 0
   m_Name: EmplacementAtmosphere
   m_TagString: Untagged
@@ -2157,6 +2358,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf75b8eebad9fa4293fee4715fa5dd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &839014610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 839014604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &855536058
 GameObject:
   m_ObjectHideFlags: 0
@@ -2169,6 +2402,7 @@ GameObject:
   - component: {fileID: 855536062}
   - component: {fileID: 855536061}
   - component: {fileID: 855536060}
+  - component: {fileID: 855536064}
   m_Layer: 0
   m_Name: EmplacementSol
   m_TagString: Untagged
@@ -2255,6 +2489,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 855536058}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &855536064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 855536058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &894047763
 GameObject:
   m_ObjectHideFlags: 0
@@ -2398,6 +2664,7 @@ GameObject:
   - component: {fileID: 934407397}
   - component: {fileID: 934407396}
   - component: {fileID: 934407395}
+  - component: {fileID: 934407399}
   m_Layer: 0
   m_Name: EmplacementSol
   m_TagString: Untagged
@@ -2484,6 +2751,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 934407393}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &934407399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 934407393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1012223360
 GameObject:
   m_ObjectHideFlags: 0
@@ -2612,6 +2911,7 @@ GameObject:
   - component: {fileID: 1012494304}
   - component: {fileID: 1012494303}
   - component: {fileID: 1012494306}
+  - component: {fileID: 1012494307}
   m_Layer: 0
   m_Name: EmplacementAtmosphere
   m_TagString: Untagged
@@ -2698,6 +2998,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf75b8eebad9fa4293fee4715fa5dd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1012494307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1012494301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1093712424
 GameObject:
   m_ObjectHideFlags: 0
@@ -2874,6 +3206,7 @@ GameObject:
   - component: {fileID: 1147440883}
   - component: {fileID: 1147440882}
   - component: {fileID: 1147440881}
+  - component: {fileID: 1147440885}
   m_Layer: 0
   m_Name: EmplacementSol
   m_TagString: Untagged
@@ -2960,6 +3293,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1147440879}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1147440885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1147440879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1198175352
 GameObject:
   m_ObjectHideFlags: 0
@@ -2972,6 +3337,7 @@ GameObject:
   - component: {fileID: 1198175355}
   - component: {fileID: 1198175354}
   - component: {fileID: 1198175357}
+  - component: {fileID: 1198175358}
   m_Layer: 0
   m_Name: EmplacementAtmosphere
   m_TagString: Untagged
@@ -3058,6 +3424,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf75b8eebad9fa4293fee4715fa5dd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1198175358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1198175352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1201323398
 GameObject:
   m_ObjectHideFlags: 0
@@ -3492,6 +3890,7 @@ GameObject:
   - component: {fileID: 1354775074}
   - component: {fileID: 1354775073}
   - component: {fileID: 1354775072}
+  - component: {fileID: 1354775076}
   m_Layer: 0
   m_Name: EmplacementAtmosphere
   m_TagString: Untagged
@@ -3578,6 +3977,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1354775070}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1354775076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1354775070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1372194400
 GameObject:
   m_ObjectHideFlags: 0
@@ -3783,6 +4214,7 @@ GameObject:
   - component: {fileID: 1419215176}
   - component: {fileID: 1419215175}
   - component: {fileID: 1419215178}
+  - component: {fileID: 1419215179}
   m_Layer: 0
   m_Name: EmplacementSol
   m_TagString: Untagged
@@ -3869,6 +4301,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd50065830805346a2f3dc80c0f71bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1419215179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1419215173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1435069617
 GameObject:
   m_ObjectHideFlags: 0
@@ -3921,6 +4385,7 @@ GameObject:
   - component: {fileID: 1517779555}
   - component: {fileID: 1517779554}
   - component: {fileID: 1517779557}
+  - component: {fileID: 1517779558}
   m_Layer: 0
   m_Name: EmplacementAtmosphere
   m_TagString: Untagged
@@ -4007,6 +4472,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf75b8eebad9fa4293fee4715fa5dd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1517779558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1517779552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1556129396
 GameObject:
   m_ObjectHideFlags: 0
@@ -4019,6 +4516,7 @@ GameObject:
   - component: {fileID: 1556129399}
   - component: {fileID: 1556129398}
   - component: {fileID: 1556129401}
+  - component: {fileID: 1556129402}
   m_Layer: 0
   m_Name: EmplacementSol
   m_TagString: Untagged
@@ -4105,6 +4603,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd50065830805346a2f3dc80c0f71bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1556129402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1556129396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1567544655
 GameObject:
   m_ObjectHideFlags: 0
@@ -4348,6 +4878,7 @@ GameObject:
   - component: {fileID: 1728987236}
   - component: {fileID: 1728987235}
   - component: {fileID: 1728987238}
+  - component: {fileID: 1728987239}
   m_Layer: 0
   m_Name: EmplacementAtmosphere
   m_TagString: Untagged
@@ -4434,6 +4965,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf75b8eebad9fa4293fee4715fa5dd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1728987239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1728987233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1729665673
 GameObject:
   m_ObjectHideFlags: 0
@@ -4446,6 +5009,7 @@ GameObject:
   - component: {fileID: 1729665676}
   - component: {fileID: 1729665675}
   - component: {fileID: 1729665678}
+  - component: {fileID: 1729665679}
   m_Layer: 0
   m_Name: EmplacementSol
   m_TagString: Untagged
@@ -4532,6 +5096,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd50065830805346a2f3dc80c0f71bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1729665679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1729665673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1798505130
 GameObject:
   m_ObjectHideFlags: 0
@@ -4544,6 +5140,7 @@ GameObject:
   - component: {fileID: 1798505134}
   - component: {fileID: 1798505133}
   - component: {fileID: 1798505132}
+  - component: {fileID: 1798505136}
   m_Layer: 0
   m_Name: EmplacementSol
   m_TagString: Untagged
@@ -4630,6 +5227,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1798505130}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1798505136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1798505130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1818831169
 GameObject:
   m_ObjectHideFlags: 0
@@ -5030,7 +5659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b828a8f6a8965c419f9184818ebc437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tester: 0
+  tester: 1
 --- !u!1 &1967535830
 GameObject:
   m_ObjectHideFlags: 0
@@ -5043,6 +5672,7 @@ GameObject:
   - component: {fileID: 1967535834}
   - component: {fileID: 1967535833}
   - component: {fileID: 1967535832}
+  - component: {fileID: 1967535836}
   m_Layer: 0
   m_Name: EmplacementAtmosphere
   m_TagString: Untagged
@@ -5129,6 +5759,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1967535830}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1967535836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1967535830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 0
+    i1: 0
+    i2: 0
+    i3: 0
+    i4: 0
+    i5: 0
+    i6: 0
+    i7: 0
+    i8: 0
+    i9: 0
+    i10: 0
+    i11: 0
+    i12: 0
+    i13: 0
+    i14: 0
+    i15: 0
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!1 &1993922679
 GameObject:
   m_ObjectHideFlags: 0

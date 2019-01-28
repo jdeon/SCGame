@@ -9,15 +9,22 @@ public class EmplacementSolMetier : EmplacementMetierAbstract {
 
 	public override void onClick(){
 		GameObject goJoueur = ClientScene.FindLocalObject (this.idJoueurPossesseur);
-		Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
-		if(isMovableByPlayer(joueur)){
-			if (joueur.CarteSelectionne is CarteBatimentMetier || joueur.CarteSelectionne is CarteDefenseMetier || listNomCarteExeption.Contains (joueur.CarteSelectionne.name)) {
-				if (isCardCostPayable (joueur.RessourceMetal, joueur.CarteSelectionne)) {
-					joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
+		if (null != goJoueur) {
+			Joueur joueur = goJoueur.GetComponent<Joueur> ();
+
+			if (isMovableByPlayer (joueur)) {
+				Joueur localJoueur = Joueur.getJoueurLocal ();
+				if (this.etatSelectionnable == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
+					localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
+
+				} else if (joueur.CarteSelectionne is CarteBatimentMetier || joueur.CarteSelectionne is CarteDefenseMetier || listNomCarteExeption.Contains (joueur.CarteSelectionne.name)) {
+					if (isCardCostPayable (joueur.RessourceMetal, joueur.CarteSelectionne)) {
+						joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
+					}
+				} else if (joueur.CarteSelectionne is CarteVaisseauMetier) {
+					//TODO vaisseau en mode defense
 				}
-			} else if (joueur.CarteSelectionne is CarteVaisseauMetier) {
-				//TODO vaisseau en mode defense
 			}
 		}
 	}

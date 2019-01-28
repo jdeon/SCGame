@@ -26,6 +26,7 @@ MonoBehaviour:
   conditionEmplacement:
   - 1-P
   conditionAction:
-  - 9-P
+  - 3-P
+  - 16-P
   moduleAInvoquer: {fileID: 11400000, guid: 86cad5bedb621ee4ba9d05af82657eb0, type: 2}
   comportementSiModulSimilaire: 1

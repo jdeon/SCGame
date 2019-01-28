@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb4323408fe5d6744a52676e3a39362f, type: 3}
+  m_Name: DeckConstructionBatiment
+  m_EditorClassIdentifier: 
+  titre: Deck batiment
+  commentaire: Liste des batiments
+  listeCarte:
+  - {fileID: 11400000, guid: 95583b4f40af3d041a34e0ab26c42c51, type: 2}
+  - {fileID: 11400000, guid: efa6584b50485584d9415c17023d2d2c, type: 2}
+  - {fileID: 11400000, guid: 64c3303cdd761c141ac7011b6f610d35, type: 2}
+  - {fileID: 11400000, guid: b7a07837147fd2442bedbcc45d12d7b3, type: 2}
+  - {fileID: 11400000, guid: 45aaeb4c1e4f35445964e8477ead0963, type: 2}
+  - {fileID: 11400000, guid: 03e00e665c72f13448a2e4d412870146, type: 2}

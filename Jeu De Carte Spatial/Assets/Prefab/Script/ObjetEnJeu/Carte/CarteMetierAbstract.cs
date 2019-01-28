@@ -21,6 +21,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	protected GameObject faceCarteGO;
 
+	public int etatSelectionne;
+
 
 	public abstract CarteDTO getCarteDTORef ();
 
@@ -53,8 +55,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		bool deplacementImpossible = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_IMMOBILE);
 
 		//TODO que faire pour deplacement vers la mains
-		if (!deplacementImpossible && nouveauEmplacement is ISelectionnable) {
-			ActionEventManager.EventActionManager.CmdCardDeplacement (joueurProprietaire.netId, this, (ISelectionnable) nouveauEmplacement);
+		if (!deplacementImpossible && nouveauEmplacement is NetworkBehaviour) {
+			ActionEventManager.EventActionManager.CmdCardDeplacement (joueurProprietaire.netId, this.netId, ((NetworkBehaviour) nouveauEmplacement).netId);
 
 			nouveauEmplacement.putCard (this);
 
@@ -232,17 +234,31 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		return contain;
 	}
 
+	public void synchroniseListCapacite (){
+		byte[] listeCapaData = SerializeUtils.SerializeToByteArray(this.listEffetCapacite);
+		RpcSyncCapaciteList (listeCapaData);
+	}
+
 	/*******************ISelectionnable****************/
 	public virtual void onClick (){
-		if (joueurProprietaire.CarteSelectionne == this) {
+		Joueur localJoueur = Joueur.getJoueurLocal ();
+		if (this.etatSelectionne == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
+			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
+
+		} else if (joueurProprietaire.CarteSelectionne == this) {
 			joueurProprietaire.CarteSelectionne = null;	//On deselectionne au second click
 		} else {
 			joueurProprietaire.CarteSelectionne = this;
 		}
 	}
 
-	public void miseEnBrillance(){
+	public void miseEnBrillance(int etat){
+		etatSelectionne = etat;
 		//TODO mise en brillance
+	}
+
+	public int EtatSelectionnable {
+		get { return etatSelectionne; }
 	}
 
 	/************************Hook***********************************/
@@ -263,7 +279,13 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		this.idJoueurProprietaire = netIdJoueur;
 	}
 		
-
+	[ClientRpc]
+	public void RpcSyncCapaciteList(byte[] listeCapaData){
+		List<CapaciteMetier> listCapacite = SerializeUtils.Deserialize<List<CapaciteMetier>> (listeCapaData);
+		if (null != listCapacite) {
+			this.listEffetCapacite = listCapacite;
+		}
+	}
 
 	/**********************************Getter Setter***************************/
 	public string getId(){

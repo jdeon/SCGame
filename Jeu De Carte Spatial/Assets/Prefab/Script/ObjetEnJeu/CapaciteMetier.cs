@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+[System.Serializable]
 public class CapaciteMetier  {
 
 	private static int sequenceId;

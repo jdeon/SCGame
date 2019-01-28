@@ -36,7 +36,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 				yield return null;
 			}
 
-			ActionEventManager.EventActionManager.CmdAttaque (joueurProprietaire.netId, this, cible);
+			ActionEventManager.EventActionManager.CmdAttaque (joueurProprietaire.netId, this.netId, cible.netId);
 		}
 
 
@@ -91,7 +91,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 				yield return null;
 			}
 
-			ActionEventManager.EventActionManager.CmdAttaque (joueurProprietaire.netId, this, cible);
+			ActionEventManager.EventActionManager.CmdAttaque (joueurProprietaire.netId, this.netId, cible.netId);
 		}
 
 
@@ -200,7 +200,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 	}
 
 	public IEnumerator defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
-		ActionEventManager.EventActionManager.CmdDefense (joueurProprietaire.netId, this, vaisseauAttaquant);
+		ActionEventManager.EventActionManager.CmdDefense (joueurProprietaire.netId, this.netId, vaisseauAttaquant.netId);
 
 		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
 

@@ -6,5 +6,7 @@ public interface ISelectionnable  {
 
 	void onClick ();
 
-	void miseEnBrillance();
+	void miseEnBrillance(int etat);
+
+	int EtatSelectionnable{ get; }
 }

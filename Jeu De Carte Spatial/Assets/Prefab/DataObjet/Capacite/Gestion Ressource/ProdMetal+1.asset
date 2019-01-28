@@ -22,8 +22,10 @@ MonoBehaviour:
   duree: 100
   nbCible: 1
   conditionCible:
-  - 9-A
-  conditionEmplacement:
-  - 16-A
-  conditionAction:
   - 9-P
+  conditionEmplacement:
+  - 16-P
+  conditionAction:
+  - 3-P
+  - 9-P
+  - 16-P

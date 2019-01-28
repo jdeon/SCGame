@@ -13,11 +13,19 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 
 	protected List<CapaciteMetier> listCapaciteDeck = new List<CapaciteMetier> ();
 
+	protected int etatSelectionnable;
+
+
 	public abstract void intiDeck (NetworkInstanceId joueurNetId);
 
 	public abstract int getNbCarteRestante ();
 
 	public abstract GameObject tirerCarte();
+
+
+	public void OnMouseDown(){
+		onClick ();
+	}
 
 	public int getNbCartePiochePointDegat(){
 		int nbCartePioche = 1;
@@ -112,15 +120,35 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 		return contain;
 	}
 
+	public void synchroniseListCapacite (){
+		byte[] listeCapaData = SerializeUtils.SerializeToByteArray(this.listCapaciteDeck);
+		RpcSyncCapaciteList (listeCapaData);
+	}
+
+	[ClientRpc]
+	public void RpcSyncCapaciteList(byte[] listeCapaData){
+		List<CapaciteMetier> listCapacite = SerializeUtils.Deserialize<List<CapaciteMetier>> (listeCapaData);
+		if (null != listCapacite) {
+			this.listCapaciteDeck = listCapacite;
+		}
+	}
 
 	/*******************ISelectionnable****************/
 	public void onClick (){
 		//TODO selectionne
+		Joueur localJoueur = Joueur.getJoueurLocal ();
+		if (this.etatSelectionnable == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
+			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
 
+		}
 	}
 
-	public void miseEnBrillance(){
+	public void miseEnBrillance(int etat){
 		//TODO mise en brillance
+	}
+
+	public int EtatSelectionnable{
+		get { return etatSelectionnable; }
 	}
 
 

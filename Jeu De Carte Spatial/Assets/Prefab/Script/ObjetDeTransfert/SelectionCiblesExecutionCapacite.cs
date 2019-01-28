@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class SelectionCiblesExecutionCapacite : MonoBehaviour {
+public class SelectionCiblesExecutionCapacite {
 
 	protected CapaciteDTO capaciteBase;
 
@@ -14,6 +14,10 @@ public class SelectionCiblesExecutionCapacite : MonoBehaviour {
 	protected int idActionAppelante;
 
 	protected List<ISelectionnable> listCiblesProbables;
+
+	public SelectionCiblesExecutionCapacite (){
+		//Constructeur par defaut obliger par unet
+	}
 
 	public SelectionCiblesExecutionCapacite (CapaciteDTO capacite, CarteMetierAbstract carteSource, int idActionAppelante){
 		/*this.idTypeCapacite = capacite.Capacite;
@@ -49,7 +53,7 @@ public class SelectionCiblesExecutionCapacite : MonoBehaviour {
 	}
 
 	public NetworkInstanceId IdJoueurCarteSource{
-		get{ return IdJoueurCarteSource; }
+		get{ return idJoueurCarteSource; }
 	}
 
 	public int IdCapaciteSource{

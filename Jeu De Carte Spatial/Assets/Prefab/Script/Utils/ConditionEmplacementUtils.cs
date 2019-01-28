@@ -234,7 +234,16 @@ public class ConditionEmplacementUtils {
 	public static List<IConteneurCarte>	getEmplacementsLigneAttaquant (NetworkInstanceId netidJoueur, string conditionAllierEnnemie, IConteneurCarte emplacementCarteOrigin, CarteMetierAbstract carteCible){
 		List<IConteneurCarte> listEmplacementsCible = new List<IConteneurCarte> ();
 		bool isProvenance = conditionAllierEnnemie.Contains (ConstanteIdObjet.STR_CONDITION_POUR_PROVENANCE);
-		IConteneurCarte conteneurOrigin = fillConteneur(emplacementCarteOrigin, carteCible.getConteneur (),isProvenance);
+		IConteneurCarte conteneurCible;
+
+		if (null != carteCible) {
+			conteneurCible = carteCible.getConteneur ();
+		} else {
+			conteneurCible = null;
+		}
+
+
+		IConteneurCarte conteneurOrigin = fillConteneur(emplacementCarteOrigin, conteneurCible,isProvenance);
 
 		if (null != conteneurOrigin && conteneurOrigin is EmplacementMetierAbstract) {
 			EmplacementMetierAbstract emplacementOrigne = (EmplacementMetierAbstract)conteneurOrigin;
@@ -259,7 +268,16 @@ public class ConditionEmplacementUtils {
 	public static List<IConteneurCarte>	getEmplacementsLigneAtmosphere (NetworkInstanceId netidJoueur, string conditionAllierEnnemie, IConteneurCarte emplacementCarteOrigin, CarteMetierAbstract carteCible){
 		List<IConteneurCarte> listEmplacementsCible = new List<IConteneurCarte> ();
 		bool isProvenance = conditionAllierEnnemie.Contains (ConstanteIdObjet.STR_CONDITION_POUR_PROVENANCE);
-		IConteneurCarte conteneurOrigin = fillConteneur(emplacementCarteOrigin, carteCible.getConteneur (),isProvenance);
+		IConteneurCarte conteneurCible;
+
+		if (null != carteCible) {
+			conteneurCible = carteCible.getConteneur ();
+		} else {
+			conteneurCible = null;
+		}
+
+
+		IConteneurCarte conteneurOrigin = fillConteneur(emplacementCarteOrigin, conteneurCible,isProvenance);
 
 		if (null != conteneurOrigin && conteneurOrigin is EmplacementMetierAbstract) {
 			EmplacementMetierAbstract emplacementOrigne = (EmplacementMetierAbstract)conteneurOrigin;
@@ -285,7 +303,16 @@ public class ConditionEmplacementUtils {
 	public static List<IConteneurCarte>	getEmplacementsLigneSol (NetworkInstanceId netidJoueur, string conditionAllierEnnemie, IConteneurCarte emplacementCarteOrigin, CarteMetierAbstract carteCible){
 		List<IConteneurCarte> listEmplacementsCible = new List<IConteneurCarte> ();
 		bool isProvenance = conditionAllierEnnemie.Contains (ConstanteIdObjet.STR_CONDITION_POUR_PROVENANCE);
-		IConteneurCarte conteneurOrigin = fillConteneur(emplacementCarteOrigin, carteCible.getConteneur (),isProvenance);
+		IConteneurCarte conteneurCible;
+
+		if (null != carteCible) {
+			conteneurCible = carteCible.getConteneur ();
+		} else {
+			conteneurCible = null;
+		}
+
+
+		IConteneurCarte conteneurOrigin = fillConteneur(emplacementCarteOrigin, conteneurCible,isProvenance);
 
 		if (null != conteneurOrigin && conteneurOrigin is EmplacementMetierAbstract) {
 			EmplacementMetierAbstract emplacementOrigne = (EmplacementMetierAbstract)conteneurOrigin;

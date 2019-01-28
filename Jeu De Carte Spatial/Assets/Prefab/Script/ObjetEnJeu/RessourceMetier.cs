@@ -27,6 +27,8 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite 
 
 	private List<CapaciteMetier> listCapaciteRessource = new List<CapaciteMetier> ();
 
+	private int etatSelectionne;
+
 	//TODO cree des constante
 	private static string getPrefixeProd(string typeRessource){
 		string result;
@@ -62,8 +64,8 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite 
 
 	public void init (NetworkInstanceId netIdJoueur){
 		this.netIdJoueur = netIdJoueur;
-		//production = 1;
-		//stock = 20; //TODO change to 3
+		production = 1;
+		stock = 20; //TODO change to 3
 
 		this.prefixeRessourceProd = getPrefixeProd (typeRessource);
 		this.prefixeRessourceStock = getPrefixeStock (typeRessource);
@@ -78,12 +80,12 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite 
 			txtStock = tStock.GetComponentInChildren<TextMesh>();
 		}
 
-		txtProd.text = prefixeRessourceProd + production;
-		txtStock.text = prefixeRessourceStock + stock;
+		txtProd.text = prefixeRessourceProd + Production;
+		txtStock.text = prefixeRessourceStock + Stock;
 	}
 
 	public void productionDeRessourceByServer(){
-		stock += production;
+		stock += Production;
 	}
 
 	public bool payerRessource(int nbDemande){
@@ -98,12 +100,18 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite 
 
 	/*******************ISelectionnable****************/
 	public void onClick (){
-		//TODO selectionne
-
+		Joueur localJoueur = Joueur.getJoueurLocal ();
+		if (this.etatSelectionne == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
+			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
+		}
 	}
 
-	public void miseEnBrillance(){
+	public void miseEnBrillance(int etat){
 		//TODO mise en brillance
+	}
+
+	public int EtatSelectionnable {
+		get { return etatSelectionne; }
 	}
 
 	/*******************IAvecCapacity*****************/
@@ -167,6 +175,21 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite 
 		return contain;
 	}
 
+	public void synchroniseListCapacite (){
+		byte[] listeCapaData = SerializeUtils.SerializeToByteArray(this.listCapaciteRessource);
+		RpcSyncCapaciteList (listeCapaData);
+	}
+
+	[ClientRpc]
+	public void RpcSyncCapaciteList(byte[] listeCapaData){
+		List<CapaciteMetier> listCapacite = SerializeUtils.Deserialize<List<CapaciteMetier>> (listeCapaData);
+		if (null != listCapacite) {
+			this.listCapaciteRessource = listCapacite;
+		}
+		txtProd.text = prefixeRessourceProd + Production;
+		txtStock.text = prefixeRessourceProd + Stock;
+	}
+
 	/*************************Hook*********************/
 	public void onChangeProd(int prod){
 		if (null != txtProd) {
@@ -192,12 +215,16 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite 
 	}
 
 	public int Production {
-		get { return production; }
+		get { 
+			return  CapaciteUtils.valeurAvecCapacite (this.production, listCapaciteRessource, ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE); 
+		}
 		set { production = value; }
 	}
 
 	public int Stock {
-		get { return stock; }
+		get { 
+			return CapaciteUtils.valeurAvecCapacite (this.stock, listCapaciteRessource, ConstanteIdObjet.ID_CAPACITE_MODIF_STOCK_RESSOURCE); 
+		}
 		set { stock = value; }
 	}
 

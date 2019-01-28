@@ -11,20 +11,27 @@ public class EmplacementAttaque : EmplacementMetierAbstract {
 		//TODO fonction en cours
 
 		GameObject goJoueur = ClientScene.FindLocalObject (this.idJoueurPossesseur);
-		Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
-		if(isMovableByPlayer(joueur)){
-			if (joueur.CarteSelectionne is CarteVaisseauMetier && ((CarteVaisseauMetier)joueur.CarteSelectionne).isCapableAttaquer ()
-				&& joueur.RessourceCarburant.payerRessource (((CarteVaisseauMetier)joueur.CarteSelectionne).getConsomationCarburant ())) {
+		if (null != goJoueur) {
+			Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
-				joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
+			if (isMovableByPlayer (joueur)) {		
+				Joueur localJoueur = Joueur.getJoueurLocal ();
+				if (this.etatSelectionnable == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
+					localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
+			
+				} else if (joueur.CarteSelectionne is CarteVaisseauMetier && ((CarteVaisseauMetier)joueur.CarteSelectionne).isCapableAttaquer ()
+				          && joueur.RessourceCarburant.payerRessource (((CarteVaisseauMetier)joueur.CarteSelectionne).getConsomationCarburant ())) {
 
-				BoutonTour boutonJoueur = joueur.GoPlateau.GetComponentInChildren<BoutonTour> ();
-				if (null != boutonJoueur) {
-					boutonJoueur.CmdSetEtatBouton(BoutonTour.enumEtatBouton.attaque);
+					joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
+
+					BoutonTour boutonJoueur = joueur.GoPlateau.GetComponentInChildren<BoutonTour> ();
+					if (null != boutonJoueur) {
+						boutonJoueur.CmdSetEtatBouton (BoutonTour.enumEtatBouton.attaque);
+					}
+				} else if (listNomCarteExeption.Contains (joueur.CarteSelectionne.name)) {
+					//TODO carte en exception
 				}
-			} else if (listNomCarteExeption.Contains(joueur.CarteSelectionne.name)){
-				//TODO carte en exception
 			}
 		}
 	}

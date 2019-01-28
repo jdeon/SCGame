@@ -16,4 +16,6 @@ public interface IAvecCapacite {
 	List<CapaciteMetier> containCapacityOfType(int idTypCapacity);
 
 	bool containCapacityWithId (int idCapacityDTO);
+
+	void synchroniseListCapacite (); 
 }

@@ -39,6 +39,12 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 
 	private List<CapaciteMetier> listCapacite = new List<CapaciteMetier>();
 
+	private PhaseChoixCibleJoueur phaseChoixCibleJoueur;
+
+	private int etatSelectionne;
+
+
+
 	public static Joueur getJoueurLocal(){
 		Joueur joueurResult = null;
 
@@ -261,6 +267,30 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 	}
 
 
+	[ClientRpc]
+	public void RpcDisplayCapacityChoice (byte[] byteSelectionCible){
+		if (isLocalPlayer) {
+			SelectionCiblesExecutionCapacite selectionCibles = SerializeUtils.Deserialize<SelectionCiblesExecutionCapacite> (byteSelectionCible);
+			if (null != selectionCibles && null != selectionCibles.ListCiblesProbables 
+				&& selectionCibles.ListCiblesProbables.Count > 0 && phaseChoixCibleJoueur.finChoix) {
+				phaseChoixCibleJoueur = new PhaseChoixCibleJoueur (selectionCibles, this);
+			}
+		} else {
+			//TODO mise en attente
+			//TODO coroutine pour fin de mise en attente
+		}
+	}
+
+	[Command]
+	public void CmdExecuteCapaciteSurCibleChoisi(byte[] byteSelectionCiblesCapacite){
+		SelectionCiblesExecutionCapacite selectionCibles = SerializeUtils.Deserialize<SelectionCiblesExecutionCapacite> (byteSelectionCiblesCapacite);
+		if (null != selectionCibles && null != selectionCibles.ListCiblesProbables && selectionCibles.ListCiblesProbables.Count > 0) {
+			CapaciteUtils.executeCapacity (selectionCibles);
+		}
+	}
+
+
+
 	/*********************************IAvecCapacite*********************/
 	public void addCapacity (CapaciteMetier capaToAdd){
 		listCapacite.Add (capaToAdd);
@@ -321,16 +351,35 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 		return contain;
 	}
 
+	public void synchroniseListCapacite (){
+		byte[] listeCapaData = SerializeUtils.SerializeToByteArray(this.listCapacite);
+		RpcSyncCapaciteList (listeCapaData);
+	}
+
+	[ClientRpc]
+	public void RpcSyncCapaciteList(byte[] listeCapaData){
+		List<CapaciteMetier> listCapacite = SerializeUtils.Deserialize<List<CapaciteMetier>> (listeCapaData);
+		if (null != listCapacite) {
+			this.listCapacite = listCapacite;
+		}
+	}
 
 	/*******************ISelectionnable****************/
 	public virtual void onClick (){
 		//TODO pass par le terrain
+		Joueur localJoueur = Joueur.getJoueurLocal ();
+		if (this.etatSelectionne == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
+			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
+		}
 	}
 
-	public void miseEnBrillance(){
+	public void miseEnBrillance(int etat){
 		//TODO mise en brillance
 	}
-
+		
+	public int EtatSelectionnable {
+		get { return etatSelectionne; }
+	}
 
 	/*******************Getter et setter***************/
 
@@ -383,5 +432,9 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 		
 	public bool getIsLocalJoueur(){
 		return isLocalPlayer;
+	}
+
+	public PhaseChoixCibleJoueur PhaseChoixCible{
+		get { return phaseChoixCibleJoueur; }
 	}
 }

@@ -13,6 +13,8 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	[SyncVar]
 	protected NetworkInstanceId idCarte;
 
+	protected int etatSelectionnable;
+
 	public void Start(){
 		numColone = transform.GetSiblingIndex () + 1;
 	}
@@ -23,7 +25,7 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 
 	public void putCard(CarteMetierAbstract cartePoser){
 		if (cartePoser.getConteneur () is Mains) {
-			ActionEventManager.EventActionManager.CmdPoseCarte (idJoueurPossesseur, cartePoser, this);
+			ActionEventManager.EventActionManager.CmdPoseCarte (idJoueurPossesseur, cartePoser.netId, this.netId);
 		}
 
 
@@ -83,8 +85,12 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	/*******************ISelectionnable****************/
 	public abstract void onClick ();
 
-	public void miseEnBrillance(){
+	public void miseEnBrillance(int etat){
 		//TODO mise en brillance
+	}
+
+	public int EtatSelectionnable{
+		get {return etatSelectionnable;}
 	}
 
 	/************************Getter Setter ***************/

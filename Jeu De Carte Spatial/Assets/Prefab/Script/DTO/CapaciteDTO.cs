@@ -7,16 +7,20 @@ public class CapaciteDTO {
 
 	public static int idSequence = 0;
 
+	public int idCapacite;
+
 	public CapaciteDTO (){
-		Id = ++idSequence;
+		idCapacite = ++idSequence;
 	}
 
 	//Utilise pour clone
 	public CapaciteDTO (int id){
-		Id = id;
+		this.idCapacite = id;
 	}
 
-	public int Id { get; }
+	public int Id { 
+		get{ return idCapacite; }
+	}
 
 	public string Nom{ get; set; }
 

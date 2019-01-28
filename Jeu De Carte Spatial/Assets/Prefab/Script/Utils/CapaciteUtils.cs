@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class CapaciteUtils : MonoBehaviour {
+public class CapaciteUtils {
 
 	public static List<int> listIdCapaciteEffetImmediat = getListIdCapaciteEffetImmediat();
 
@@ -29,24 +29,14 @@ public class CapaciteUtils : MonoBehaviour {
 		return valeurAvecCapacite;
 	}
 
-	public static bool isCapaciteCall(CapaciteDTO capaciteTest, List<CapaciteMetier> listCapaciteCarteSource, bool isAllier, int idConditionAction){
+	public static bool isCapaciteCall(CapaciteDTO capaciteTest, int idConditionAction, bool isAllier, bool isProvenance){
 		bool capable = false;
 		string allieOuEnnemi = isAllier ? ConstanteIdObjet.STR_CONDITION_POUR_ALLIER : ConstanteIdObjet.STR_CONDITION_POUR_ENNEMIE;
 
 		foreach (string conditionAction in capaciteTest.ConditionsAction) {
 			string[] tabConditionAction = conditionAction.Split (char.Parse("-"));
 			if (tabConditionAction.Length >= 2 && tabConditionAction [0] == idConditionAction.ToString()
-				&& (tabConditionAction [1].Contains (allieOuEnnemi) || tabConditionAction [1].Contains (ConstanteIdObjet.STR_CONDITION_POUR_PROVENANCE))) {
-				int valeurIncapacite = 0;
-				if( null != listCapaciteCarteSource){
-					foreach(CapaciteMetier capaciteCourante in listCapaciteCarteSource){
-						if(capaciteCourante.IdTypeCapacite.Equals (ConstanteIdObjet.ID_CAPACITE_ETAT_SANS_EFFET)){
-							valeurIncapacite = capaciteCourante.getNewValue (valeurIncapacite);
-						} 
-					}
-				}
-
-
+				&& (tabConditionAction [1].Contains (allieOuEnnemi) || (isProvenance && tabConditionAction [1].Contains (ConstanteIdObjet.STR_CONDITION_POUR_PROVENANCE)))) {
 				capable = true;
 			}
 		}	
@@ -59,11 +49,15 @@ public class CapaciteUtils : MonoBehaviour {
 
 		if (null != selectionCiblesResult && selectionCiblesResult.ListCiblesProbables.Count > 0) {
 			if (capaciteSource.ChoixCible) {
-				ActionEventManager.EventActionManager.RpcDisplayCapacity (selectionCiblesResult);
+				GameObject goJoueur = NetworkServer.FindLocalObject (netIdJoueur);
+				if (null != goJoueur && null != goJoueur.GetComponent<Joueur> ()) {
+					Joueur joueur = goJoueur.GetComponent<Joueur> ();
+					byte[] selectionCibleByte = SerializeUtils.SerializeToByteArray (selectionCiblesResult);
+					joueur.RpcDisplayCapacityChoice (selectionCibleByte);
+				}
+
 			} else {
-
-
-
+				
 				while (selectionCiblesResult.ListCiblesProbables.Count > selectionCiblesResult.NbCible) {
 					int indexToDelete = Random.Range (0, selectionCiblesResult.ListCiblesProbables.Count);
 					selectionCiblesResult.ListCiblesProbables.RemoveAt (indexToDelete);
@@ -74,85 +68,6 @@ public class CapaciteUtils : MonoBehaviour {
 		}
 	}
 		
-	public static SelectionCiblesExecutionCapacite getCiblesOfCapacity(CarteMetierAbstract carteSourceCapacite, CarteMetierAbstract carteSourceAction,ISelectionnable cible, CapaciteDTO capaciteSource, NetworkInstanceId netIdJoueur, int actionAppelante){
-		SelectionCiblesExecutionCapacite selectionCiblesResult = null;
-
-		CapaciteDTO capacite = capaciteSource.Clone ();
-
-		if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_ACTION_HASARD) {
-			capacite.Capacite = Random.Range (1, 40);
-		}
-
-
-		if (ConditionCarteUtils.listIdCapacitePourCarte.Contains (capacite.Capacite) && (null == cible || cible is CarteMetierAbstract)) {
-			List<CarteMetierAbstract> cartesCible = getCartesCible (carteSourceCapacite, (CarteMetierAbstract)cible, capacite, netIdJoueur);
-			//TODO use ConstanteIdObjet.ID_CAPACITE_CONDITION
-			selectionCiblesResult = new SelectionCiblesExecutionCapacite(capacite, carteSourceCapacite, actionAppelante);
-			selectionCiblesResult.ListCiblesProbables.AddRange (ConvertUtils.convertToListParent<ISelectionnable,CarteMetierAbstract> (cartesCible));
-		} else {
-			selectionCiblesResult = findCiblesHorsCarte (capacite, carteSourceCapacite,carteSourceAction, netIdJoueur, NetworkInstanceId.Invalid /*TODO cible.netIdJoueurCible*/, actionAppelante);
-		}
-
-		return selectionCiblesResult;
-	}
-
-	private static SelectionCiblesExecutionCapacite findCiblesHorsCarte (CapaciteDTO capacite, CarteMetierAbstract carteSourceCapacite, CarteMetierAbstract carteSourceAction,NetworkInstanceId netIdJoueurAction, NetworkInstanceId netIdJoueurCible, int actionAppelante){
-		SelectionCiblesExecutionCapacite selectionCible = null;
-
-		if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE 
-			|| capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE 
-			|| (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_VOL_RESSOURCE && null != carteSourceCapacite && null != carteSourceCapacite.getJoueurProprietaire())
-			|| capacite.Capacite  == ConstanteIdObjet.ID_CAPACITE_MODIF_TYPE_RESSOURCE) {
-
-			selectionCible = new SelectionCiblesExecutionCapaciteRessource (capacite, carteSourceCapacite, actionAppelante);
-
-			List<RessourceMetier> ressourcesCible = getRessourceMetierCible (capacite.ConditionsEmplacement, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
-			((SelectionCiblesExecutionCapaciteRessource)selectionCible).ListRessouceCible.AddRange (ressourcesCible);
-
-			if (capacite.NbCible == 1 && !capacite.ChoixCible 
-				&& (actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE || actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION)
-				&& isCardCibleCapacity(carteSourceAction, capacite.ConditionsCible, netIdJoueurAction)) {
-					selectionCible.ListCiblesProbables.Add (carteSourceAction);
-				//TODO prise en compte appel unique
-			} else {
-				HashSet<ISelectionnable> provenanceRessource = getRessourceProvenanceCible (capacite, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
-				selectionCible.ListCiblesProbables.AddRange (provenanceRessource);
-			}
-
-		} else if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_NB_CARTE_PIOCHE) {
-
-			selectionCible = new SelectionCiblesExecutionCapacite (capacite, carteSourceCapacite, actionAppelante);
-
-			List<DeckMetierAbstract> decksCible = getDecksCibles (capacite, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
-			selectionCible.ListCiblesProbables.AddRange (ConvertUtils.convertToListParent<ISelectionnable,DeckMetierAbstract> (decksCible));
-
-		} else if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU || capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_DISSIMULER_PLATEAU) {
-			HashSet<Joueur> joueursCible = new HashSet<Joueur> ();
-			selectionCible = new SelectionCiblesExecutionCapacite (capacite, carteSourceCapacite, actionAppelante);
-
-			foreach (string conditionCible in capacite.ConditionsCible) {
-				joueursCible.UnionWith(getJoueursCible (conditionCible, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite));
-			}
-
-			if (capacite.AppelUnique) {
-				foreach (Joueur joueurCible in joueursCible) {
-					if (!joueurCible.containCapacityWithId (capacite.Id)) {
-						selectionCible.ListCiblesProbables.Add (joueurCible);
-					}
-				}
-			} else {
-				selectionCible.ListCiblesProbables.AddRange (ConvertUtils.convertToListParent<ISelectionnable,Joueur>(joueursCible));
-			}
-
-
-		} else if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_NB_PLACE_PLATEAU) {
-			//TODO quelle est la cible (emplacement, plateau, ?)
-
-		}
-
-		return selectionCible;
-	}
-
 	public static void executeCapacity(SelectionCiblesExecutionCapacite selectionCiblesResult){
 		Joueur joueurSource = Joueur.getJoueur(selectionCiblesResult.IdJoueurCarteSource);
 
@@ -168,10 +83,16 @@ public class CapaciteUtils : MonoBehaviour {
 				
 				//TODO faire le trie ressource ou non
 				traitementCapaciteRessource (selectionCiblesResult.Capacite,((SelectionCiblesExecutionCapaciteRessource)selectionCiblesResult).ListRessouceCible, (IAvecCapacite) cibleSelectionne, joueurSource, selectionCiblesResult.IdCarteSource);
+				foreach (RessourceMetier ressourceCible in ((SelectionCiblesExecutionCapaciteRessource)selectionCiblesResult).ListRessouceCible) {
+					ressourceCible.synchroniseListCapacite ();
+				}
+
+
 
 			} else if(cibleSelectionne is IAvecCapacite) {
 				//TODO faire le trie ressource ou non
 				traitementAutreCible ((IAvecCapacite) cibleSelectionne, selectionCiblesResult.Capacite, selectionCiblesResult.IdCarteSource);
+				((IAvecCapacite)cibleSelectionne).synchroniseListCapacite();
 
 			}
 		}
@@ -217,8 +138,87 @@ public class CapaciteUtils : MonoBehaviour {
 		//TODO prendre en compte module
 		return new CapaciteMetier (capaciteDTO.Capacite,capaciteDTO.Id,capaciteDTO.ModeCalcul,capaciteDTO.Quantite,netIdCard, capaciteDTO.LierACarte);
 	}
-		
-	public static List<CarteMetierAbstract> getCartesCible (CarteMetierAbstract carteOrigin, CarteMetierAbstract carteCible,CapaciteDTO capacite, NetworkInstanceId netIdJoueur){
+
+	private static SelectionCiblesExecutionCapacite getCiblesOfCapacity(CarteMetierAbstract carteSourceCapacite, CarteMetierAbstract carteSourceAction,ISelectionnable cible, CapaciteDTO capaciteSource, NetworkInstanceId netIdJoueur, int actionAppelante){
+		SelectionCiblesExecutionCapacite selectionCiblesResult = null;
+
+		CapaciteDTO capacite = capaciteSource.Clone ();
+
+		if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_ACTION_HASARD) {
+			capacite.Capacite = Random.Range (1, 40);
+		}
+
+
+		if (ConditionCarteUtils.listIdCapacitePourCarte.Contains (capacite.Capacite) && (null == cible || cible is CarteMetierAbstract)) {
+			List<CarteMetierAbstract> cartesCible = getCartesCible (carteSourceCapacite, (CarteMetierAbstract)cible, capacite, netIdJoueur);
+			//TODO use ConstanteIdObjet.ID_CAPACITE_CONDITION
+			selectionCiblesResult = new SelectionCiblesExecutionCapacite(capacite, carteSourceCapacite, actionAppelante);
+			selectionCiblesResult.ListCiblesProbables.AddRange (ConvertUtils.convertToListParent<ISelectionnable,CarteMetierAbstract> (cartesCible));
+		} else {
+			selectionCiblesResult = findCiblesHorsCarte (capacite, carteSourceCapacite,carteSourceAction, netIdJoueur, NetworkInstanceId.Invalid /*TODO cible.netIdJoueurCible*/, actionAppelante);
+		}
+
+		return selectionCiblesResult;
+	}
+
+	private static SelectionCiblesExecutionCapacite findCiblesHorsCarte (CapaciteDTO capacite, CarteMetierAbstract carteSourceCapacite, CarteMetierAbstract carteSourceAction,NetworkInstanceId netIdJoueurAction, NetworkInstanceId netIdJoueurCible, int actionAppelante){
+		SelectionCiblesExecutionCapacite selectionCible = null;
+
+		if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE 
+			|| capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE 
+			|| (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_VOL_RESSOURCE && null != carteSourceCapacite && null != carteSourceCapacite.getJoueurProprietaire())
+			|| capacite.Capacite  == ConstanteIdObjet.ID_CAPACITE_MODIF_TYPE_RESSOURCE) {
+
+			selectionCible = new SelectionCiblesExecutionCapaciteRessource (capacite, carteSourceCapacite, actionAppelante);
+
+			List<RessourceMetier> ressourcesCible = getRessourceMetierCible (capacite.ConditionsEmplacement, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
+			((SelectionCiblesExecutionCapaciteRessource)selectionCible).ListRessouceCible.AddRange (ressourcesCible);
+
+			if (capacite.NbCible == 1 && !capacite.ChoixCible 
+				&& (actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE || actionAppelante == ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION)
+				&& isCardCibleCapacity(carteSourceAction, capacite.ConditionsCible, netIdJoueurAction)) {
+				selectionCible.ListCiblesProbables.Add (carteSourceAction);
+				//TODO prise en compte appel unique
+			} else {
+				HashSet<ISelectionnable> provenanceRessource = getRessourceProvenanceCible (capacite, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
+				selectionCible.ListCiblesProbables.AddRange (provenanceRessource);
+			}
+
+		} else if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_NB_CARTE_PIOCHE) {
+
+			selectionCible = new SelectionCiblesExecutionCapacite (capacite, carteSourceCapacite, actionAppelante);
+
+			List<DeckMetierAbstract> decksCible = getDecksCibles (capacite, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite);
+			selectionCible.ListCiblesProbables.AddRange (ConvertUtils.convertToListParent<ISelectionnable,DeckMetierAbstract> (decksCible));
+
+		} else if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU || capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_DISSIMULER_PLATEAU) {
+			HashSet<Joueur> joueursCible = new HashSet<Joueur> ();
+			selectionCible = new SelectionCiblesExecutionCapacite (capacite, carteSourceCapacite, actionAppelante);
+
+			foreach (string conditionCible in capacite.ConditionsCible) {
+				joueursCible.UnionWith(getJoueursCible (conditionCible, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite));
+			}
+
+			if (capacite.AppelUnique) {
+				foreach (Joueur joueurCible in joueursCible) {
+					if (!joueurCible.containCapacityWithId (capacite.Id)) {
+						selectionCible.ListCiblesProbables.Add (joueurCible);
+					}
+				}
+			} else {
+				selectionCible.ListCiblesProbables.AddRange (ConvertUtils.convertToListParent<ISelectionnable,Joueur>(joueursCible));
+			}
+
+
+		} else if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_NB_PLACE_PLATEAU) {
+			//TODO quelle est la cible (emplacement, plateau, ?)
+
+		}
+
+		return selectionCible;
+	}
+
+	private static List<CarteMetierAbstract> getCartesCible (CarteMetierAbstract carteOrigin, CarteMetierAbstract carteCible,CapaciteDTO capacite, NetworkInstanceId netIdJoueur){
 		List<CarteMetierAbstract> listCartesCible = new List<CarteMetierAbstract> ();
 
 		List<IConteneurCarte> listEmplacementsCible = new List<IConteneurCarte> ();
@@ -254,7 +254,7 @@ public class CapaciteUtils : MonoBehaviour {
 		return listCartesCible;
 	}
 
-	/*
+	/**
 	 * carteCibleCapacite : Carte vers laquelle la capacite va aller
 	 * capaciteImmediate : capacite applicable immediatement
 	 * carteOrigine : carte d'ou provient la capacite
@@ -290,7 +290,7 @@ public class CapaciteUtils : MonoBehaviour {
 			|| capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_STOCK_RESSOURCE) {
 			//Cas ou l on rajoute une capaciteMetier
 			foreach (RessourceMetier ressource in ressourcesCible) {	
-				int productionActuel = ressource.Production;
+
 
 				if (cibleSelectionne is CarteBatimentMetier || cibleSelectionne is CarteDefenseMetier || cibleSelectionne is CarteVaisseauMetier) {
 					CapaciteDTO capaciteRessource = getRessourceFromCarte (capacite, cibleSelectionne, ressource.TypeRessource);
