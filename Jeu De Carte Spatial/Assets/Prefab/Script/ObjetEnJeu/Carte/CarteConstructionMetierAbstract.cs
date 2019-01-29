@@ -25,12 +25,15 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	protected DesignCarteConstructionV2 designCarte;
 
-	public string initCarte (CarteConstructionDTO initCarteRef){
+	public string initCarte (CarteConstructionDTO initCarteRef, bool isServer){
 		carteRef = initCarteRef;
 		initId ();
-		initEvent ();
 		NiveauActuel = 1;
 		PV = carteRef.PointVieMax;
+
+		if (isServer) {
+			initEvent ();
+		}
 
 		return id;
 	}
@@ -187,7 +190,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 			carteRef = SerializeUtils.Deserialize<CarteConstructionDTO> (dataObject);
 
-			initCarte (carteRef);
+			initCarte (carteRef, false);
 			generateGOCard ();
 		}
 	}
@@ -359,7 +362,6 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	[Command]
 	public void CmdDestuction(){
-
 		NetworkUtils.unassignObjectFromPlayer (this, getJoueurProprietaire ().GetComponent<NetworkIdentity> ());
 
 		getJoueurProprietaire ().CimetiereConstruction.addCarte (this);
@@ -367,7 +369,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	/*****************ISelectionnable*****************/
 	public override void onClick(){
-		Joueur joueurLocal = Joueur.getJoueurLocal ();
+		Joueur joueurLocal = JoueurUtils.getJoueurLocal ();
 
 		if (null != joueurLocal) {
 			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();

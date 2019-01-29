@@ -98,7 +98,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 	}
 
 	public override void OnMouseDown(){
-		Joueur joueurLocal = Joueur.getJoueurLocal ();
+		Joueur joueurLocal = JoueurUtils.getJoueurLocal ();
 
 		if (null != joueurLocal) {
 			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();

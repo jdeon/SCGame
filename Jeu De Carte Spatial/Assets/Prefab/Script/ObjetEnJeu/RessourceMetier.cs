@@ -3,19 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite {
+public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 
 	[SerializeField]
 	private string typeRessource;
 
-	[SyncVar]
-	private NetworkInstanceId netIdJoueur;
-
-	[SyncVar (hook = "onChangeProd")]
-	private int production;
-
-	[SyncVar (hook = "onChangeStock")]
-	private int stock;
+	private Joueur joueur;
 
 	private TextMesh txtProd;
 
@@ -62,10 +55,11 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite 
 		return result;
 	}
 
-	public void init (NetworkInstanceId netIdJoueur){
-		this.netIdJoueur = netIdJoueur;
-		production = 1;
-		stock = 20; //TODO change to 3
+
+	public void init (Joueur joueurPossesseur){
+		this.joueur = joueurPossesseur;
+		Production = 1;
+		Stock = 20; //TODO change to 3
 
 		this.prefixeRessourceProd = getPrefixeProd (typeRessource);
 		this.prefixeRessourceStock = getPrefixeStock (typeRessource);
@@ -80,27 +74,36 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite 
 			txtStock = tStock.GetComponentInChildren<TextMesh>();
 		}
 
-		txtProd.text = prefixeRessourceProd + Production;
-		txtStock.text = prefixeRessourceStock + Stock;
-	}
-
-	public void productionDeRessourceByServer(){
-		stock += Production;
+		txtProd.text = prefixeRessourceProd + ProductionWithCapacity;
+		txtStock.text = prefixeRessourceStock + StockWithCapacity;
 	}
 
 	public bool payerRessource(int nbDemande){
 			bool result = false;
-		if (stock >= nbDemande) {
-			stock -= nbDemande;
+		if (StockWithCapacity >= nbDemande) {
+			Stock -= nbDemande;
 			result = true;
 		}
 
 		return result;
 	}
 
+	public void updateVisual(){
+		txtProd.text = prefixeRessourceProd + ProductionWithCapacity;
+		txtStock.text = prefixeRessourceProd + StockWithCapacity;
+	}
+
+	public void syncListCapacityFromServer(List<CapaciteMetier> listMetierServer){
+		if(null != listMetierServer){
+			this.listCapaciteRessource = listMetierServer;
+			updateVisual ();
+		}
+	}
+
+
 	/*******************ISelectionnable****************/
 	public void onClick (){
-		Joueur localJoueur = Joueur.getJoueurLocal ();
+		Joueur localJoueur = JoueurUtils.getJoueurLocal ();
 		if (this.etatSelectionne == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
 			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
 		}
@@ -177,56 +180,31 @@ public class RessourceMetier : NetworkBehaviour, ISelectionnable, IAvecCapacite 
 
 	public void synchroniseListCapacite (){
 		byte[] listeCapaData = SerializeUtils.SerializeToByteArray(this.listCapaciteRessource);
-		RpcSyncCapaciteList (listeCapaData);
+		joueur.RpcSyncCapaciteListRessource (listeCapaData, TypeRessource);
 	}
-
-	[ClientRpc]
-	public void RpcSyncCapaciteList(byte[] listeCapaData){
-		List<CapaciteMetier> listCapacite = SerializeUtils.Deserialize<List<CapaciteMetier>> (listeCapaData);
-		if (null != listCapacite) {
-			this.listCapaciteRessource = listCapacite;
-		}
-		txtProd.text = prefixeRessourceProd + Production;
-		txtStock.text = prefixeRessourceProd + Stock;
-	}
-
-	/*************************Hook*********************/
-	public void onChangeProd(int prod){
-		if (null != txtProd) {
-			txtProd.text = prefixeRessourceProd + prod;
-		}
-	}
-
-	public void onChangeStock(int stock){
-		if (null != txtStock) {
-			txtStock.text = prefixeRessourceStock + stock;
-		}
-	}
-
 
 	/*************************Getter et setter*************/
 	public NetworkInstanceId NetIdJoueur {
-		get { return netIdJoueur; }
+		get { return joueur.netId; }
 	}
-
-
+		
 	public string TypeRessource {
 		get { return typeRessource; }
 	}
 
-	public int Production {
+	public int Production { get; set; }
+
+	public int Stock{ get; set; }
+
+	public int ProductionWithCapacity {
 		get { 
-			return  CapaciteUtils.valeurAvecCapacite (this.production, listCapaciteRessource, ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE); 
+			return  CapaciteUtils.valeurAvecCapacite (Production, listCapaciteRessource, ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE); 
 		}
-		set { production = value; }
 	}
 
-	public int Stock {
+	public int StockWithCapacity {
 		get { 
-			return CapaciteUtils.valeurAvecCapacite (this.stock, listCapaciteRessource, ConstanteIdObjet.ID_CAPACITE_MODIF_STOCK_RESSOURCE); 
+			return CapaciteUtils.valeurAvecCapacite (Stock, listCapaciteRessource, ConstanteIdObjet.ID_CAPACITE_MODIF_STOCK_RESSOURCE); 
 		}
-		set { stock = value; }
 	}
-
-
 }

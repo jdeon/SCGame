@@ -5,19 +5,19 @@ using UnityEngine.Networking;
 
 public class CarteUtils {
 
-	public static GameObject convertCarteDTOToGameobject(CarteDTO carteDTO){
+	public static GameObject convertCarteDTOToGameobject(CarteDTO carteDTO, bool isServer){
 		GameObject carteGO;
 		string idCarte = "";
 
 		if (carteDTO.TypeOfCarte == ConstanteInGame.strBatiment) {
 			carteGO = GameObject.Instantiate(ConstanteInGame.carteBatimentPrefab);
-			idCarte = carteGO.GetComponent<CarteBatimentMetier> ().initCarte ((CarteConstructionDTO) carteDTO);
+			idCarte = carteGO.GetComponent<CarteBatimentMetier> ().initCarte ((CarteConstructionDTO) carteDTO, isServer);
 		} else if (carteDTO.TypeOfCarte == ConstanteInGame.strDefense) {
 			carteGO = GameObject.Instantiate(ConstanteInGame.carteDefensePrefab);
-			idCarte = carteGO.GetComponent<CarteDefenseMetier> ().initCarte ((CarteConstructionDTO) carteDTO);
+			idCarte = carteGO.GetComponent<CarteDefenseMetier> ().initCarte ((CarteConstructionDTO) carteDTO, isServer);
 		} else if (carteDTO.TypeOfCarte == ConstanteInGame.strVaisseau) {
 			carteGO = GameObject.Instantiate (ConstanteInGame.carteVaisseauPrefab);
-			idCarte = carteGO.GetComponent<CarteVaisseauMetier> ().initCarte ((CarteConstructionDTO) carteDTO);
+			idCarte = carteGO.GetComponent<CarteVaisseauMetier> ().initCarte ((CarteConstructionDTO) carteDTO, isServer);
 		} else {
 			carteGO = GameObject.Instantiate (ConstanteInGame.emptyPrefab);
 		}

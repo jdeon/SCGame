@@ -69,7 +69,7 @@ public class CapaciteUtils {
 	}
 		
 	public static void executeCapacity(SelectionCiblesExecutionCapacite selectionCiblesResult){
-		Joueur joueurSource = Joueur.getJoueur(selectionCiblesResult.IdJoueurCarteSource);
+		Joueur joueurSource = JoueurUtils.getJoueur(selectionCiblesResult.IdJoueurCarteSource);
 
 		foreach (ISelectionnable cibleSelectionne in selectionCiblesResult.ListCiblesProbables) {
 			if (listIdCapaciteEffetImmediat.Contains (selectionCiblesResult.IdTypeCapacite)) {
@@ -198,16 +198,13 @@ public class CapaciteUtils {
 			foreach (string conditionCible in capacite.ConditionsCible) {
 				joueursCible.UnionWith(getJoueursCible (conditionCible, netIdJoueurAction, netIdJoueurCible, carteSourceCapacite));
 			}
-
-			if (capacite.AppelUnique) {
-				foreach (Joueur joueurCible in joueursCible) {
-					if (!joueurCible.containCapacityWithId (capacite.Id)) {
-						selectionCible.ListCiblesProbables.Add (joueurCible);
-					}
+				
+			foreach (Joueur joueurCible in joueursCible) {
+				if (!(capacite.AppelUnique && joueurCible.CartePlaneteJoueur.containCapacityWithId (capacite.Id))) {
+					selectionCible.ListCiblesProbables.Add (joueurCible.CartePlaneteJoueur);
 				}
-			} else {
-				selectionCible.ListCiblesProbables.AddRange (ConvertUtils.convertToListParent<ISelectionnable,Joueur>(joueursCible));
 			}
+			
 
 
 		} else if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_NB_PLACE_PLATEAU) {
@@ -275,10 +272,10 @@ public class CapaciteUtils {
 			}
 
 		} else if (capaciteImmediate.Capacite == ConstanteIdObjet.ID_CAPACITE_INVOQUE_CARTE && null != capaciteImmediate.CarteInvocation) {
-			GameObject carteGO = CarteUtils.convertCarteDTOToGameobject (capaciteImmediate.CarteInvocation);
+			GameObject carteGO = CarteUtils.convertCarteDTOToGameobject (capaciteImmediate.CarteInvocation, true);
 
 			//TODO ne prends pas en compte l'emplacement cible ou l invocation chez l ennemie
-			joueur.invoquerCarte (carteGO, capaciteImmediate.NiveauInvocation, joueur.Main);
+			joueur.invoquerCarteServer (carteGO, capaciteImmediate.NiveauInvocation, joueur.Main);
 
 		} else if (capaciteImmediate.Capacite == ConstanteIdObjet.ID_CAPACITE_REVELE_CARTE) {
 			//TODO RPC carteCibleCapacite.generateVisualCard ();
@@ -327,7 +324,7 @@ public class CapaciteUtils {
 					}
 
 					ressource.Stock -= montantVoler;
-					int montantReelVole = joueurCarteSource.addRessource (ressource.TypeRessource, montantVoler);
+					int montantReelVole = joueurCarteSource.addRessourceServer (ressource.TypeRessource, montantVoler);
 
 					if (montantReelVole != montantVoler) {
 						ressource.Stock += montantVoler - montantReelVole;
@@ -362,9 +359,9 @@ public class CapaciteUtils {
 					ressourceOppose = "Metal";
 				}
 
-				Joueur joueurRessource = Joueur.getJoueur (ressource.NetIdJoueur);
+				Joueur joueurRessource = JoueurUtils.getJoueur (ressource.NetIdJoueur);
 
-				int montantReelEchange = joueurRessource.addRessource (ressourceOppose, montantEchange);
+				int montantReelEchange = joueurRessource.addRessourceServer (ressourceOppose, montantEchange);
 
 				if (montantReelEchange != montantEchange) {
 					ressource.Stock += montantEchange - montantReelEchange;
@@ -535,10 +532,10 @@ public class CapaciteUtils {
 		HashSet<Joueur> joueursCible = new HashSet<Joueur>();
 
 		if (netIdJoueurCible != netIdJoueurSource && conditionCible.Contains (ConstanteIdObjet.STR_CONDITION_POUR_ENNEMIE)) {
-			joueursCible.Add(Joueur.getJoueur (netIdJoueurCible));
+			joueursCible.Add(JoueurUtils.getJoueur (netIdJoueurCible));
 		} 
 		if (netIdJoueurCible == netIdJoueurSource && conditionCible.Contains (ConstanteIdObjet.STR_CONDITION_POUR_ALLIER)) {
-			joueursCible.Add(Joueur.getJoueur (netIdJoueurSource));
+			joueursCible.Add(JoueurUtils.getJoueur (netIdJoueurSource));
 		} 
 
 		if (null != carteSource && null != carteSource.getJoueurProprietaire () && conditionCible.Contains (ConstanteIdObjet.STR_CONDITION_POUR_PROVENANCE)) {

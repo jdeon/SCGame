@@ -14,7 +14,7 @@ public class EmplacementAtomsphereMetier : EmplacementMetierAbstract {
 			Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
 			if (isMovableByPlayer (joueur) && (joueur.CarteSelectionne is CarteVaisseauMetier || listNomCarteExeption.Contains (joueur.CarteSelectionne.name))) {
-				Joueur localJoueur = Joueur.getJoueurLocal ();
+				Joueur localJoueur = JoueurUtils.getJoueurLocal ();
 				if (this.etatSelectionnable == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
 					localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
 

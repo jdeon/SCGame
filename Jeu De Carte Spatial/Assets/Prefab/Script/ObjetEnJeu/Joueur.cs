@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
+public class Joueur : NetworkBehaviour {
 
 	[SerializeField][SyncVar]
 	private string pseudo = "Test";
 
 	[SerializeField]
 	private Mains main;
-
-
-	private CartePlaneteMetier cartePlanetJoueur;
 
 	[SerializeField]
 	private RessourceMetier ressourceXP;
@@ -23,6 +20,7 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 	[SerializeField]
 	private RessourceMetier ressourceCarburant;
 
+	private CartePlaneteMetier cartePlanetJoueur;
 
 	[SerializeField]
 	private DeckConstructionMetier deckConstruction;
@@ -30,63 +28,24 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 	private DeckConstructionMetier cimetiereConstruction;
 
 
+	private GameObject goPlateau;
 
 	private CarteMetierAbstract carteSelectionne;
 
 	private bool carteEnVisuel;
 
-	private GameObject goPlateau;
-
-	private List<CapaciteMetier> listCapacite = new List<CapaciteMetier>();
-
 	private PhaseChoixCibleJoueur phaseChoixCibleJoueur;
-
-	private int etatSelectionne;
-
-
-
-	public static Joueur getJoueurLocal(){
-		Joueur joueurResult = null;
-
-		Joueur[] listJoueur = GameObject.FindObjectsOfType<Joueur> ();
-	
-		if (null != listJoueur && listJoueur.Length > 0) {
-			foreach (Joueur joueur in listJoueur) {
-				if (joueur.isLocalPlayer) {
-					joueurResult = joueur;
-					break;
-				}
-			}
-		}
-
-		return joueurResult;
-	}
-
-	public static Joueur getJoueur(NetworkInstanceId netIdJoueur){
-		Joueur joueurResult = null;
-
-		Joueur[] listJoueur = GameObject.FindObjectsOfType<Joueur> ();
-
-		if (null != listJoueur && listJoueur.Length > 0) {
-			foreach (Joueur joueur in listJoueur) {
-				if (joueur.netId == netIdJoueur) {
-					joueurResult = joueur;
-					break;
-				}
-			}
-		}
-
-		return joueurResult;
-	}
 
 	void Start (){
 		main.init(netId);
 
+		deckConstruction.intiDeck (this, isServer);
+		ressourceXP.init (this);
+		ressourceMetal.init (this);
+		ressourceCarburant.init (this);
+
 		if (isLocalPlayer) {
 			CmdGenerateCardAlreadyLaid (this.netId);
-
-			CmdInitDeck ();
-			deckConstruction.setClientNetIdJoueur (netId);
 
 			initPlateau ();
 			CmdInitSystemeTour();
@@ -123,15 +82,6 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 
 		TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
 		systemTour.addInSystemeTour (netId, pseudo, boutonTour.netId);
-	}
-
-	[Command]
-	public void CmdInitDeck(){
-		Debug.Log ("Begin CmdInitDeck");
-
-		deckConstruction.intiDeck (this.netId);
-
-		Debug.Log ("End CmdInitDeck");
 	}
 
 	[Command]
@@ -175,9 +125,7 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 		if (null != cartePlanetJoueur) {
 			cartePlanetJoueur.initPlanete(this.netId, pseudo);
 		}
-
-
-
+		
 		NetworkServer.Spawn (carteplaneteGO);
 
 		RpcGeneratePlanete(carteplaneteGO, NetworkInstanceId.Invalid);
@@ -185,13 +133,7 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 		Debug.Log ("End CmdInitPlanete");
 	}
 
-	[Command]
-	public void CmdPiocheCarte(){
-		Debug.Log ("command");
-		deckConstruction.piocheDeckConstructionByServer (main);
-	}
-
-	public void invoquerCarte(GameObject carteAInvoquer, int niveauInvocation, IConteneurCarte emplacementCible){
+	public void invoquerCarteServer(GameObject carteAInvoquer, int niveauInvocation, IConteneurCarte emplacementCible){
 
 		NetworkServer.Spawn (carteAInvoquer);
 
@@ -210,8 +152,6 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 		if (carteScript is CarteConstructionMetierAbstract) {
 			((CarteConstructionMetierAbstract)carteScript).RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
 		} //TODO carte amelioration
-
-
 	}
 
 	/**
@@ -230,42 +170,10 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 			CartePlaneteMetier cartePlaneteScript = goScript.GetComponent<CartePlaneteMetier> ();
 			this.cartePlanetJoueur = cartePlaneteScript;
 			cartePlaneteScript.generateGOCard ();
-
-			//TODO risque de mettre mauvaise instance ID
-			ressourceXP.init (netId);
-			ressourceMetal.init (netId);
-			ressourceCarburant.init (netId);
-
 		}
 
 		Debug.Log ("End RpcGeneratePlanete");
 	}
-
-	[Command]
-	public void CmdProductionRessource(){
-		//TODO XP?
-		ressourceMetal.productionDeRessourceByServer();
-		ressourceCarburant.productionDeRessourceByServer();
-	}
-
-	public int addRessource(string type, int nb){
-		int ressourceAdded = 0;
-
-		if (type == "Metal") {
-			ressourceAdded = -nb > ressourceMetal.Stock ? nb : -ressourceMetal.Stock; //Cas ou le nombre est negatif et plus grand que le stock
-			ressourceMetal.Stock += ressourceAdded;
-		} else if (type == "Carburant") {
-			ressourceAdded = -nb > RessourceCarburant.Stock ? nb : -RessourceCarburant.Stock; //Cas ou le nombre est negatif et plus grand que le stock
-			RessourceCarburant.Stock += ressourceAdded;
-		} else if (type == "XP") {
-			ressourceAdded = -nb > RessourceXP.Stock ? nb : -RessourceXP.Stock; //Cas ou le nombre est negatif et plus grand que le stock
-			RessourceXP.Stock += ressourceAdded;
-		}
-
-
-		return ressourceAdded;
-	}
-
 
 	[ClientRpc]
 	public void RpcDisplayCapacityChoice (byte[] byteSelectionCible){
@@ -289,101 +197,96 @@ public class Joueur : NetworkBehaviour, IAvecCapacite, ISelectionnable {
 		}
 	}
 
+	/******************Gestion Deck********************/
+	[Command]
+	public void CmdPiocheCarte(){
+		Debug.Log ("command");
+		deckConstruction.piocheDeckConstructionByServer (main);
+	}
+		
+	[ClientRpc]
+	public void RpcSyncCapaciteListDeck(byte[] listeCapaData, string type){
+		List<CapaciteMetier> listCapacite = SerializeUtils.Deserialize<List<CapaciteMetier>> (listeCapaData);
+		DeckMetierAbstract deckCible = getDeckByType (type);
 
-
-	/*********************************IAvecCapacite*********************/
-	public void addCapacity (CapaciteMetier capaToAdd){
-		listCapacite.Add (capaToAdd);
-		//TODO recalculate visual
+		if (null != deckCible) {
+			deckCible.syncListCapacityFromServer (listCapacite);
+		}
 	}
 
-	public void removeLinkCardCapacity (NetworkInstanceId netIdCard){
-		List<CapaciteMetier> capacitesToDelete = new List<CapaciteMetier> ();
+	private DeckMetierAbstract getDeckByType(string type){
+		DeckMetierAbstract deck = null;
+		if (type == "Construction") {
+			deck = DeckConstruction;
+		} else if (type == "Amelioration") {
+			//TODO deck = DeckAmelioration;
+		} 
 
-		foreach (CapaciteMetier capacite in listCapacite) {
-			if (capacite.Reversible && capacite.IdCarteProvenance == netIdCard) {
-				capacitesToDelete.Add (capacite);
-			}
-		}
-
-		foreach (CapaciteMetier capaciteToDelete in capacitesToDelete) {
-			listCapacite.Remove(capaciteToDelete);
-		}
-		//TODO recalculate visual
+		return deck;
 	}
 
-	public void capaciteFinTour (){
-		List<CapaciteMetier> capacitesToDelete = new List<CapaciteMetier> ();
 
-		foreach (CapaciteMetier capacite in listCapacite) {
-			bool existeEncore = capacite.endOfTurn ();
-			if (!existeEncore) {
-				capacitesToDelete.Add (capacite);
-			}
-		}
+	/******************Gestion Ressource****************/
+	[Command]
+	public void CmdProductionRessource(){
+		//TODO XP?
+		ressourceMetal.Stock += ressourceMetal.ProductionWithCapacity;
+		RpcSyncRessourceStockAndProd (ressourceMetal.TypeRessource, ressourceMetal.Production, ressourceMetal.Stock);
 
-		foreach (CapaciteMetier capaciteToDelete in capacitesToDelete) {
-			listCapacite.Remove(capaciteToDelete);
-		}
-		//TODO recalculate visual
+		ressourceCarburant.Stock += ressourceCarburant.ProductionWithCapacity;
+		RpcSyncRessourceStockAndProd (ressourceCarburant.TypeRessource, ressourceCarburant.Production, ressourceCarburant.Stock);
 	}
 
-	public List<CapaciteMetier>  containCapacityOfType(int idTypCapacity){
-		List<CapaciteMetier> listCapaciteResult = new List<CapaciteMetier> ();
+	public int addRessourceServer(string type, int nb){
+		int ressourceAdded = 0;
 
-		foreach (CapaciteMetier capacite in listCapacite) {
-			if (capacite.IdTypeCapacite == idTypCapacity) {
-				listCapaciteResult.Add (capacite);
-			}
-		}
-		return listCapaciteResult;
-	}
+		RessourceMetier ressource = getRessourceByType (type);
 
-	public bool containCapacityWithId (int idCapacityDTO){
-		bool contain = false;
-
-		foreach (CapaciteMetier capacite in listCapacite) {
-			if (capacite.IdCapaciteProvenance == idCapacityDTO) {
-				contain = true;
-				break;
-			}
-		}
-		return contain;
-	}
-
-	public void synchroniseListCapacite (){
-		byte[] listeCapaData = SerializeUtils.SerializeToByteArray(this.listCapacite);
-		RpcSyncCapaciteList (listeCapaData);
+		if (null != ressource) {
+			ressourceAdded = -nb > ressource.Stock ? nb : -ressource.Stock; //Cas ou le nombre est negatif et plus grand que le stock
+			ressource.Stock += ressourceAdded;
+			RpcSyncRessourceStockAndProd (ressource.TypeRessource, ressource.Production, ressource.Stock);
+		} 
+			
+		return ressourceAdded;
 	}
 
 	[ClientRpc]
-	public void RpcSyncCapaciteList(byte[] listeCapaData){
+	public void RpcSyncRessourceStockAndProd(string type, int prod, int stock){
+		RessourceMetier ressource = getRessourceByType (type);
+
+		if (null != ressource) {
+			ressource.Production = prod;
+			ressource.Stock = stock;
+			ressource.updateVisual ();
+		}
+	}
+
+	[ClientRpc]
+	public void RpcSyncCapaciteListRessource(byte[] listeCapaData, string type){
 		List<CapaciteMetier> listCapacite = SerializeUtils.Deserialize<List<CapaciteMetier>> (listeCapaData);
-		if (null != listCapacite) {
-			this.listCapacite = listCapacite;
+
+		RessourceMetier ressource = getRessourceByType (type);
+
+		if (null != ressource) {
+			ressource.syncListCapacityFromServer (listCapacite);
 		}
 	}
 
-	/*******************ISelectionnable****************/
-	public virtual void onClick (){
-		//TODO pass par le terrain
-		Joueur localJoueur = Joueur.getJoueurLocal ();
-		if (this.etatSelectionne == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
-			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
+	private RessourceMetier getRessourceByType(string type){
+		RessourceMetier ressource = null;
+		if (type == RessourceMetal.TypeRessource) {
+			ressource = RessourceMetal;
+		} else if (type == RessourceCarburant.TypeRessource) {
+			ressource = RessourceCarburant;
+		} else if (type == RessourceXP.TypeRessource) {
+			ressource = RessourceXP;
 		}
-	}
 
-	public void miseEnBrillance(int etat){
-		//TODO mise en brillance
-	}
-		
-	public int EtatSelectionnable {
-		get { return etatSelectionne; }
+		return ressource;
 	}
 
 	/*******************Getter et setter***************/
-
-
 	public string Pseudo {
 		get {return pseudo;}
 	}

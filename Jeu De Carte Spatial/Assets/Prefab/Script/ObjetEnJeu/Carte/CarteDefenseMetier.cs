@@ -31,7 +31,7 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 	}
 
 	public override void OnMouseDown(){
-		Joueur joueurLocal = Joueur.getJoueurLocal ();
+		Joueur joueurLocal = JoueurUtils.getJoueurLocal ();
 
 		//Selection de la defense lors de la phase attaque adverse
 		if (SelectionnableDefense && null != joueurLocal) {

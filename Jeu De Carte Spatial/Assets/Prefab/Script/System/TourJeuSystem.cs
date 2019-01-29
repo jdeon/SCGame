@@ -75,7 +75,7 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				//Remplissage de la main initial
 				foreach (JoueurMinimalDTO joueurDTO in listJoueurs) {
-					Joueur joueur = Joueur.getJoueur (joueurDTO.netIdJoueur);
+					Joueur joueur = JoueurUtils.getJoueur (joueurDTO.netIdJoueur);
 
 					if (null != joueur) {
 						joueur.DeckConstruction.piocheDeckConstructionByServer (joueur.Main);
@@ -121,7 +121,7 @@ public class TourJeuSystem : NetworkBehaviour {
 				}
 
 			} else if (actionPlayer == FIN_TOUR) {
-				Joueur joueurTour = Joueur.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
+				Joueur joueurTour = JoueurUtils.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
 
 				int phasePrecedente = phase;
 
@@ -137,7 +137,7 @@ public class TourJeuSystem : NetworkBehaviour {
 				}
 				
 
-				bool tourSupJoueur = 0 < CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
+				bool tourSupJoueur = 0 < CapaciteUtils.valeurAvecCapacite (0, joueurTour.CartePlaneteJoueur.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
 
 				if (!tourSupJoueur) { //Pas de tour supplementaire
 
@@ -149,14 +149,14 @@ public class TourJeuSystem : NetworkBehaviour {
 					}
 
 					this.idJoueurTour = listJoueurs [indexPlayerPlaying].netIdJoueur;
-					joueurTour = Joueur.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
+					joueurTour = JoueurUtils.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
 				}
 
 				RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
 			
 				ActionEventManager.EventActionManager.CmdStartTurn (joueurTour.netId);
 
-				bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
+				bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.CartePlaneteJoueur.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
 				initTour(joueurTour);
 
 				if (perteTour) {//Perte de tour

@@ -8,28 +8,28 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 	[SerializeField]
 	private DeckConstructionData deckContructionRef;
 
-	public override void intiDeck (NetworkInstanceId joueurNetId){
-		this.netIdJoueur = joueurNetId;
+	public override void intiDeck (Joueur joueurInitiateur, bool isServer){
+		base.intiDeck(joueurInitiateur, isServer);
 
-		List<CarteConstructionAbstractData> listCarteConstuctionData = deckContructionRef.listeCarte;
-		foreach (CarteConstructionAbstractData carteConstructionData in listCarteConstuctionData) {
-			GameObject carteGO = convertDataToGO (carteConstructionData);
-			carteGO.transform.SetParent (transform);
+		if (isServer) {
+			List<CarteConstructionAbstractData> listCarteConstuctionData = deckContructionRef.listeCarte;
+			foreach (CarteConstructionAbstractData carteConstructionData in listCarteConstuctionData) {
+				GameObject carteGO = convertDataToGO (carteConstructionData, isServer);
+				carteGO.transform.SetParent (transform);
 
-			int cartePlace = Mathf.FloorToInt (Random.Range (0, transform.childCount));
-			carteGO.transform.SetSiblingIndex (cartePlace);
-
+				int cartePlace = Mathf.FloorToInt (Random.Range (0, transform.childCount));
+				carteGO.transform.SetSiblingIndex (cartePlace);
+			}
 		}
 	}
 
 	public void piocheDeckConstructionByServer(Mains main){
-		if (joueurProprietaire.isServer) {
+		if (joueurProprietaire.isServer && getNbCarteRestante() > 0) {
 			Debug.Log ("taille deck : " + getNbCarteRestante());
 
 			GameObject carteTiree = tirerCarte ();
 
 			Debug.Log ("carteTiree : " + carteTiree);
-
 
 			NetworkServer.Spawn (carteTiree);
 
@@ -40,7 +40,7 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 			byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteConstructionScript.getCarteRef());
 			carteConstructionScript.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
 
-			ActionEventManager.EventActionManager.CmdPiocheConstruction (netIdJoueur,carteConstructionScript.netId,NetworkInstanceId.Invalid);
+			ActionEventManager.EventActionManager.CmdPiocheConstruction (NetIdJoueur,carteConstructionScript.netId,NetworkInstanceId.Invalid);
 		}
 	}
 
@@ -65,7 +65,7 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		if(null != cartePioche){
 			cartePioche.SetActive (true);
 			CarteConstructionMetierAbstract carteConstruction = cartePioche.GetComponent<CarteConstructionMetierAbstract> ();
-			carteConstruction.setJoueurProprietaireServer (netIdJoueur);
+			carteConstruction.setJoueurProprietaireServer (NetIdJoueur);
 		}
 
 		Debug.Log ("End tirerCarte()");
@@ -81,10 +81,10 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		carte.RpcDestroyClientCard ();
 	}
 
-	private GameObject convertDataToGO(CarteConstructionAbstractData carteConstructionData){
+	private GameObject convertDataToGO(CarteConstructionAbstractData carteConstructionData, bool isServer){
 		CarteConstructionDTO carteDTO = ConvertDataAndDTOUtils.convertCarteConstructionDataToDTO (carteConstructionData);
 
-		GameObject carteConstructionGO = CarteUtils.convertCarteDTOToGameobject (carteDTO);
+		GameObject carteConstructionGO = CarteUtils.convertCarteDTOToGameobject (carteDTO, isServer);
 
 		carteConstructionGO.SetActive (false);
 

@@ -4,19 +4,14 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IAvecCapacite, ISelectionnable {
+public abstract class DeckMetierAbstract : MonoBehaviour, IConteneurCarte, IAvecCapacite, ISelectionnable {
 
 	protected Joueur joueurProprietaire;
-
-	[SyncVar  (hook = "onChangeNetIdJoueur")]
-	protected NetworkInstanceId netIdJoueur;
 
 	protected List<CapaciteMetier> listCapaciteDeck = new List<CapaciteMetier> ();
 
 	protected int etatSelectionnable;
 
-
-	public abstract void intiDeck (NetworkInstanceId joueurNetId);
 
 	public abstract int getNbCarteRestante ();
 
@@ -27,7 +22,11 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 		onClick ();
 	}
 
-	public int getNbCartePiochePointDegat(){
+	public virtual void intiDeck (Joueur joueurInitiateur, bool isServer){
+		this.joueurProprietaire = joueurInitiateur;
+	}
+
+	public int getNbCartePioche(){
 		int nbCartePioche = 1;
 
 		if( null != ListCapaciteDeck){
@@ -41,14 +40,15 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 		return nbCartePioche;
 	}
 
-
-
-
+	public void syncListCapacityFromServer(List<CapaciteMetier> listMetierServer){
+		if(null != listMetierServer){
+			this.listCapaciteDeck = listMetierServer;
+		}
+	}
 
 	/*****************	IContenerCarte *****************/
-
 	public bool isConteneurAllier (NetworkInstanceId netIdJoueur){
-		return netIdJoueur == this.netIdJoueur;
+		return netIdJoueur == joueurProprietaire.netId;
 	}
 
 	public List<CarteMetierAbstract> getCartesContenu (){
@@ -122,24 +122,22 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 
 	public void synchroniseListCapacite (){
 		byte[] listeCapaData = SerializeUtils.SerializeToByteArray(this.listCapaciteDeck);
-		RpcSyncCapaciteList (listeCapaData);
-	}
+		string typeDeck = "";
 
-	[ClientRpc]
-	public void RpcSyncCapaciteList(byte[] listeCapaData){
-		List<CapaciteMetier> listCapacite = SerializeUtils.Deserialize<List<CapaciteMetier>> (listeCapaData);
-		if (null != listCapacite) {
-			this.listCapaciteDeck = listCapacite;
-		}
+		if (this is DeckConstructionMetier) {
+			joueurProprietaire.RpcSyncCapaciteListDeck (listeCapaData, "Construction");
+		} /*else if (this is DeckAmelirationMetier) {
+			joueurProprietaire.RpcSyncCapaciteListDeck (listeCapaData, "Amelioration");
+		}*/
+
 	}
 
 	/*******************ISelectionnable****************/
 	public void onClick (){
 		//TODO selectionne
-		Joueur localJoueur = Joueur.getJoueurLocal ();
+		Joueur localJoueur = JoueurUtils.getJoueurLocal ();
 		if (this.etatSelectionnable == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
 			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
-
 		}
 	}
 
@@ -152,24 +150,9 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 	}
 
 
-	/*******************************Hook************************/
-	protected void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
-		this.netIdJoueur = netIdJoueur;
-		joueurProprietaire = Joueur.getJoueur (netIdJoueur);
-	}
-
-	public void setClientNetIdJoueur(NetworkInstanceId netIdJoueur){
-		this.netIdJoueur = netIdJoueur;
-		joueurProprietaire = Joueur.getJoueur (netIdJoueur);
-	}
-
-	[ClientRpc]
-	public void RpcInitIdJoueur(NetworkInstanceId joueurNetId){
-		onChangeNetIdJoueur (joueurNetId);
-	}
-
+	/********************Getter et Setter************************/
 	public NetworkInstanceId NetIdJoueur {
-		get { return netIdJoueur; }
+		get { return joueurProprietaire.netId; }
 	}
 
 	public List<CapaciteMetier> ListCapaciteDeck {

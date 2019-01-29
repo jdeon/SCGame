@@ -15,7 +15,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	protected Joueur joueurProprietaire;
 
-	protected List<CapaciteMetier> listEffetCapacite;
+	protected List<CapaciteMetier> listEffetCapacite = new List<CapaciteMetier> ();
 
 	protected GameObject panelGO;
 
@@ -241,7 +241,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	/*******************ISelectionnable****************/
 	public virtual void onClick (){
-		Joueur localJoueur = Joueur.getJoueurLocal ();
+		Joueur localJoueur = JoueurUtils.getJoueurLocal ();
 		if (this.etatSelectionne == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
 			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
 
@@ -264,7 +264,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	/************************Hook***********************************/
 	private void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
 		this.idJoueurProprietaire = netIdJoueur;
-		joueurProprietaire = Joueur.getJoueur (netIdJoueur);
+		joueurProprietaire = JoueurUtils.getJoueur (netIdJoueur);
 	}
 
 
