@@ -5,27 +5,27 @@ using UnityEngine.Networking;
 
 public class NetworkUtils  {
 
-	public static void assignObjectToPlayer(NetworkBehaviour netObject, NetworkIdentity playerId){
+	public static void assignObjectToPlayer(NetworkIdentity netIdObject, NetworkIdentity playerId){
 
-		NetworkIdentity netIdentity = netObject.GetComponent<NetworkIdentity> ();
-		netIdentity.localPlayerAuthority = true;
-		NetworkConnection otherOwner = netIdentity.clientAuthorityOwner;        
+		if (null != netIdObject) {
+			netIdObject.localPlayerAuthority = true;
+			NetworkConnection otherOwner = netIdObject.clientAuthorityOwner;        
 
-		if (otherOwner == playerId.connectionToClient) {
-			return;
-		} else if (otherOwner != null) {
-			netIdentity.RemoveClientAuthority (otherOwner);
+			if (otherOwner == playerId.connectionToClient) {
+				return;
+			} else if (otherOwner != null) {
+				netIdObject.RemoveClientAuthority (otherOwner);
+			}
+
+			netIdObject.AssignClientAuthority (playerId.connectionToClient);
 		}
-
-		netIdentity.AssignClientAuthority (playerId.connectionToClient);
 	}
 
-	public static void unassignObjectFromPlayer(NetworkBehaviour netObject, NetworkIdentity playerId){
+	public static void unassignObjectFromPlayer(NetworkIdentity netIdObject, NetworkIdentity playerId){
 
-		NetworkIdentity netIdentity = netObject.GetComponent<NetworkIdentity> ();
-		if (null != netIdentity) {
-			netIdentity.localPlayerAuthority = false;     
-			netIdentity.RemoveClientAuthority (playerId.connectionToClient);
+		if (null != netIdObject) {
+			netIdObject.localPlayerAuthority = false;     
+			netIdObject.RemoveClientAuthority (playerId.connectionToClient);
 		}
 	}
 

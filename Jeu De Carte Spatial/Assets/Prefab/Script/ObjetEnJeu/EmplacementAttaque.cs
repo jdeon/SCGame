@@ -21,8 +21,9 @@ public class EmplacementAttaque : EmplacementMetierAbstract {
 					localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
 			
 				} else if (joueur.CarteSelectionne is CarteVaisseauMetier && ((CarteVaisseauMetier)joueur.CarteSelectionne).isCapableAttaquer ()
-				          && joueur.RessourceCarburant.payerRessource (((CarteVaisseauMetier)joueur.CarteSelectionne).getConsomationCarburant ())) {
+				          && joueur.RessourceCarburant.StockWithCapacity >= ((CarteVaisseauMetier)joueur.CarteSelectionne).getConsomationCarburant ()) {
 
+					joueur.CmdPayerRessource (joueur.RessourceCarburant.TypeRessource, ((CarteVaisseauMetier)joueur.CarteSelectionne).getConsomationCarburant ());
 					joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
 
 					BoutonTour boutonJoueur = joueur.GoPlateau.GetComponentInChildren<BoutonTour> ();

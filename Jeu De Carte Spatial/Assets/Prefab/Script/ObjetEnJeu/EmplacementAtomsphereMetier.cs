@@ -19,6 +19,9 @@ public class EmplacementAtomsphereMetier : EmplacementMetierAbstract {
 					localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
 
 				} else if (isCardCostPayable (joueur.RessourceMetal, joueur.CarteSelectionne)) {
+					joueur.CmdPayerRessource(joueur.RessourceMetal.TypeRessource,((CarteConstructionMetierAbstract)joueur.CarteSelectionne).getCoutMetal ());
+
+
 					joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
 				}
 			}

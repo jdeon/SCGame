@@ -20,6 +20,7 @@ public class EmplacementSolMetier : EmplacementMetierAbstract {
 
 				} else if (joueur.CarteSelectionne is CarteBatimentMetier || joueur.CarteSelectionne is CarteDefenseMetier || listNomCarteExeption.Contains (joueur.CarteSelectionne.name)) {
 					if (isCardCostPayable (joueur.RessourceMetal, joueur.CarteSelectionne)) {
+						joueur.CmdPayerRessource(joueur.RessourceMetal.TypeRessource,((CarteConstructionMetierAbstract)joueur.CarteSelectionne).getCoutMetal ());
 						joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
 					}
 				} else if (joueur.CarteSelectionne is CarteVaisseauMetier) {

@@ -21,6 +21,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	protected GameObject faceCarteGO;
 
+	public int idSelectionnable;
+
 	public int etatSelectionne;
 
 
@@ -32,6 +34,13 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	/**Retourne si l'init est faite*/
 	public abstract bool initCarteRef (CarteDTO carteRef);
+
+	public void Start(){
+		if (isServer) {
+			idSelectionnable = ++SelectionnableUtils.sequenceSelectionnable;
+			RpcInitIdSelectionnable (idSelectionnable);
+		}
+	}
 
 	public IConteneurCarte getConteneur (){
 		return transform.GetComponentInParent<IConteneurCarte> ();
@@ -51,12 +60,21 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		} 
 	}
 
+	[Command]
+	protected void CmdAssignCard(){
+		NetworkUtils.assignObjectToPlayer (GetComponent<NetworkIdentity> (), joueurProprietaire.GetComponent<NetworkIdentity> ());
+	}
+
+
 	public void deplacerCarte(IConteneurCarte nouveauEmplacement, NetworkInstanceId netIdNouveauPossesseur){
 		bool deplacementImpossible = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_IMMOBILE);
 
 		//TODO que faire pour deplacement vers la mains
-		if (!deplacementImpossible && nouveauEmplacement is NetworkBehaviour) {
-			ActionEventManager.EventActionManager.CmdCardDeplacement (joueurProprietaire.netId, this.netId, ((NetworkBehaviour) nouveauEmplacement).netId);
+		if (!deplacementImpossible) {
+
+			if (nouveauEmplacement is ISelectionnable) {
+				ActionEventManager.EventActionManager.CmdCardDeplacement (joueurProprietaire.netId, this.netId, ((ISelectionnable)nouveauEmplacement).IdISelectionnable);
+			}
 
 			nouveauEmplacement.putCard (this);
 
@@ -257,6 +275,10 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		//TODO mise en brillance
 	}
 
+	public int IdISelectionnable {
+		get { return idSelectionnable; }
+	}
+
 	public int EtatSelectionnable {
 		get { return etatSelectionne; }
 	}
@@ -285,6 +307,11 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		if (null != listCapacite) {
 			this.listEffetCapacite = listCapacite;
 		}
+	}
+
+	[ClientRpc]
+	public void RpcInitIdSelectionnable(int idSelectionnableFromServer){
+		this.idSelectionnable = idSelectionnableFromServer;
 	}
 
 	/**********************************Getter Setter***************************/

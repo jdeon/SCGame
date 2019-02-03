@@ -36,11 +36,10 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 			CarteConstructionMetierAbstract carteConstructionScript = carteTiree.GetComponent<CarteConstructionMetierAbstract> ();
 			main.putCard (carteConstructionScript);
 
-			NetworkUtils.assignObjectToPlayer (carteConstructionScript, joueurProprietaire.GetComponent<NetworkIdentity> ());
 			byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteConstructionScript.getCarteRef());
 			carteConstructionScript.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
 
-			ActionEventManager.EventActionManager.CmdPiocheConstruction (NetIdJoueur,carteConstructionScript.netId,NetworkInstanceId.Invalid);
+			ActionEventManager.EventActionManager.CmdPiocheConstruction (NetIdJoueur,carteConstructionScript.netId,-1);
 		}
 	}
 

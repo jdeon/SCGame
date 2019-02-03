@@ -13,10 +13,16 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	[SyncVar]
 	protected NetworkInstanceId idCarte;
 
+	public int idSelectionnable;
+
 	protected int etatSelectionnable;
 
 	public void Start(){
 		numColone = transform.GetSiblingIndex () + 1;
+		if (isServer) {
+			idSelectionnable = ++SelectionnableUtils.sequenceSelectionnable;
+			RpcInitIdSelectionnable (idSelectionnable);
+		}
 	}
 		
 	public void OnMouseDown(){
@@ -25,7 +31,7 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 
 	public void putCard(CarteMetierAbstract cartePoser){
 		if (cartePoser.getConteneur () is Mains) {
-			ActionEventManager.EventActionManager.CmdPoseCarte (idJoueurPossesseur, cartePoser.netId, this.netId);
+			ActionEventManager.EventActionManager.CmdPoseCarte (idJoueurPossesseur, cartePoser.netId, IdISelectionnable);
 		}
 
 
@@ -46,7 +52,7 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	public bool isCardCostPayable(RessourceMetier ressourceMetal, CarteMetierAbstract carteSelectionne){
 		bool costPayable = false;
 
-		if (null != ressourceMetal && carteSelectionne is CarteConstructionMetierAbstract && ressourceMetal.payerRessource (((CarteConstructionMetierAbstract)carteSelectionne).getCoutMetal ())) {
+		if (null != ressourceMetal && carteSelectionne is CarteConstructionMetierAbstract && ressourceMetal.StockWithCapacity >= ((CarteConstructionMetierAbstract)carteSelectionne).getCoutMetal ()) {
 			costPayable = true;
 		}
 
@@ -88,9 +94,18 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	public void miseEnBrillance(int etat){
 		//TODO mise en brillance
 	}
+		
+	public int IdISelectionnable {
+		get { return idSelectionnable; }
+	}
 
 	public int EtatSelectionnable{
 		get {return etatSelectionnable;}
+	}
+
+	[ClientRpc]
+	public void RpcInitIdSelectionnable(int idSelectionnableFromServer){
+		this.idSelectionnable = idSelectionnableFromServer;
 	}
 
 	/************************Getter Setter ***************/

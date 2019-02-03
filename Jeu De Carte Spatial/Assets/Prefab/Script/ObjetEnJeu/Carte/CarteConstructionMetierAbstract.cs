@@ -192,6 +192,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 			initCarte (carteRef, false);
 			generateGOCard ();
+			CmdAssignCard ();
 		}
 	}
 
@@ -337,7 +338,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		bool invulnerable = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_INVULNERABLE);
 
 		if (!invulnerable && nbDegat > 0) {
-			ActionEventManager.EventActionManager.CmdRecoitDegat (joueurProprietaire.netId, this.netId, sourceDegat.netId);
+			ActionEventManager.EventActionManager.CmdRecoitDegat (joueurProprietaire.netId, this.netId, sourceDegat.IdISelectionnable);
 
 			PV -= nbDegat;
 			if (PV <= 0) {
@@ -350,7 +351,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	public IEnumerator destruction (){
 		if (!joueurProprietaire.isServer) {
-			ActionEventManager.EventActionManager.CmdDestruction (joueurProprietaire.netId, this.netId, NetworkInstanceId.Invalid);
+			ActionEventManager.EventActionManager.CmdDestruction (joueurProprietaire.netId, this.netId, -1);
 
 			CmdDestuction ();
 			Destroy (gameObject);
@@ -362,7 +363,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	[Command]
 	public void CmdDestuction(){
-		NetworkUtils.unassignObjectFromPlayer (this, getJoueurProprietaire ().GetComponent<NetworkIdentity> ());
+		NetworkUtils.unassignObjectFromPlayer (GetComponent<NetworkIdentity> (), getJoueurProprietaire ().GetComponent<NetworkIdentity> ());
 
 		getJoueurProprietaire ().CimetiereConstruction.addCarte (this);
 	}

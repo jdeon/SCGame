@@ -20,6 +20,8 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 
 	private List<CapaciteMetier> listCapaciteRessource = new List<CapaciteMetier> ();
 
+	private int idSelectionnable;
+
 	private int etatSelectionne;
 
 	//TODO cree des constante
@@ -55,7 +57,13 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 		return result;
 	}
 
-
+	public void Start(){
+		if (joueur.isServer) {
+			idSelectionnable = ++SelectionnableUtils.sequenceSelectionnable;
+			joueur.RpcInitRessourceIdSelectionnable (idSelectionnable, typeRessource);
+		}
+	}
+			
 	public void init (Joueur joueurPossesseur){
 		this.joueur = joueurPossesseur;
 		Production = 1;
@@ -76,16 +84,6 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 
 		txtProd.text = prefixeRessourceProd + ProductionWithCapacity;
 		txtStock.text = prefixeRessourceStock + StockWithCapacity;
-	}
-
-	public bool payerRessource(int nbDemande){
-			bool result = false;
-		if (StockWithCapacity >= nbDemande) {
-			Stock -= nbDemande;
-			result = true;
-		}
-
-		return result;
 	}
 
 	public void updateVisual(){
@@ -115,6 +113,15 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 
 	public int EtatSelectionnable {
 		get { return etatSelectionne; }
+	}
+
+	public int IdISelectionnable {
+		get { return idSelectionnable; }
+		set {
+			if (null == idSelectionnable || idSelectionnable < 1) {
+				idSelectionnable = value;
+			}
+		}
 	}
 
 	/*******************IAvecCapacity*****************/

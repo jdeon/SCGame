@@ -78,7 +78,7 @@ public class Joueur : NetworkBehaviour {
 	[Command]
 	private void CmdInitSystemeTour (){
 		BoutonTour boutonTour = goPlateau.GetComponentInChildren<BoutonTour> ();
-		NetworkUtils.assignObjectToPlayer (boutonTour, GetComponent<NetworkIdentity> ());
+		NetworkUtils.assignObjectToPlayer (boutonTour.GetComponent<NetworkIdentity> (), GetComponent<NetworkIdentity> ());
 
 		TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
 		systemTour.addInSystemeTour (netId, pseudo, boutonTour.netId);
@@ -145,7 +145,7 @@ public class Joueur : NetworkBehaviour {
 
 		emplacementCible.putCard (carteScript);
 
-		NetworkUtils.assignObjectToPlayer (carteScript, GetComponent<NetworkIdentity> ());
+		NetworkUtils.assignObjectToPlayer (carteScript.GetComponent<NetworkIdentity> (), GetComponent<NetworkIdentity> ());
 		byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteScript.getCarteDTORef ());
 
 
@@ -214,6 +214,15 @@ public class Joueur : NetworkBehaviour {
 		}
 	}
 
+	[ClientRpc]
+	public void RpcInitDeckIdSelectionnable(int idSelectionnableServer, string type){
+		DeckMetierAbstract deckCible = getDeckByType (type);
+
+		if (null != deckCible) {
+			deckCible.IdISelectionnable = idSelectionnableServer;
+		}
+	}
+
 	private DeckMetierAbstract getDeckByType(string type){
 		DeckMetierAbstract deck = null;
 		if (type == "Construction") {
@@ -236,6 +245,17 @@ public class Joueur : NetworkBehaviour {
 		ressourceCarburant.Stock += ressourceCarburant.ProductionWithCapacity;
 		RpcSyncRessourceStockAndProd (ressourceCarburant.TypeRessource, ressourceCarburant.Production, ressourceCarburant.Stock);
 	}
+
+	[Command]
+	public void CmdPayerRessource(string type, int nbRessourcePaye){
+		RessourceMetier ressource = getRessourceByType (type);
+
+		if (null != ressource) {
+			ressource.Stock -= nbRessourcePaye;
+			RpcSyncRessourceStockAndProd(ressource.TypeRessource,ressource.Production,ressource.Stock);
+		}
+	}
+
 
 	public int addRessourceServer(string type, int nb){
 		int ressourceAdded = 0;
@@ -272,6 +292,16 @@ public class Joueur : NetworkBehaviour {
 			ressource.syncListCapacityFromServer (listCapacite);
 		}
 	}
+
+	[ClientRpc]
+	public void RpcInitRessourceIdSelectionnable(int idSelectionnableServer, string type){
+		RessourceMetier ressource = getRessourceByType (type);
+
+		if (null != ressource) {
+			ressource.IdISelectionnable = idSelectionnableServer;
+		}
+	}
+
 
 	private RessourceMetier getRessourceByType(string type){
 		RessourceMetier ressource = null;

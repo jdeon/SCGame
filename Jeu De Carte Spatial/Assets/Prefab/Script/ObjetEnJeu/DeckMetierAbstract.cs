@@ -10,13 +10,28 @@ public abstract class DeckMetierAbstract : MonoBehaviour, IConteneurCarte, IAvec
 
 	protected List<CapaciteMetier> listCapaciteDeck = new List<CapaciteMetier> ();
 
+	protected int idSelectionnable;
+
 	protected int etatSelectionnable;
+
+
 
 
 	public abstract int getNbCarteRestante ();
 
 	public abstract GameObject tirerCarte();
 
+	public void Start(){
+		if (joueurProprietaire.isServer) {
+			idSelectionnable = ++SelectionnableUtils.sequenceSelectionnable;
+
+			if (this is DeckConstructionMetier) {
+				joueurProprietaire.RpcInitDeckIdSelectionnable (idSelectionnable, "Construction");
+			} /*else if (this is DeckAmelirationMetier) {
+			joueurProprietaire.RpcSyncCapaciteListDeck (listeCapaData, "Amelioration");
+			}*/
+		}
+	}
 
 	public void OnMouseDown(){
 		onClick ();
@@ -143,6 +158,16 @@ public abstract class DeckMetierAbstract : MonoBehaviour, IConteneurCarte, IAvec
 
 	public void miseEnBrillance(int etat){
 		//TODO mise en brillance
+	}
+
+
+	public int IdISelectionnable {
+		get { return idSelectionnable; }
+		set {
+			if (null == idSelectionnable || idSelectionnable < 1) {
+				idSelectionnable = value;
+			}
+		}
 	}
 
 	public int EtatSelectionnable{

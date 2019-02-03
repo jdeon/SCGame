@@ -66,9 +66,9 @@ public class ActionEventManager : NetworkBehaviour {
 	public static event CardEventHandler onCardDeplacement;
 
 	[Command]
-	public void CmdPiocheConstruction (NetworkInstanceId netIdJoueur,  NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdCible){
+	public void CmdPiocheConstruction (NetworkInstanceId netIdJoueur,  NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
-		ISelectionnable cible = convertNetIdToISelectionnable (netIdCible, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != onPiocheConstruction) {
 			onPiocheConstruction (netIdJoueur, carteOrigineAction, cible);
@@ -76,9 +76,9 @@ public class ActionEventManager : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdPiocheAmelioration (NetworkInstanceId netIdJoueur,  NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdCible){
+	public void CmdPiocheAmelioration (NetworkInstanceId netIdJoueur,  NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
-		ISelectionnable cible = convertNetIdToISelectionnable (netIdCible, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != onPiocheAmelioration) {
 			onPiocheAmelioration (netIdJoueur, carteOrigineAction, cible);
@@ -86,10 +86,10 @@ public class ActionEventManager : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdPoseCarte (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdCible){
+	public void CmdPoseCarte (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
-		ISelectionnable cible = convertNetIdToISelectionnable (netIdCible, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction) {
 			if (carteOrigineAction is CarteConstructionMetierAbstract){
@@ -102,19 +102,19 @@ public class ActionEventManager : NetworkBehaviour {
 			/*if (carteOrigineAction is CarteAmeliorationMetier && null != onPoseConstruction) {
 			onPoseConstruction (netIdJoueur);
 		}*/
-
+			/*
 			if (null != onInvocation) {
 				//TODO carteInvoque?
 				onInvocation (netIdJoueur, carteOrigineAction, cible);
-			}
+			}*/
 		}
 	}
 
 	[Command]
-	public void CmdAttaque (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdCible){
+	public void CmdAttaque (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
-		ISelectionnable cible = convertNetIdToISelectionnable (netIdCible, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onAttaque) {
 			onAttaque (netIdJoueur, carteOrigineAction, cible);
@@ -122,10 +122,10 @@ public class ActionEventManager : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdDefense (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdCible){
+	public void CmdDefense (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
-		ISelectionnable cible = convertNetIdToISelectionnable (netIdCible, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onDefense) {
 			onDefense (netIdJoueur, carteOrigineAction, cible);
@@ -133,10 +133,10 @@ public class ActionEventManager : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdUtilise (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdCible){
+	public void CmdUtilise (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
-		ISelectionnable cible = convertNetIdToISelectionnable (netIdCible, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onUtilise) {
 			onUtilise (netIdJoueur, carteOrigineAction, cible);
@@ -144,10 +144,10 @@ public class ActionEventManager : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdDestruction (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdCible){
+	public void CmdDestruction (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
-		ISelectionnable cible = convertNetIdToISelectionnable (netIdCible, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onDestruction) {
 			onDestruction (netIdJoueur, carteOrigineAction, cible);
@@ -155,10 +155,10 @@ public class ActionEventManager : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdXPGain (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdCible){
+	public void CmdXPGain (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
-		ISelectionnable cible = convertNetIdToISelectionnable (netIdCible, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != onXPGain) {
 			onXPGain (netIdJoueur, carteOrigineAction, cible);
@@ -166,10 +166,10 @@ public class ActionEventManager : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdRecoitDegat (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdCible){
+	public void CmdRecoitDegat (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
-		ISelectionnable cible = convertNetIdToISelectionnable (netIdCible, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onRecoitDegat) {
 			onRecoitDegat(netIdJoueur, carteOrigineAction, cible);
@@ -177,27 +177,14 @@ public class ActionEventManager : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdCardDeplacement (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdCible){
+	public void CmdCardDeplacement (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
-		ISelectionnable cible = convertNetIdToISelectionnable (netIdCible, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onCardDeplacement) {
 			onCardDeplacement (netIdJoueur, carteOrigineAction, cible);
 		}
-	}
-
-	private ISelectionnable convertNetIdToISelectionnable(NetworkInstanceId netId, bool localPlayer){
-		ISelectionnable result;
-		NetworkBehaviour nBScripObject = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (netId, localPlayer);
-
-		if (null != nBScripObject && nBScripObject is ISelectionnable) {
-			result = (ISelectionnable)nBScripObject;
-		} else {
-			result = null;
-		}
-
-		return result;
 	}
 
 	/****************************Systeme coroutine**************************/

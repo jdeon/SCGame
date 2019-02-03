@@ -8,5 +8,7 @@ public interface ISelectionnable  {
 
 	void miseEnBrillance(int etat);
 
+	int IdISelectionnable{ get; }
+
 	int EtatSelectionnable{ get; }
 }
