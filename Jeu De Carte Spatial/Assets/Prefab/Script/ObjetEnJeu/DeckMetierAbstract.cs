@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-public abstract class DeckMetierAbstract : MonoBehaviour, IConteneurCarte, IAvecCapacite, ISelectionnable {
+public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IAvecCapacite, ISelectionnable {
 
 	protected Joueur joueurProprietaire;
 
@@ -150,10 +150,11 @@ public abstract class DeckMetierAbstract : MonoBehaviour, IConteneurCarte, IAvec
 	/*******************ISelectionnable****************/
 	public void onClick (){
 		//TODO selectionne
-		Joueur localJoueur = JoueurUtils.getJoueurLocal ();
-		if (this.etatSelectionnable == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
-			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
+		EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
+		if (this.etatSelectionnable == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
+			((EventTaskChoixCible) eventTask).ListCibleChoisie.Add (this);
 		}
+
 	}
 
 	public void miseEnBrillance(int etat){

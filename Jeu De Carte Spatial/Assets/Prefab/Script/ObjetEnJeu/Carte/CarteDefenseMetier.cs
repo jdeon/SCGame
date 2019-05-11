@@ -82,19 +82,15 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		return ConstanteInGame.colorDefense;
 	}
 
-	public IEnumerator preDefense (CarteVaisseauMetier vaisseauAttaquant){
-		vaisseauAttaquant.recevoirDegat (getPointDegat (), this);
+	public void preDefense (CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){
+		vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent);
 
 		if (vaisseauAttaquant.OnBoard) {
-			this.recevoirDegat (vaisseauAttaquant.getPointDegat (), vaisseauAttaquant);
+			this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent);
 		}
-
-		yield return null;
 	}
 
-	public IEnumerator defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant){
-		ActionEventManager.EventActionManager.CmdDefense (joueurProprietaire.netId, this.netId, vaisseauAttaquant.IdISelectionnable);
-
+	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){
 		bool attaqueEvite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_EVITE_ATTAQUE);
 
 		if (!attaqueEvite) {
@@ -105,9 +101,9 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 				CarteMetierAbstract cible = listCartes [Random.Range (0, listCartes.Count)];
 
 				if (cible is CarteConstructionMetierAbstract) {
-					vaisseauAttaquant.attaqueCarte ((CarteConstructionMetierAbstract)cible, -1);
+					vaisseauAttaquant.attaqueCarte ((CarteConstructionMetierAbstract)cible, netIdTaskEvent);
 				} else if (cible is CartePlaneteMetier) {
-					vaisseauAttaquant.attaquePlanete ((CartePlaneteMetier)cible, -1);
+					vaisseauAttaquant.attaquePlanete ((CartePlaneteMetier)cible, netIdTaskEvent);
 				}
 			} else {
 				bool attaquePriorite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ATTAQUE_OPPORTUNITE);
@@ -115,19 +111,17 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 				int degatRecu = vaisseauAttaquant.getPointDegat ();
 
 				if (attaquePriorite) {
-					this.recevoirDegat (degatRecu,vaisseauAttaquant);
+					this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent);
 
 					if (this.PV > 0) {
-						vaisseauAttaquant.recevoirDegat (degatInfliger,this);
+						vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent);
 					}
 				} else {
-					vaisseauAttaquant.recevoirDegat (degatInfliger, this);
-					this.recevoirDegat (degatRecu, vaisseauAttaquant);
+					vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent);
+					this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent);
 				}
 			}
 		}
-
-		yield return null;
 	}
 
 	public bool isCapableDefendre (){

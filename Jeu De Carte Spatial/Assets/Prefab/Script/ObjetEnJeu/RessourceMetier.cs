@@ -101,10 +101,11 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 
 	/*******************ISelectionnable****************/
 	public void onClick (){
-		Joueur localJoueur = JoueurUtils.getJoueurLocal ();
-		if (this.etatSelectionne == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
-			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
+		EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
+		if (this.etatSelectionne == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
+			((EventTaskChoixCible)eventTask).ListCibleChoisie.Add (this);
 		}
+
 	}
 
 	public void miseEnBrillance(int etat){

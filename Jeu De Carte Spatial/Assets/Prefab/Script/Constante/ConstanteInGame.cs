@@ -21,6 +21,8 @@ public class ConstanteInGame {
 
 	public static string strDeterioration = "Deterioration";
 
+	public static string strSystemActionEvent = "SystemActionEvent";
+
 
 	public static readonly Sprite spriteBackgroundCarte = Resources.Load<Sprite>("Background");
 
@@ -80,6 +82,10 @@ public class ConstanteInGame {
 	public static readonly GameObject carteBatimentPrefab = Resources.Load<GameObject>("goCard/goBatiment");
 
 	public static readonly GameObject cartePlanetePrefab = Resources.Load<GameObject>("goCard/goPlanete");
+
+	public static readonly GameObject eventTaskPrefab = Resources.Load<GameObject>("eventTask");
+
+	public static readonly GameObject eventTaskChooseTargetPrefab = Resources.Load<GameObject>("eventTaskChooseTarget");
 
 
 

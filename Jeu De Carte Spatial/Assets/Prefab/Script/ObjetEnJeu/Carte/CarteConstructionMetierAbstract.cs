@@ -334,31 +334,37 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	/***********************IVulnerable*****************/
 
 	//Retourne PV restant
-	public IEnumerator recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat){
+	public void recevoirAttaque (CarteMetierAbstract sourceDegat, NetworkInstanceId netdTaskEvent){
+		bool invulnerable = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_INVULNERABLE);
+
+		if (!invulnerable) { //TODO calcul degat
+			//TODO comande eventTask avec point dega?
+			ActionEventManager.EventActionManager.CmdRecoitDegat (joueurProprietaire.netId, this.netId, sourceDegat.IdISelectionnable, netdTaskEvent); 
+		}
+	}
+
+	//Retourne PV restant
+	public int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat, NetworkInstanceId netdTaskEvent){
 		bool invulnerable = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_INVULNERABLE);
 
 		if (!invulnerable && nbDegat > 0) {
-			ActionEventManager.EventActionManager.CmdRecoitDegat (joueurProprietaire.netId, this.netId, sourceDegat.IdISelectionnable);
-
 			PV -= nbDegat;
 			if (PV <= 0) {
-				destruction ();
+				destruction (netdTaskEvent);
 			}
 		}
 
-		yield return null;
+		return PV;
 	}
 
-	public IEnumerator destruction (){
+	public void destruction (NetworkInstanceId netdTaskEvent){
 		if (!joueurProprietaire.isServer) {
-			ActionEventManager.EventActionManager.CmdDestruction (joueurProprietaire.netId, this.netId, -1);
+			ActionEventManager.EventActionManager.CmdDestruction (joueurProprietaire.netId, this.netId, -1, NetworkInstanceId.Invalid); //TODO create EventTask);
 
 			CmdDestuction ();
 			Destroy (gameObject);
 			onBoard = false;
 		}
-
-		yield return null;
 	}
 
 	[Command]
@@ -381,8 +387,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 				&& joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 
 				//TODO vérifier l'emplacement sol
-				ActionEventManager.EventActionManager.CmdAddNewCoroutine();
-				StartCoroutine(((IAttaquer)joueurLocal.CarteSelectionne).attaqueCarte (this, ActionEventManager.EventActionManager.nextIdCoroutine));
+				ActionEventManager.EventActionManager.CmdCreateTask(joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid);
 			} else {
 				base.onClick ();
 			}
@@ -409,114 +414,120 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	}
 
 
-	public void useStartTurnCapacity(NetworkInstanceId netIdJoueur){
+	public void useStartTurnCapacity(NetworkInstanceId netIdJoueur, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract) {
 
 			List<CapaciteDTO> capaciteStartTurn = getListCapaciteToCall (netIdJoueur, netId, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR);
 
 			foreach (CapaciteDTO capacite in capaciteStartTurn) {
-				CapaciteUtils.callCapacite (this, null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR);
+				CapaciteUtils.callCapacite (this, null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, netIdTaskEvent);
 			}
 		}
 	}
 
-	public void useEndPhaseAttaqueCapacity(NetworkInstanceId netIdJoueur){
+	public void useEndPhaseAttaqueCapacity(NetworkInstanceId netIdJoueur, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract) {
 			List<CapaciteDTO> capaciteEndAttaque = getListCapaciteToCall (netIdJoueur, netId, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE);
 
 			foreach (CapaciteDTO capacite in capaciteEndAttaque) {
-				CapaciteUtils.callCapacite (this, null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE);
+				CapaciteUtils.callCapacite (this, null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE, netIdTaskEvent);
 			}
 		}
 	}
 
-	public void useEndTurnCapacity(NetworkInstanceId netIdJoueur){
+	public void useEndTurnCapacity(NetworkInstanceId netIdJoueur, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract) {
 			List<CapaciteDTO> capaciteEndTurn = getListCapaciteToCall (netIdJoueur, netId, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR);
 
 			foreach (CapaciteDTO capacite in capaciteEndTurn) {
-				CapaciteUtils.callCapacite (this, null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR);
+				CapaciteUtils.callCapacite (this, null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, netIdTaskEvent);
 			}
 		}
 	}
 
 
-	public void usePiocheConstructionPhaseCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+	public void usePiocheConstructionPhaseCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract || carteSourceAction.netId == this.netId) {
 			List<CapaciteDTO> capacitePicheConstr = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION);
 
 			foreach (CapaciteDTO capacite in capacitePicheConstr) {
-				CapaciteUtils.callCapacite (this, null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION);
+				CapaciteUtils.callCapacite (this, null, null, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION, netIdTaskEvent);
 			}
 		}
 	}
 
-	public void usePoseConstructionCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+	public void usePoseConstructionCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract || carteSourceAction.netId == this.netId) {
 			List<CapaciteDTO> capacitePoseConstruction = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION);
 
 			foreach (CapaciteDTO capacite in capacitePoseConstruction) {
-				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION);
+				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION, netIdTaskEvent);
 			}
 		}
 	}
 
-	public void useAttaqueCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+	public void useAttaqueCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract) {
 			List<CapaciteDTO> capaciteAttaque = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE);
 
 			foreach (CapaciteDTO capacite in capaciteAttaque) {
-				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE);
+				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, netIdTaskEvent);
 			}
 		}
 	}
 
-	public void useDefenseCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+	public void useDefenseCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract) {
 			List<CapaciteDTO> capaciteDefense = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND);
 
 			foreach (CapaciteDTO capacite in capaciteDefense) {
-				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND);
+				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdTaskEvent);
 			}
 		}
 	}
 
-	public void useDestructionCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+	public void useDestructionCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract) {
 			List<CapaciteDTO> capaciteDestruction = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE);
 
 			foreach (CapaciteDTO capacite in capaciteDestruction) {
-				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE);
+				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netIdTaskEvent);
 			}
 		}
 	}
 
-	public void useInvocationCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+	public void useInvocationCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract) {
 			List<CapaciteDTO> capaciteInvocation = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION);
 
 			foreach (CapaciteDTO capacite in capaciteInvocation) {
-				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION);
+				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION, netIdTaskEvent);
 			}
 		}
 	}
 
-	public void useRecoitDegatCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+	public void useRecoitDegatCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract) {
 			List<CapaciteDTO> capaciteDegatRecu = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT);
 
 			foreach (CapaciteDTO capacite in capaciteDegatRecu) {
-				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT);
+				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent);
 			}
 		}
 	}
 
-	public void useDeplacementCapacity (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible){
+	public void useDeplacementCapacity (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
 		if (cible is EmplacementAttaque && this.getConteneur () is EmplacementMetierAbstract) {
 			List<CapaciteDTO> capaciteDeplacementAttaque = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE);
 
 			foreach (CapaciteDTO capacite in capaciteDeplacementAttaque) {
-				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE);
+				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE, netIdTaskEvent);
+			}
+		} else if (cible is EmplacementMetierAbstract) {
+			List<CapaciteDTO> capaciteDeplacementAttaque = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART);
+
+			foreach (CapaciteDTO capacite in capaciteDeplacementAttaque) {
+				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, netIdTaskEvent);
 			}
 		}
 	}

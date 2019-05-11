@@ -14,14 +14,15 @@ public class EmplacementSolMetier : EmplacementMetierAbstract {
 			Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
 			if (isMovableByPlayer (joueur)) {
-				Joueur localJoueur = JoueurUtils.getJoueurLocal ();
-				if (this.etatSelectionnable == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
-					localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
+				EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
+				if (this.etatSelectionnable == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
+					((EventTaskChoixCible) eventTask).ListCibleChoisie.Add (this);
+
 
 				} else if (joueur.CarteSelectionne is CarteBatimentMetier || joueur.CarteSelectionne is CarteDefenseMetier || listNomCarteExeption.Contains (joueur.CarteSelectionne.name)) {
 					if (isCardCostPayable (joueur.RessourceMetal, joueur.CarteSelectionne)) {
 						joueur.CmdPayerRessource(joueur.RessourceMetal.TypeRessource,((CarteConstructionMetierAbstract)joueur.CarteSelectionne).getCoutMetal ());
-						joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
+						joueur.CarteSelectionne.deplacerCarte (this,joueur.netId,NetworkInstanceId.Invalid);
 					}
 				} else if (joueur.CarteSelectionne is CarteVaisseauMetier) {
 					//TODO vaisseau en mode defense

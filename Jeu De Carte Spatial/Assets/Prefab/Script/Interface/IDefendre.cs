@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public interface IDefendre {
 
-	IEnumerator preDefense (CarteVaisseauMetier vaisseauAttaquant);
+	void preDefense (CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent);
 
-	IEnumerator defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant);
+	void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent);
 
 	bool isCapableDefendre ();
 

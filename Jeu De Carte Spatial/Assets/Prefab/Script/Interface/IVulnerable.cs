@@ -1,12 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public interface IVulnerable {
 
-	//Retourne PV restant
-	IEnumerator recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat);
+	//Est la cible d'une attauqe mais ne perd pas forcément de PV
+	void recevoirAttaque (CarteMetierAbstract sourceDegat, NetworkInstanceId netdTaskEvent);
 
-	IEnumerator destruction ();
+	//Retourne PV restant
+	int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat, NetworkInstanceId netdTaskEvent);
+
+	void destruction (NetworkInstanceId netdTaskEvent);
 
 }

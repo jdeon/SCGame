@@ -66,22 +66,28 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	}
 
 
-	public void deplacerCarte(IConteneurCarte nouveauEmplacement, NetworkInstanceId netIdNouveauPossesseur){
-		bool deplacementImpossible = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_IMMOBILE);
+	public void deplacerCarte(IConteneurCarte nouveauEmplacement, NetworkInstanceId netIdNouveauPossesseur, NetworkInstanceId netIdTaskEvent){
 
 		//TODO que faire pour deplacement vers la mains
-		if (!deplacementImpossible) {
+		if (isDeplacable()) {
 
-			if (nouveauEmplacement is ISelectionnable) {
-				ActionEventManager.EventActionManager.CmdCardDeplacement (joueurProprietaire.netId, this.netId, ((ISelectionnable)nouveauEmplacement).IdISelectionnable);
+			if (nouveauEmplacement is EmplacementMetierAbstract) {
+				((EmplacementMetierAbstract) nouveauEmplacement).putCard (this, this.getConteneur () is Mains, netIdTaskEvent);
+			} else if (nouveauEmplacement is ISelectionnable) {
+				ActionEventManager.EventActionManager.CmdCreateTask (this.netId, this.idJoueurProprietaire, ((ISelectionnable) nouveauEmplacement).IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, NetworkInstanceId.Invalid);
+			}else {
+				//TODO bon comportement si emplacement pa sselectionnable?
+				nouveauEmplacement.putCard (this);
 			}
-
-			nouveauEmplacement.putCard (this);
 
 			if (netIdNouveauPossesseur != NetworkInstanceId.Invalid && netIdNouveauPossesseur != idJoueurProprietaire) {
 				this.idJoueurProprietaire = netIdNouveauPossesseur;
 			}
 		}
+	}
+
+	public bool isDeplacable(){
+		return 0 >= CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_IMMOBILE);
 	}
 
 	public virtual void generateVisualCard(){
@@ -259,9 +265,9 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	/*******************ISelectionnable****************/
 	public virtual void onClick (){
-		Joueur localJoueur = JoueurUtils.getJoueurLocal ();
-		if (this.etatSelectionne == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
-			localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
+		EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
+		if (this.etatSelectionne == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
+			((EventTaskChoixCible) eventTask).ListCibleChoisie.Add (this);
 
 		} else if (joueurProprietaire.CarteSelectionne == this) {
 			joueurProprietaire.CarteSelectionne = null;	//On deselectionne au second click
@@ -284,7 +290,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	}
 
 	/************************Hook***********************************/
-	private void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
+	protected void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
 		this.idJoueurProprietaire = netIdJoueur;
 		joueurProprietaire = JoueurUtils.getJoueur (netIdJoueur);
 	}

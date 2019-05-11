@@ -317,6 +317,8 @@ MonoBehaviour:
   - {fileID: 1582805893208406, guid: 83aee3283e7ed9441bd75f3390d87907, type: 2}
   - {fileID: 1956581633283366, guid: ba11cf66eef23a54ab8e54bc11248e34, type: 2}
   - {fileID: 1513491877393434, guid: abca683cec7a31c43a6f2876aed63076, type: 2}
+  - {fileID: 1554068956840554, guid: 0a5ac046eea54144d8befbaec13fce7d, type: 2}
+  - {fileID: 1200970977772684, guid: 9afa34c366290b14ab49e736add14054, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:
@@ -5689,7 +5691,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b828a8f6a8965c419f9184818ebc437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tester: 0
+  tester: 1
 --- !u!1 &1967535830
 GameObject:
   m_ObjectHideFlags: 0

@@ -34,10 +34,8 @@ public class Joueur : NetworkBehaviour {
 
 	private bool carteEnVisuel;
 
-	private PhaseChoixCibleJoueur phaseChoixCibleJoueur;
-
 	void Start (){
-		main.init(netId);
+		main.init(this);
 
 		deckConstruction.intiDeck (this, isServer);
 		ressourceXP.init (this);
@@ -122,8 +120,9 @@ public class Joueur : NetworkBehaviour {
 		carteplaneteGO.transform.localScale =Vector3.one;
 
 		cartePlanetJoueur = carteplaneteGO.GetComponent<CartePlaneteMetier> ();
+		cartePlanetJoueur.setJoueurProprietaireServer (NetworkInstanceId.Invalid);
 		if (null != cartePlanetJoueur) {
-			cartePlanetJoueur.initPlanete(this.netId, pseudo);
+			cartePlanetJoueur.initPlaneteServer(this.netId, pseudo);
 		}
 		
 		NetworkServer.Spawn (carteplaneteGO);
@@ -175,35 +174,7 @@ public class Joueur : NetworkBehaviour {
 		Debug.Log ("End RpcGeneratePlanete");
 	}
 
-	[ClientRpc]
-	public void RpcDisplayCapacityChoice (byte[] byteSelectionCible){
-		if (isLocalPlayer) {
-			SelectionCiblesExecutionCapacite selectionCibles = SerializeUtils.Deserialize<SelectionCiblesExecutionCapacite> (byteSelectionCible);
-			if (null != selectionCibles && null != selectionCibles.ListCiblesProbables 
-				&& selectionCibles.ListCiblesProbables.Count > 0 && phaseChoixCibleJoueur.finChoix) {
-				phaseChoixCibleJoueur = new PhaseChoixCibleJoueur (selectionCibles, this);
-			}
-		} else {
-			//TODO mise en attente
-			//TODO coroutine pour fin de mise en attente
-		}
-	}
-
-	[Command]
-	public void CmdExecuteCapaciteSurCibleChoisi(byte[] byteSelectionCiblesCapacite){
-		SelectionCiblesExecutionCapacite selectionCibles = SerializeUtils.Deserialize<SelectionCiblesExecutionCapacite> (byteSelectionCiblesCapacite);
-		if (null != selectionCibles && null != selectionCibles.ListCiblesProbables && selectionCibles.ListCiblesProbables.Count > 0) {
-			CapaciteUtils.executeCapacity (selectionCibles);
-		}
-	}
-
 	/******************Gestion Deck********************/
-	[Command]
-	public void CmdPiocheCarte(){
-		Debug.Log ("command");
-		deckConstruction.piocheDeckConstructionByServer (main);
-	}
-		
 	[ClientRpc]
 	public void RpcSyncCapaciteListDeck(byte[] listeCapaData, string type){
 		List<CapaciteMetier> listCapacite = SerializeUtils.Deserialize<List<CapaciteMetier>> (listeCapaData);
@@ -316,6 +287,15 @@ public class Joueur : NetworkBehaviour {
 		return ressource;
 	}
 
+
+	/***************************************************/
+	[ClientRpc]
+	public void RpcInitMainIdSelectionnable(int idSelectionnableServer){
+		if (null != main) {
+			main.IdISelectionnable = idSelectionnableServer;
+		}
+	}
+
 	/*******************Getter et setter***************/
 	public string Pseudo {
 		get {return pseudo;}
@@ -365,9 +345,5 @@ public class Joueur : NetworkBehaviour {
 		
 	public bool getIsLocalJoueur(){
 		return isLocalPlayer;
-	}
-
-	public PhaseChoixCibleJoueur PhaseChoixCible{
-		get { return phaseChoixCibleJoueur; }
 	}
 }

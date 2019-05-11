@@ -16,16 +16,17 @@ public class EmplacementAttaque : EmplacementMetierAbstract {
 			Joueur joueur = goJoueur.GetComponent<Joueur> ();
 
 			if (isMovableByPlayer (joueur)) {		
-				Joueur localJoueur = JoueurUtils.getJoueurLocal ();
-				if (this.etatSelectionnable == 1 && null != localJoueur.PhaseChoixCible && !localJoueur.PhaseChoixCible.finChoix) {
-					localJoueur.PhaseChoixCible.listCibleChoisi.Add (this);
-			
+				EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
+				if (this.etatSelectionnable == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
+					((EventTaskChoixCible) eventTask).ListCibleChoisie.Add (this);
+
 				} else if (joueur.CarteSelectionne is CarteVaisseauMetier && ((CarteVaisseauMetier)joueur.CarteSelectionne).isCapableAttaquer ()
 				          && joueur.RessourceCarburant.StockWithCapacity >= ((CarteVaisseauMetier)joueur.CarteSelectionne).getConsomationCarburant ()) {
 
 					joueur.CmdPayerRessource (joueur.RessourceCarburant.TypeRessource, ((CarteVaisseauMetier)joueur.CarteSelectionne).getConsomationCarburant ());
-					joueur.CarteSelectionne.deplacerCarte (this, NetworkInstanceId.Invalid);
+					joueur.CarteSelectionne.deplacerCarte (this,joueur.netId,NetworkInstanceId.Invalid);
 
+					//TODO doit on mettre tous de suite le bouton (si le déplacement est impossible?
 					BoutonTour boutonJoueur = joueur.GoPlateau.GetComponentInChildren<BoutonTour> ();
 					if (null != boutonJoueur) {
 						boutonJoueur.CmdSetEtatBouton (BoutonTour.enumEtatBouton.attaque);

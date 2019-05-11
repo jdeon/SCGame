@@ -10,7 +10,6 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 	[SyncVar (hook = "onChangePointVie")]
 	public int pointVie;
 
-	private NetworkInstanceId netIdJoueur;
 	private TextMesh txtPointVie;
 
 
@@ -22,7 +21,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 
 		if (null != listPlanete && listPlanete.Length > 0) {
 			foreach (CartePlaneteMetier planete in listPlanete) {
-				if (planete.netIdJoueur != idJoueur) {
+				if (planete.idJoueurProprietaire != idJoueur) {
 					planeteResult = planete;
 					break;
 				}
@@ -32,12 +31,13 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 		return planeteResult;
 	}
 
-	public void initPlanete (NetworkInstanceId netIdJoueur, string pseudo){
+	public void initPlaneteServer (NetworkInstanceId netIdJoueur, string pseudo){
 		this.pseudo = pseudo;
 		initId ();
 
 		//TODO remettre stocke base à 0
-		this.netIdJoueur = netIdJoueur;
+		this.idJoueurProprietaire = netIdJoueur;
+		onChangeNetIdJoueur (netIdJoueur);
 		pointVie = maxPVPlanete;
 
 	}
@@ -46,7 +46,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 	/*****************	IContenerCarte *****************/
 
 	public bool isConteneurAllier (NetworkInstanceId netIdJoueur){
-		return netIdJoueur == this.netIdJoueur;
+		return netIdJoueur == this.idJoueurProprietaire;
 	}
 
 	public List<CarteMetierAbstract> getCartesContenu (){
@@ -56,22 +56,23 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 	}
 
 	/****************** IVulnerable **********************/
+	public void recevoirAttaque (CarteMetierAbstract sourceDegat, NetworkInstanceId netIdEventTask){
+		ActionEventManager.EventActionManager.CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask);
+	}
 
-
-	public IEnumerator recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat){
+	public int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat, NetworkInstanceId netIdEventTask){
 		pointVie -= nbDegat;
 
 		if (pointVie <= 0) {
-			destruction ();
+			ActionEventManager.EventActionManager.CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netIdEventTask);
 		}
 
-		yield return null;
+		return pointVie;
 	}
 
-	public IEnumerator destruction (){
+	public void destruction (NetworkInstanceId netdTaskEvent){
 		//TODO fonction victoire
 
-		yield return null;
 	}
 
 
@@ -97,7 +98,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 		return false;
 	}
 
-	public override void OnMouseDown(){
+	public override void onClick(){
 		Joueur joueurLocal = JoueurUtils.getJoueurLocal ();
 
 		if (null != joueurLocal) {
@@ -106,15 +107,14 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
 			if (systemTour.getPhase (joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
 			    && null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.getJoueurProprietaire () != joueurProprietaire
-			    && joueurLocal.CarteSelectionne is IAttaquer && !((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
+			    && joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 				//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
-				ActionEventManager.EventActionManager.CmdAddNewCoroutine();
-				StartCoroutine(((IAttaquer)joueurLocal.CarteSelectionne).attaquePlanete (this, ActionEventManager.EventActionManager.nextIdCoroutine));
+				ActionEventManager.EventActionManager.CmdCreateTask (joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid);
 			} else {
-				base.OnMouseDown ();
+				base.onClick ();
 			}
 		} else {
-			base.OnMouseDown ();
+			base.onClick ();
 		}	
 	}
 
@@ -124,6 +124,10 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 	}
 
 	public override void generateGOCard(){
+		BoxCollider colidCarte = gameObject.AddComponent<BoxCollider> ();
+		colidCarte.size = new Vector3 (1.5f, .1f, 2f);
+		colidCarte.center = new Vector3 (0, .15f, 0);
+
 		GameObject goCartePlanete = new GameObject("CartePlanete_" + id);
 		goCartePlanete.transform.SetParent (gameObject.transform);
 		goCartePlanete.transform.localPosition = new Vector3 (0,0.1f,0);

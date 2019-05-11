@@ -3,15 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class Mains : MonoBehaviour, IConteneurCarte {
+public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 
 	private NetworkInstanceId netIdJoueurPossesseur;
 
 	private List<CarteMetierAbstract> carteEnMains;
 
-	public void init(NetworkInstanceId netIdJoueur){
-		netIdJoueurPossesseur = netIdJoueur;
+	private int idSelectionnable;
+
+	private int etatSelection;
+
+	public void init(Joueur joueurPossesseur){
+		netIdJoueurPossesseur = joueurPossesseur.netId;
 		carteEnMains = new List<CarteMetierAbstract> ();
+
+		if (joueurPossesseur.isServer) {
+			idSelectionnable = ++SelectionnableUtils.sequenceSelectionnable;
+			joueurPossesseur.RpcInitMainIdSelectionnable (idSelectionnable);
+		}
 	}
 
 	public void putCard(CarteMetierAbstract carteAdded){
@@ -47,5 +56,28 @@ public class Mains : MonoBehaviour, IConteneurCarte {
 
 	public List<CarteMetierAbstract> getCartesContenu (){
 		return new List<CarteMetierAbstract> (transform.GetComponentsInChildren<CarteMetierAbstract> ());
+	}
+
+
+	/***************** ISelectionnable ******************/
+	public void onClick (){
+		//TODO
+	}
+
+	public void miseEnBrillance(int etat){
+		//TODO
+	}
+
+	public int IdISelectionnable{ 
+		get{return idSelectionnable;}
+		set{
+			if (null == idSelectionnable || idSelectionnable <= 0) {
+				idSelectionnable = value;
+			}
+		}
+	}
+
+	public int EtatSelectionnable { 
+		get{ return etatSelection; }
 	}
 }

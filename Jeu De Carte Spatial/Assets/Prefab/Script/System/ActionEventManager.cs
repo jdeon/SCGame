@@ -5,7 +5,11 @@ using UnityEngine.Networking;
 
 public class ActionEventManager : NetworkBehaviour {
 
-	public delegate void TurnEventHandler(NetworkInstanceId netIdJoueur);
+	public static Dictionary<int, CapaciteDTO> capacityInUse = new Dictionary<int, CapaciteDTO> ();
+
+	public static int sequenceCapacityInUse = 1;
+
+	public delegate void TurnEventHandler(NetworkInstanceId netIdJoueur, NetworkInstanceId netIdTaskEvent);
 
 	public static event TurnEventHandler onStartTurn;
 	public static event TurnEventHandler onFinPhaseAttaque;
@@ -32,25 +36,25 @@ public class ActionEventManager : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdStartTurn (NetworkInstanceId netIdJoueur){
+	public void CmdStartTurn (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdTaskEvent){
 		if (null != onStartTurn) {
-			onStartTurn (netIdJoueur);
+			onStartTurn (netIdJoueur, netIdTaskEvent);
 		}
 	}
 
 	[Command]
-	public void CmdEndTurn (NetworkInstanceId netIdJoueur, int phasePrecedente){
+	public void CmdEndTurn (NetworkInstanceId netIdJoueur, int phasePrecedente, NetworkInstanceId netIdTaskEvent){
 		if (phasePrecedente == TourJeuSystem.PHASE_ATTAQUE && null != onFinPhaseAttaque) {
-			onFinPhaseAttaque (netIdJoueur);
+			onFinPhaseAttaque (netIdJoueur, netIdTaskEvent);
 		}
 
 		if (null != onEndTurn) {
-			onEndTurn (netIdJoueur);
+			onEndTurn (netIdJoueur, netIdTaskEvent);
 		}
 	}
 
 
-	public delegate void CardEventHandler(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible);
+	public delegate void CardEventHandler(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteOrigineAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent);
 
 	public static event CardEventHandler onPiocheConstruction;
 	public static event CardEventHandler onPiocheAmelioration;
@@ -66,27 +70,27 @@ public class ActionEventManager : NetworkBehaviour {
 	public static event CardEventHandler onCardDeplacement;
 
 	[Command]
-	public void CmdPiocheConstruction (NetworkInstanceId netIdJoueur,  NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
+	public void CmdPiocheConstruction (NetworkInstanceId netIdJoueur,  NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
 		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != onPiocheConstruction) {
-			onPiocheConstruction (netIdJoueur, carteOrigineAction, cible);
+			onPiocheConstruction (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 		}
 	}
 
 	[Command]
-	public void CmdPiocheAmelioration (NetworkInstanceId netIdJoueur,  NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
+	public void CmdPiocheAmelioration (NetworkInstanceId netIdJoueur,  NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
 		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != onPiocheAmelioration) {
-			onPiocheAmelioration (netIdJoueur, carteOrigineAction, cible);
+			onPiocheAmelioration (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 		}
 	}
 
 	[Command]
-	public void CmdPoseCarte (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
+	public void CmdPoseCarte (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
 		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
@@ -94,7 +98,7 @@ public class ActionEventManager : NetworkBehaviour {
 		if (null != carteOrigineAction) {
 			if (carteOrigineAction is CarteConstructionMetierAbstract){
 				if (null != onPoseConstruction) {
-					onPoseConstruction (netIdJoueur, carteOrigineAction, cible);
+					onPoseConstruction (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 				}
 			}
 
@@ -111,126 +115,131 @@ public class ActionEventManager : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdAttaque (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
+	public void CmdAttaque (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
 		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onAttaque) {
-			onAttaque (netIdJoueur, carteOrigineAction, cible);
+			onAttaque (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 		}
 	}
 
 	[Command]
-	public void CmdDefense (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
+	public void CmdDefense (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
 		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onDefense) {
-			onDefense (netIdJoueur, carteOrigineAction, cible);
+			onDefense (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 		}
 	}
 
 	[Command]
-	public void CmdUtilise (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
+	public void CmdUtilise (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
 		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onUtilise) {
-			onUtilise (netIdJoueur, carteOrigineAction, cible);
+			onUtilise (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 		}
 	}
 
 	[Command]
-	public void CmdDestruction (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
+	public void CmdDestruction (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
 		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onDestruction) {
-			onDestruction (netIdJoueur, carteOrigineAction, cible);
+			onDestruction (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 		}
 	}
 
 	[Command]
-	public void CmdXPGain (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
+	public void CmdXPGain (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
 		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != onXPGain) {
-			onXPGain (netIdJoueur, carteOrigineAction, cible);
+			onXPGain (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 		}
 	}
 
 	[Command]
-	public void CmdRecoitDegat (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
+	public void CmdRecoitDegat (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
 		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onRecoitDegat) {
-			onRecoitDegat(netIdJoueur, carteOrigineAction, cible);
+			onRecoitDegat(netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 		}
 	}
 
 	[Command]
-	public void CmdCardDeplacement (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible){
+	public void CmdCardDeplacement (NetworkInstanceId netIdJoueur, NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
 
 		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
 		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
 
 		if (null != carteOrigineAction && null != onCardDeplacement) {
-			onCardDeplacement (netIdJoueur, carteOrigineAction, cible);
+			onCardDeplacement (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 		}
 	}
-
-	/****************************Systeme coroutine**************************/
+		
 	[Command]
-	public void CmdAddNewCoroutine(){
-		int idCoroutine = sequenceIdCoroutine++;
-		listIdCouroutineAtraiter.Add (idCoroutine);
+	public void CmdCreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask){
+		GameObject eventTaskGO = Instantiate<GameObject> (ConstanteInGame.eventTaskPrefab);
 
-		if(listIdCouroutineAtraiter.Count == 1){
-			idCoroutineEnCours = idCoroutine;
-		}
 
-		RpcSetNewIdCoroutine (idCoroutine);
-	}
-
-	[Command]
-	public void CmdAddNewCoroutinePrioriaire(){
-		int idCoroutine = sequenceIdCoroutine++;
-		listIdCouroutineAtraiterPrioritaire.Add (idCoroutine);
-
-		if(listIdCouroutineAtraiterPrioritaire.Count == 1){
-			idCoroutineEnCours = idCoroutine;
-		}
-
-		RpcSetNewIdCoroutine (idCoroutine);
-	}
-
-	[ClientRpc]
-	public void RpcSetNewIdCoroutine(int newIdCoroutine){
-		nextIdCoroutine = newIdCoroutine;
-	}
-
-	[Command]
-	public void CmdEndOfCoroutine(){
-		if(listIdCouroutineAtraiter.Count> 0){
-			listIdCouroutineAtraiter.RemoveAt (0);
-		}
-
-		if(listIdCouroutineAtraiter.Count > 0){
-			idCoroutineEnCours = listIdCouroutineAtraiter[0];
+		GameObject eventParnetTaskGO;
+		if (netIdParentTask == NetworkInstanceId.Invalid) {
+			eventParnetTaskGO = GameObject.Find ("SystemActionEvent");
 		} else {
-			idCoroutineEnCours = 0;
+			eventParnetTaskGO = NetworkServer.FindLocalObject (netIdParentTask);
 		}
+
+		eventTaskGO.transform.SetParent (eventParnetTaskGO.transform);
+
+		EventTask eventTask = eventTaskGO.GetComponent<EventTask> ();
+
+		eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction);
+
+		NetworkServer.Spawn (eventTaskGO);
 	}
 
-	public int IdCoroutineEnCours{
-		get { return idCoroutineEnCours; }
+	[Command]
+	public void CmdCreateTaskChooseTarget(SelectionCiblesExecutionCapacite selectionCibles,NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask){
+		GameObject eventTaskChooseTargetGO = Instantiate<GameObject> (ConstanteInGame.eventTaskChooseTargetPrefab);
+
+		GameObject eventParnetTaskGO;
+		if (netIdParentTask == NetworkInstanceId.Invalid) {
+			eventParnetTaskGO = GameObject.Find (ConstanteInGame.strSystemActionEvent);
+		} else {
+			eventParnetTaskGO = NetworkServer.FindLocalObject (netIdParentTask);
+		}
+
+		eventTaskChooseTargetGO.transform.SetParent (eventParnetTaskGO.transform);
+
+		EventTaskChoixCible eventTask = eventTaskChooseTargetGO.GetComponent<EventTaskChoixCible> ();
+
+		eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction,idSelectionCible, typeAction);
+		eventTask.SelectionCibles = selectionCibles;
+
+		NetworkServer.Spawn (eventTaskChooseTargetGO);
+	}
+
+
+	[Command]
+	public void CmdExecuteCapacity(SelectionCiblesExecutionCapacite selectionCibles, NetworkInstanceId netIdEventTask){
+		//TODO modifier
+		CapaciteUtils.executeCapacity (selectionCibles, netIdEventTask);
+		//TODO display capa
+		EventTask eventSource = ConvertUtils.convertNetIdToScript<EventTask>(netIdEventTask,false);
+		eventSource.endOfTask ();
 	}
 }

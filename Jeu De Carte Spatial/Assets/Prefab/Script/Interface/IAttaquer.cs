@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public interface IAttaquer  {
 
 	//void goLigneAttaque (EmplacementAttaque cible);
 
-	IEnumerator attaqueCarte (CarteConstructionMetierAbstract cible, int idCoroutine);
+	void attaqueCarte (CarteConstructionMetierAbstract cible, NetworkInstanceId netIdTaskEvent);
 
-	IEnumerator attaquePlanete (CartePlaneteMetier cible, int idCoroutine);
+	void attaquePlanete (CartePlaneteMetier cible, NetworkInstanceId netIdTaskEvent);
 
 	bool isCapableAttaquer ();
 

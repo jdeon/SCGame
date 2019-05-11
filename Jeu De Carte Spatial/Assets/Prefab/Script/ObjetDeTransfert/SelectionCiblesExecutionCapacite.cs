@@ -3,49 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class SelectionCiblesExecutionCapacite {
+public struct SelectionCiblesExecutionCapacite {
 
-	protected CapaciteDTO capaciteBase;
+	private string libelleCapacite;
+	private int idTypeCapacite;
+	private int idCapaciteSource;
+	private bool choixManuelle;
+	private int nbChoixCible;
 
-	protected NetworkInstanceId idCarteSource;
+	private int idActionAppelante;
 
-	protected NetworkInstanceId idJoueurCarteSource;
+	private NetworkInstanceId idCarteSource;
 
-	protected int idActionAppelante;
+	private NetworkInstanceId idJoueurCarteSource;
 
-	protected List<ISelectionnable> listCiblesProbables;
+	private List<int> listIdCiblesProbables;
 
-	public SelectionCiblesExecutionCapacite (){
-		//Constructeur par defaut obliger par unet
-	}
+	private List<int> listIdRessouceCible;
+
+	//CARTE INVOQUER
+	//Niv CARTE INVOQUER
 
 	public SelectionCiblesExecutionCapacite (CapaciteDTO capacite, CarteMetierAbstract carteSource, int idActionAppelante){
-		/*this.idTypeCapacite = capacite.Capacite;
-		this.choixCible = capacite.ChoixCible;
-		this.nbCible = capacite.NbCible;
-		this.idCapaciteSource = capacite.Id;
-		this.nbTour = capacite.Duree;
-		this.valeurCalcul = capacite.Quantite;
-		this.typeCalcul*/
+		this.idTypeCapacite = capacite.Capacite;
+		this.libelleCapacite = capacite.Nom; // TODO rajouter fonction descriptive de action
+		this.choixManuelle = capacite.ChoixCible;
+		this.nbChoixCible = capacite.NbCible;
 
-		this.capaciteBase = capacite.Clone ();
+		int newIdCapacityInUse = ActionEventManager.sequenceCapacityInUse++;
+		this.idCapaciteSource = newIdCapacityInUse;
+		ActionEventManager.capacityInUse.Add (newIdCapacityInUse, capacite.Clone());
 
+		//this.capaciteBase = capacite.Clone ();
 		this.idActionAppelante = idActionAppelante;
 		this.idCarteSource = carteSource.netId;
 		this.idJoueurCarteSource = carteSource.getJoueurProprietaire().netId;
-		this.listCiblesProbables = new List<ISelectionnable> ();
+		this.listIdCiblesProbables = new List<int> ();
+
+		this.listIdRessouceCible = null;
+	}
+
+	public void initModeRessourceCapa(List<RessourceMetier> listeRessourceMetier){
+		this.listIdRessouceCible = new List<int> ();
+
+		foreach(RessourceMetier ressourceMetier in listeRessourceMetier) {
+			this.listIdRessouceCible.Add(ressourceMetier.IdISelectionnable);
+		}
 	}
 
 	public int IdTypeCapacite {
-		get{ return capaciteBase.Capacite; }
+		get{ return idTypeCapacite; }
 	}
 
 	public bool ChoixCible{
-		get{ return capaciteBase.ChoixCible; }
+		get{ return choixManuelle; }
 	}
 
 	public int NbCible{
-		get{ return capaciteBase.NbCible; }
+		get{ return nbChoixCible; }
 	}
 
 	public NetworkInstanceId IdCarteSource{
@@ -57,18 +72,20 @@ public class SelectionCiblesExecutionCapacite {
 	}
 
 	public int IdCapaciteSource{
-		get{ return capaciteBase.Id; }
+		get{ return idCapaciteSource; }
 	}
 
-	public List<ISelectionnable> ListCiblesProbables{
-		get{ return listCiblesProbables; }
+
+	public List<int> ListIdCiblesProbables{
+		get{ return listIdCiblesProbables; }
 	}
 
-	public CapaciteDTO Capacite {
-		get{ return capaciteBase; }
-	}
 
 	public int IdActionAppelante{
 		get{ return idActionAppelante; }
+	}
+
+	public List<int> ListIdRessouceCible {
+		get{ return listIdRessouceCible; }
 	}
 }

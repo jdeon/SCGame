@@ -206,4 +206,8 @@ public class ConstanteIdObjet {
 	public static readonly int ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE = 15;
 
 	public static readonly int ID_CONDITION_ACTION_EVOLUTION_CARTE = 16;
+
+	public static readonly int ID_CONDITION_ACTION_EFFET_CAPACITE = 17;
+
+	public static readonly int ID_CONDITION_ACTION_DEPLACEMENT_STANDART = 18;
 }

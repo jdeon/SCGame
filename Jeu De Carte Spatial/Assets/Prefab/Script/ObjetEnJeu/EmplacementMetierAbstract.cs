@@ -29,12 +29,19 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 		onClick ();
 	}
 
-	public void putCard(CarteMetierAbstract cartePoser){
-		if (cartePoser.getConteneur () is Mains) {
-			ActionEventManager.EventActionManager.CmdPoseCarte (idJoueurPossesseur, cartePoser.netId, IdISelectionnable);
+	public void putCard(CarteMetierAbstract cartePoser, bool isNewCard, NetworkInstanceId netIdTaskEvent){
+		//Si c'est une nouvelle carte, on lance les capacités pour les cartes posées
+		if (isNewCard) {
+			ActionEventManager.EventActionManager.CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable,ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION, netIdTaskEvent);
+		} else if (this is EmplacementAttaque) {
+			ActionEventManager.EventActionManager.CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE, netIdTaskEvent);
+		} else {
+			ActionEventManager.EventActionManager.CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, netIdTaskEvent);
 		}
+	}
 
 
+	public void putCard(CarteMetierAbstract cartePoser){
 		Transform trfmCard = cartePoser.transform;
 
 		if (cartePoser is CarteConstructionMetierAbstract) {

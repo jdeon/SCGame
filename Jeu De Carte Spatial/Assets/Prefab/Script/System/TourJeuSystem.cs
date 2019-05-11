@@ -127,7 +127,8 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				phase = FIN_TOUR;
 
-				ActionEventManager.EventActionManager.CmdEndTurn (joueurTour.netId, phasePrecedente);
+				ActionEventManager.EventActionManager.CmdCreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid);
+				//TODO remove ActionEventManager.EventActionManager.CmdEndTurn (joueurTour.netId, phasePrecedente);
 
 				GameObject goBtnLastPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
 
@@ -154,7 +155,8 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
 			
-				ActionEventManager.EventActionManager.CmdStartTurn (joueurTour.netId);
+				ActionEventManager.EventActionManager.CmdCreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, NetworkInstanceId.Invalid);
+				//TODO remove ActionEventManager.EventActionManager.CmdStartTurn (joueurTour.netId);
 
 				bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.CartePlaneteJoueur.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
 				initTour(joueurTour);
@@ -178,8 +180,7 @@ public class TourJeuSystem : NetworkBehaviour {
 		phase = DEBUT_TOUR;
 		joueurInitTour.CmdProductionRessource ();
 		RpcRemiseEnPlaceCarte (joueurInitTour.netId);
-		joueurInitTour.DeckConstruction.piocheDeckConstructionByServer (joueurInitTour.Main);
-
+		ActionEventManager.EventActionManager.CmdCreateTask (joueurInitTour.DeckConstruction.netId, joueurInitTour.netId, joueurInitTour.Main.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION, NetworkInstanceId.Invalid);
 	}
 
 	[ClientRpc]
