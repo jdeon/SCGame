@@ -5,8 +5,10 @@ using UnityEngine.Networking;
 
 public class EventTaskChoixCible : EventTask {
 
+	[SyncVar]
 	private SelectionCiblesExecutionCapacite selectionCibles;
 
+	[SyncVar]
 	private int actionOrigineCapacite;
 
 	private List<ISelectionnable> listCiblesSelectionnes;
@@ -25,24 +27,29 @@ public class EventTaskChoixCible : EventTask {
 		base.Update ();
 	}*/
 
-	protected new void activateTask (){
+	protected override void activateTask (){
 		base.activateTask ();
-		if (selectionCibles.ListIdCiblesProbables.Count > 0) {
+		if (SelectionCibles.ListIdCiblesProbables.Count > 0) {
 			if (selectionCibles.ChoixCible) {
-				displayCapacityChoice ();
+				RpcDisplayCapacityChoice ();
 			} else {
 
-				while (selectionCibles.ListIdCiblesProbables.Count > selectionCibles.NbCible) {
+				while (SelectionCibles.ListIdCiblesProbables.Count > selectionCibles.NbCible) {
 					int indexToDelete = Random.Range (0, selectionCibles.ListIdCiblesProbables.Count);
-					selectionCibles.ListIdCiblesProbables.RemoveAt (indexToDelete);
+					SelectionCibles.ListIdCiblesProbables.RemoveAt (indexToDelete);
 				}
 
-				ActionEventManager.EventActionManager.CmdExecuteCapacity (selectionCibles, netId);
+				ActionEventManager.EventActionManager.CmdExecuteCapacity (SelectionCibles, netId);
 			}
 		}
 	}
-		
-	private void displayCapacityChoice (){
+
+	protected override void launchEventAction (){
+		//TODO annimation
+	}
+
+	[ClientRpc]	
+	private void RpcDisplayCapacityChoice (){
 		if (isLocalPlayer && JoueurUtils.getJoueurLocal().netId == joueur) {
 			List<ISelectionnable> listCibleSelectionnable = new List<ISelectionnable> ();
 			foreach (int idCible in selectionCibles.ListIdCiblesProbables) {
@@ -84,7 +91,16 @@ public class EventTaskChoixCible : EventTask {
 		}
 	}
 
-	public SelectionCiblesExecutionCapacite SelectionCibles{ get; set; }
+	[ClientRpc]
+	public void RpcInitSelection(SelectionCiblesExecutionCapacite selectCibleServer){
+		selectionCibles = selectCibleServer;
+	}
+
+
+	public SelectionCiblesExecutionCapacite SelectionCibles { 
+		get { return selectionCibles; }
+		set { selectionCibles = value; }
+	}
 
 	public List<ISelectionnable> ListCibleChoisie{
 		get {return this.listCiblesSelectionnes;}

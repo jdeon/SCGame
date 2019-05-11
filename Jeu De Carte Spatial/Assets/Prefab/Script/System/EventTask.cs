@@ -5,16 +5,22 @@ using UnityEngine.Networking;
 
 public class EventTask : NetworkBehaviour {
 
+	[SyncVar]
 	protected NetworkInstanceId originAction;
 
+	[SyncVar]
 	protected NetworkInstanceId joueur;
 
+	[SyncVar]
 	protected int idSelectionnableTarget;
 
+	[SyncVar]
 	protected int typeEvent;
 
+	[SyncVar]
 	protected bool activate = false;
 
+	[SyncVar]
 	protected bool pause = true;
 
 	public void initVariable(NetworkInstanceId origin, NetworkInstanceId joueur, int target, int typeEvent){
@@ -37,16 +43,20 @@ public class EventTask : NetworkBehaviour {
 			}
 
 			if (this.activate && !this.pause) {
-				EventTaskUtils.launchEventAction (this.typeEvent, this.originAction, this.joueur, this.idSelectionnableTarget, this.netId);
-				//TODO annimation 
-				endOfTask();
+				launchEventAction ();
 			}
 		}
 	}
 
-	protected void activateTask (){
+	protected virtual void activateTask (){
 		this.activate = true;
 		EventTaskUtils.launchEventCapacity(this.typeEvent, this.originAction, this.joueur, this.idSelectionnableTarget, this.netId);
+	}
+
+	protected virtual void launchEventAction (){
+		EventTaskUtils.launchEventAction (this.typeEvent, this.originAction, this.joueur, this.idSelectionnableTarget, this.netId);
+		//TODO annimation 
+		endOfTask();
 	}
 
 	public void endOfTask(){
