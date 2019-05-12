@@ -89,6 +89,15 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		return CapaciteUtils.valeurAvecCapacite (carteRef.PointVieMax, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_PV_MAX);
 	}
 
+	[Command]
+	public override void CmdPiocheCard(){
+		Mains main = this.joueurProprietaire.Main;
+
+		main.putCard (this);
+
+		byte[] carteRefData = SerializeUtils.SerializeToByteArray(this.getCarteRef());
+		this.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
+	}
 
 	//Affiche la carte si clique dessus
 	public virtual void generateVisualCard() {

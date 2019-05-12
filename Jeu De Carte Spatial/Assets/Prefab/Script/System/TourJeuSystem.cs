@@ -78,8 +78,8 @@ public class TourJeuSystem : NetworkBehaviour {
 					Joueur joueur = JoueurUtils.getJoueur (joueurDTO.netIdJoueur);
 
 					if (null != joueur) {
-						joueur.DeckConstruction.piocheDeckConstructionByServer (joueur.Main);
-						joueur.DeckConstruction.piocheDeckConstructionByServer (joueur.Main);
+						joueur.DeckConstruction.piocheDeckConstructionByServer ();
+						joueur.DeckConstruction.piocheDeckConstructionByServer ();
 					}
 				}
 
@@ -180,7 +180,7 @@ public class TourJeuSystem : NetworkBehaviour {
 		phase = DEBUT_TOUR;
 		joueurInitTour.CmdProductionRessource ();
 		RpcRemiseEnPlaceCarte (joueurInitTour.netId);
-		ActionEventManager.EventActionManager.CmdCreateTask (joueurInitTour.DeckConstruction.netId, joueurInitTour.netId, joueurInitTour.Main.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION, NetworkInstanceId.Invalid);
+		joueurInitTour.DeckConstruction.piocheDeckConstructionByServer ();
 	}
 
 	[ClientRpc]

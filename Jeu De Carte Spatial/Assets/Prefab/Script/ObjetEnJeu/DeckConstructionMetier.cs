@@ -23,7 +23,7 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		}
 	}
 
-	public void piocheDeckConstructionByServer(Mains main){
+	public void piocheDeckConstructionByServer(){
 		if (joueurProprietaire.isServer && getNbCarteRestante() > 0) {
 			Debug.Log ("taille deck : " + getNbCarteRestante());
 
@@ -32,12 +32,10 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 			Debug.Log ("carteTiree : " + carteTiree);
 
 			NetworkServer.Spawn (carteTiree);
+			carteTiree.transform.parent = null; //Carte pioche en attente de plassement
 
 			CarteConstructionMetierAbstract carteConstructionScript = carteTiree.GetComponent<CarteConstructionMetierAbstract> ();
-			main.putCard (carteConstructionScript);
-
-			byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteConstructionScript.getCarteRef());
-			carteConstructionScript.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
+			ActionEventManager.EventActionManager.CmdCreateTask (carteConstructionScript.netId, carteConstructionScript.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION, NetworkInstanceId.Invalid);
 		}
 	}
 

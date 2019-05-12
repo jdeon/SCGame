@@ -67,7 +67,12 @@ public class EventTaskUtils  {
 		//TODO remplacer les -1
 
 		if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION) {
-			//TODO
+
+			if (scriptSource is CarteConstructionMetierAbstract) {
+				((CarteConstructionMetierAbstract)scriptSource).CmdPiocheCard ();
+			} else {
+				aucuneActionEffectuer ();
+			}
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_AMELIORATION) {
 			//TODO
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION 

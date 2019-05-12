@@ -226,7 +226,6 @@ public class ActionEventManager : NetworkBehaviour {
 		eventTaskChooseTargetGO.transform.SetParent (eventParnetTaskGO.transform);
 
 		EventTaskChoixCible eventTask = eventTaskChooseTargetGO.GetComponent<EventTaskChoixCible> ();
-
 		eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction,idSelectionCible, typeAction);
 		eventTask.SelectionCibles = selectionCibles;
 

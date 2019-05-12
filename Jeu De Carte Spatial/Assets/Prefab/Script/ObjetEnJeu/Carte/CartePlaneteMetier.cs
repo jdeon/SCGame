@@ -41,6 +41,10 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 		pointVie = maxPVPlanete;
 
 	}
+	[Command]
+	public override void CmdPiocheCard (){
+		//TODO
+	}
 
 
 	/*****************	IContenerCarte *****************/

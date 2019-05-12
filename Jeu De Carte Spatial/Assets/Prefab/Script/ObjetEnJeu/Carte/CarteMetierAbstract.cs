@@ -65,6 +65,9 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		NetworkUtils.assignObjectToPlayer (GetComponent<NetworkIdentity> (), joueurProprietaire.GetComponent<NetworkIdentity> ());
 	}
 
+	[Command]
+	public abstract void CmdPiocheCard ();
+
 
 	public void deplacerCarte(IConteneurCarte nouveauEmplacement, NetworkInstanceId netIdNouveauPossesseur, NetworkInstanceId netIdTaskEvent){
 
