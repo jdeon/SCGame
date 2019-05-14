@@ -76,7 +76,7 @@ public class Joueur : NetworkBehaviour {
 	[Command]
 	private void CmdInitSystemeTour (){
 		BoutonTour boutonTour = goPlateau.GetComponentInChildren<BoutonTour> ();
-		NetworkUtils.assignObjectToPlayer (boutonTour.GetComponent<NetworkIdentity> (), GetComponent<NetworkIdentity> ());
+		NetworkUtils.assignObjectToPlayer (boutonTour.GetComponent<NetworkIdentity> (), GetComponent<NetworkIdentity> (), 0);
 
 		TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
 		systemTour.addInSystemeTour (netId, pseudo, boutonTour.netId);
@@ -144,7 +144,7 @@ public class Joueur : NetworkBehaviour {
 
 		emplacementCible.putCard (carteScript);
 
-		NetworkUtils.assignObjectToPlayer (carteScript.GetComponent<NetworkIdentity> (), GetComponent<NetworkIdentity> ());
+		NetworkUtils.assignObjectToPlayer (carteScript.GetComponent<NetworkIdentity> (), GetComponent<NetworkIdentity> (), .2f);
 		byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteScript.getCarteDTORef ());
 
 

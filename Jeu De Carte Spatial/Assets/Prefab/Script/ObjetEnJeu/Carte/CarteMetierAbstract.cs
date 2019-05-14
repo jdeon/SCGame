@@ -62,7 +62,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	[Command]
 	protected void CmdAssignCard(){
-		NetworkUtils.assignObjectToPlayer (GetComponent<NetworkIdentity> (), joueurProprietaire.GetComponent<NetworkIdentity> ());
+		NetworkUtils.assignObjectToPlayer (GetComponent<NetworkIdentity> (), joueurProprietaire.GetComponent<NetworkIdentity> (), .1f);
 	}
 
 	[Command]
@@ -321,6 +321,22 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	[ClientRpc]
 	public void RpcInitIdSelectionnable(int idSelectionnableFromServer){
 		this.idSelectionnable = idSelectionnableFromServer;
+	}
+
+	[ClientRpc]
+	public void RpcChangeParent (NetworkInstanceId netIdParent, string pathParent){
+		NetworkBehaviour scriptParent = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (netIdParent, true);
+
+		Transform trfParent;
+
+		if (null != scriptParent && null != pathParent) {
+			trfParent = scriptParent.transform.Find (pathParent);
+		} else {
+			trfParent = null;
+		}
+
+		transform.SetParent (trfParent);
+
 	}
 
 	/**********************************Getter Setter***************************/

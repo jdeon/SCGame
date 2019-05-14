@@ -9,19 +9,30 @@ public class ConstanteInGame {
 	public static readonly float tempChoixDefense = 10f;
 
 
-	public static string strImageCartePath = "Sprite/CarteImage";
 
-	public static string strVaisseau = "Vaisseau";
+	public static readonly string strSlash = "/";
 
-	public static string strDefense = "Defense";
+	public static readonly string strImageCartePath = "Sprite/CarteImage";
 
-	public static string strBatiment = "Batiment";
+	public static readonly string strVaisseau = "Vaisseau";
 
-	public static string strAmelioration = "Amelioration";
+	public static readonly string strDefense = "Defense";
 
-	public static string strDeterioration = "Deterioration";
+	public static readonly string strBatiment = "Batiment";
 
-	public static string strSystemActionEvent = "SystemActionEvent";
+	public static readonly string strAmelioration = "Amelioration";
+
+	public static readonly string strDeterioration = "Deterioration";
+
+	public static readonly string strSystemActionEvent = "SystemActionEvent";
+
+	/**Nom composant fils de joueur*/
+	public static readonly string strMainJoueur = "MainJoueur";
+
+	public static readonly string strPiocheAmelioration = "PiocheAmelioration";
+
+	public static readonly string strPiocheConstruction = "SystemActionEvent";
+
 
 
 	public static readonly Sprite spriteBackgroundCarte = Resources.Load<Sprite>("Background");

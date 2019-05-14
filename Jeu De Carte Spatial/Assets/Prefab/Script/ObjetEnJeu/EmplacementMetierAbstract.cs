@@ -43,12 +43,12 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 
 	public void putCard(CarteMetierAbstract cartePoser){
 		Transform trfmCard = cartePoser.transform;
+		trfmCard.SetParent (transform);
 
-		if (cartePoser is CarteConstructionMetierAbstract) {
-			((CarteConstructionMetierAbstract)cartePoser).OnBoard = true;
+		if (isServer) {
+			cartePoser.RpcChangeParent (this.netId, "");
 		}
 
-		trfmCard.SetParent (transform);
 		trfmCard.localPosition = new Vector3 (0, .01f, 0);
 		trfmCard.localRotation = Quaternion.identity;
 		trfmCard.localScale = Vector3.one;

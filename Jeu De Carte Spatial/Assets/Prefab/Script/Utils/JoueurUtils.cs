@@ -39,4 +39,22 @@ public class JoueurUtils {
 
 		return joueurResult;
 	}
+
+	public static string getPathJoueur(MonoBehaviour scriptOfPath){
+		string resultPath;
+
+		if (scriptOfPath is Joueur) {
+			resultPath = "";
+		} else if (scriptOfPath is Mains) {
+			resultPath = ConstanteInGame.strMainJoueur;
+		} else if (scriptOfPath is DeckConstructionMetier){
+			resultPath = ConstanteInGame.strPiocheConstruction;
+		} else if (scriptOfPath is DeckMetierAbstract){ //TODO remplacer par amelioration
+			resultPath = ConstanteInGame.strPiocheAmelioration;
+		} else {
+			resultPath = null;
+		}
+
+		return resultPath;
+	}
 }

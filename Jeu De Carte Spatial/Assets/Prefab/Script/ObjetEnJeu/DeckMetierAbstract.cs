@@ -71,7 +71,20 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 	}
 
 	public void putCard(CarteMetierAbstract carte){
-		//TODO ajout carte
+		if (isServer) {
+			Transform trfmCard = carte.transform;
+			trfmCard.SetParent (transform);
+
+			carte.RpcChangeParent (this.NetIdJoueur, JoueurUtils.getPathJoueur(this));
+
+			trfmCard.localPosition = Vector3.zero;
+			trfmCard.localRotation = Quaternion.identity;
+			trfmCard.localScale = Vector3.zero;
+
+			carte.getJoueurProprietaire ().CarteSelectionne = null;
+		}
+
+		//TODO ungenerated card on client
 	}
 
 

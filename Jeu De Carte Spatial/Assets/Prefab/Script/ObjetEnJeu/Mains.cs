@@ -27,6 +27,8 @@ public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 		carteEnMains.Add (carteAdded);
 		carteAdded.transform.SetParent(transform);
 
+		carteAdded.RpcChangeParent(netIdJoueurPossesseur, JoueurUtils.getPathJoueur(this));
+
 		int nbCarteEnMains = transform.childCount;
 
 		Vector3 position = Vector3.zero;

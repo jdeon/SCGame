@@ -14,9 +14,6 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	[SyncVar]
 	protected int pv;
 
-	[SyncVar]
-	protected bool onBoard;
-
 	protected CarteConstructionDTO carteRef;
 
 	/*protected GameObject paternCarteConstruction;
@@ -372,13 +369,12 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 			CmdDestuction ();
 			Destroy (gameObject);
-			onBoard = false;
 		}
 	}
 
 	[Command]
 	public void CmdDestuction(){
-		NetworkUtils.unassignObjectFromPlayer (GetComponent<NetworkIdentity> (), getJoueurProprietaire ().GetComponent<NetworkIdentity> ());
+		NetworkUtils.unassignObjectFromPlayer (GetComponent<NetworkIdentity> (), getJoueurProprietaire ().GetComponent<NetworkIdentity> (), -1);
 
 		getJoueurProprietaire ().CimetiereConstruction.addCarte (this);
 	}
@@ -578,8 +574,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	}
 
 	public bool OnBoard { 
-		get{ return onBoard; }
-		set{ onBoard = value; }
+		get{ return (getConteneur() is EmplacementMetierAbstract); }
 	}
 
 	public int NiveauActuel {
