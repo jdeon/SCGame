@@ -84,7 +84,7 @@ public class EventTaskUtils  {
 			if (null != cible && cible is IConteneurCarte && scriptSource is CarteConstructionMetierAbstract) {
 
 				if (((CarteConstructionMetierAbstract)scriptSource).isDeplacable()) {
-					((IConteneurCarte)cible).putCard ((CarteMetierAbstract)scriptSource);
+					EmplacementUtils.putCardFromServer ((IConteneurCarte)cible, (CarteConstructionMetierAbstract) scriptSource);
 				}
 			} else {
 				aucuneActionEffectuer ();

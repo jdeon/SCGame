@@ -76,7 +76,7 @@ public class Joueur : NetworkBehaviour {
 	[Command]
 	private void CmdInitSystemeTour (){
 		BoutonTour boutonTour = goPlateau.GetComponentInChildren<BoutonTour> ();
-		NetworkUtils.assignObjectToPlayer (boutonTour.GetComponent<NetworkIdentity> (), GetComponent<NetworkIdentity> (), 0);
+		NetworkUtils.assignObjectToPlayer (boutonTour.GetComponent<NetworkIdentity> (), GetComponent<NetworkIdentity> (), -1);
 
 		TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
 		systemTour.addInSystemeTour (netId, pseudo, boutonTour.netId);
@@ -132,6 +132,12 @@ public class Joueur : NetworkBehaviour {
 		Debug.Log ("End CmdInitPlanete");
 	}
 
+	[Command]
+	public void CmdCreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask){
+		ActionEventManager.EventActionManager.CreateTask (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, netIdParentTask);
+	}
+
+
 	public void invoquerCarteServer(GameObject carteAInvoquer, int niveauInvocation, IConteneurCarte emplacementCible){
 
 		NetworkServer.Spawn (carteAInvoquer);
@@ -142,7 +148,11 @@ public class Joueur : NetworkBehaviour {
 			((CarteConstructionMetierAbstract)carteScript).NiveauActuel = niveauInvocation;
 		}
 
-		emplacementCible.putCard (carteScript);
+		if (isServer) {
+			EmplacementUtils.putCardFromServer (emplacementCible, carteScript);
+		} else {
+			emplacementCible.putCard (carteScript);
+		}
 
 		NetworkUtils.assignObjectToPlayer (carteScript.GetComponent<NetworkIdentity> (), GetComponent<NetworkIdentity> (), .2f);
 		byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteScript.getCarteDTORef ());
@@ -293,6 +303,15 @@ public class Joueur : NetworkBehaviour {
 	public void RpcInitMainIdSelectionnable(int idSelectionnableServer){
 		if (null != main) {
 			main.IdISelectionnable = idSelectionnableServer;
+		}
+	}
+
+	[ClientRpc]
+	public void RpcPutCardInHand(NetworkInstanceId netIdCarte){
+
+		CarteMetierAbstract carte = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarte, true);
+		if (null != main) {
+			main.putCard(carte);
 		}
 	}
 

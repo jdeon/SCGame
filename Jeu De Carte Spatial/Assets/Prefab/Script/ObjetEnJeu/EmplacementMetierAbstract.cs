@@ -13,7 +13,9 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	[SyncVar]
 	protected NetworkInstanceId idCarte;
 
-	public int idSelectionnable;
+	[SerializeField]
+	[SyncVar]
+	protected int idSelectionnable;
 
 	protected int etatSelectionnable;
 
@@ -32,28 +34,36 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	public void putCard(CarteMetierAbstract cartePoser, bool isNewCard, NetworkInstanceId netIdTaskEvent){
 		//Si c'est une nouvelle carte, on lance les capacités pour les cartes posées
 		if (isNewCard) {
-			ActionEventManager.EventActionManager.CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable,ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION, netIdTaskEvent);
+			cartePoser.getJoueurProprietaire().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable,ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION, netIdTaskEvent);
 		} else if (this is EmplacementAttaque) {
-			ActionEventManager.EventActionManager.CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE, netIdTaskEvent);
+			cartePoser.getJoueurProprietaire().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE, netIdTaskEvent);
 		} else {
-			ActionEventManager.EventActionManager.CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, netIdTaskEvent);
+			cartePoser.getJoueurProprietaire().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, netIdTaskEvent);
+		}
+	}
+		
+	public void putCard(CarteMetierAbstract cartePoser){
+
+		if (null != cartePoser && null != cartePoser.getJoueurProprietaire () && cartePoser.getJoueurProprietaire ().isLocalPlayer) {
+			Transform trfmCard = cartePoser.transform;
+			trfmCard.SetParent (transform);
+
+			cartePoser.CmdChangeParent (this.netId, "");
+
+
+			trfmCard.localPosition = new Vector3 (0, .01f, 0);
+			trfmCard.localRotation = Quaternion.identity;
+			trfmCard.localScale = Vector3.one;
+
+			cartePoser.getJoueurProprietaire ().CarteSelectionne = null;
 		}
 	}
 
+	[ClientRpc]
+	public void RpcPutCard(NetworkInstanceId netIdCartePoser){
 
-	public void putCard(CarteMetierAbstract cartePoser){
-		Transform trfmCard = cartePoser.transform;
-		trfmCard.SetParent (transform);
-
-		if (isServer) {
-			cartePoser.RpcChangeParent (this.netId, "");
-		}
-
-		trfmCard.localPosition = new Vector3 (0, .01f, 0);
-		trfmCard.localRotation = Quaternion.identity;
-		trfmCard.localScale = Vector3.one;
-
-		cartePoser.getJoueurProprietaire ().CarteSelectionne = null;
+		CarteMetierAbstract cartePoser = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCartePoser, true);
+		putCard (cartePoser);
 	}
 
 	public bool isCardCostPayable(RessourceMetier ressourceMetal, CarteMetierAbstract carteSelectionne){

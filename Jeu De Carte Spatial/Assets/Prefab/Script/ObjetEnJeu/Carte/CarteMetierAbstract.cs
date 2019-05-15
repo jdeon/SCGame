@@ -77,8 +77,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 			if (nouveauEmplacement is EmplacementMetierAbstract) {
 				((EmplacementMetierAbstract) nouveauEmplacement).putCard (this, this.getConteneur () is Mains, netIdTaskEvent);
 			} else if (nouveauEmplacement is ISelectionnable) {
-				ActionEventManager.EventActionManager.CmdCreateTask (this.netId, this.idJoueurProprietaire, ((ISelectionnable) nouveauEmplacement).IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, NetworkInstanceId.Invalid);
-			}else {
+				getJoueurProprietaire().CmdCreateTask (this.netId, this.idJoueurProprietaire, ((ISelectionnable) nouveauEmplacement).IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, NetworkInstanceId.Invalid);
+			}else if (!isServer) {
 				//TODO bon comportement si emplacement pa sselectionnable?
 				nouveauEmplacement.putCard (this);
 			}
@@ -323,8 +323,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		this.idSelectionnable = idSelectionnableFromServer;
 	}
 
-	[ClientRpc]
-	public void RpcChangeParent (NetworkInstanceId netIdParent, string pathParent){
+	[Command]
+	public void CmdChangeParent (NetworkInstanceId netIdParent, string pathParent){
 		NetworkBehaviour scriptParent = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (netIdParent, true);
 
 		Transform trfParent;

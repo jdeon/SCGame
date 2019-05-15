@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnerable {
+public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCarte {
 
 	public static int maxPVPlanete = 30;
 
@@ -48,7 +48,6 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 
 
 	/*****************	IContenerCarte *****************/
-
 	public bool isConteneurAllier (NetworkInstanceId netIdJoueur){
 		return netIdJoueur == this.idJoueurProprietaire;
 	}
@@ -58,17 +57,31 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 		listCartesContenues.Add (this);
 		return listCartesContenues;
 	}
+		
+	public void putCard(CarteMetierAbstract carte){
+
+		if (null != carte && null != carte.getJoueurProprietaire () && carte.getJoueurProprietaire ().isLocalPlayer) {
+		//TODO ajout de module ou changer héros?
+		}
+	}
+
+	[ClientRpc]
+	public void RpcPutCard(NetworkInstanceId netIdCarte){
+
+		CarteMetierAbstract carte = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarte, true);
+		putCard (carte);
+	}
 
 	/****************** IVulnerable **********************/
 	public void recevoirAttaque (CarteMetierAbstract sourceDegat, NetworkInstanceId netIdEventTask){
-		ActionEventManager.EventActionManager.CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask);
+		getJoueurProprietaire().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask);
 	}
 
 	public int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat, NetworkInstanceId netIdEventTask){
 		pointVie -= nbDegat;
 
 		if (pointVie <= 0) {
-			ActionEventManager.EventActionManager.CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netIdEventTask);
+			getJoueurProprietaire().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netIdEventTask);
 		}
 
 		return pointVie;
@@ -113,7 +126,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 			    && null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.getJoueurProprietaire () != joueurProprietaire
 			    && joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 				//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
-				ActionEventManager.EventActionManager.CmdCreateTask (joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid);
+				getJoueurProprietaire().CmdCreateTask (joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid);
 			} else {
 				base.onClick ();
 			}
@@ -150,11 +163,6 @@ public class CartePlaneteMetier : CarteMetierAbstract, IConteneurCarte, IVulnera
 
 		txtPointVie = GenerateObjectUtils.createText ("pointVie", new Vector3 (0, 0.01f, -.75f), Quaternion.identity, new Vector3 (2f, 1, .5f), 14, goCartePlanete);
 		txtPointVie.text = "PV - " + pointVie;
-	}
-
-
-	public void putCard(CarteMetierAbstract carte){
-		//TODO ajout de module
 	}
 		
 	public void onChangePointVie(int PV){

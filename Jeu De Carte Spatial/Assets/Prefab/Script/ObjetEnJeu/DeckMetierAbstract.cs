@@ -69,22 +69,27 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 	public List<CarteMetierAbstract> getCartesContenu (){
 		return new List<CarteMetierAbstract> (transform.GetComponentsInChildren<CarteMetierAbstract> ());
 	}
-
+		
 	public void putCard(CarteMetierAbstract carte){
-		if (isServer) {
+
+		if (null != carte && null != carte.getJoueurProprietaire () && carte.getJoueurProprietaire ().isLocalPlayer) {
+			//TODO ungenerated card on client
+
 			Transform trfmCard = carte.transform;
 			trfmCard.SetParent (transform);
 
-			carte.RpcChangeParent (this.NetIdJoueur, JoueurUtils.getPathJoueur(this));
-
-			trfmCard.localPosition = Vector3.zero;
-			trfmCard.localRotation = Quaternion.identity;
-			trfmCard.localScale = Vector3.zero;
+			//TODO délpacer à un index au hasard
+			carte.CmdChangeParent (this.NetIdJoueur, JoueurUtils.getPathJoueur (this));
 
 			carte.getJoueurProprietaire ().CarteSelectionne = null;
 		}
+	}
 
-		//TODO ungenerated card on client
+	[ClientRpc]
+	public void RpcPutCard(NetworkInstanceId netIdcarte){
+
+		CarteMetierAbstract carte = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdcarte, true);
+		putCard (carte);
 	}
 
 

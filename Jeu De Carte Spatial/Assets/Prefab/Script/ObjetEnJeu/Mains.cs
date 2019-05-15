@@ -22,26 +22,30 @@ public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 			joueurPossesseur.RpcInitMainIdSelectionnable (idSelectionnable);
 		}
 	}
-
+		
 	public void putCard(CarteMetierAbstract carteAdded){
-		carteEnMains.Add (carteAdded);
-		carteAdded.transform.SetParent(transform);
 
-		carteAdded.RpcChangeParent(netIdJoueurPossesseur, JoueurUtils.getPathJoueur(this));
+		//CarteMetierAbstract carteAdded = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdcarteAdded, true);
+		if (null != carteAdded && null != carteAdded.getJoueurProprietaire () && carteAdded.getJoueurProprietaire ().isLocalPlayer) {
+			carteEnMains.Add (carteAdded);
+			carteAdded.transform.SetParent (transform);
 
-		int nbCarteEnMains = transform.childCount;
+			carteAdded.CmdChangeParent (netIdJoueurPossesseur, JoueurUtils.getPathJoueur (this));
 
-		Vector3 position = Vector3.zero;
-		if(carteAdded is CarteConstructionMetierAbstract){
-			//On ajoute a gauche
-			position.x = carteAdded.transform.localScale.x * (nbCarteEnMains - .5f);
-		} else if (carteAdded is CarteMetierAbstract){
-			//TODO nbCarte ne doit compter separement les ameliration et les construction
-			position.x = -carteAdded.transform.localScale.x * (nbCarteEnMains - .5f);
+			int nbCarteEnMains = transform.childCount;
+
+			Vector3 position = Vector3.zero;
+			if (carteAdded is CarteConstructionMetierAbstract) {
+				//On ajoute a gauche
+				position.x = carteAdded.transform.localScale.x * (nbCarteEnMains - .5f);
+			} else if (carteAdded is CarteMetierAbstract) {
+				//TODO nbCarte ne doit compter separement les ameliration et les construction
+				position.x = -carteAdded.transform.localScale.x * (nbCarteEnMains - .5f);
+			}
+
+			carteAdded.transform.localPosition = position;
+			carteAdded.transform.Rotate (new Vector3 (-60, 0) + transform.rotation.eulerAngles);
 		}
-
-		carteAdded.transform.localPosition = position;
-		carteAdded.transform.Rotate (new Vector3 (-60, 0) + transform.rotation.eulerAngles);
 	}
 
 	public void removeCarte(CarteMetierAbstract carteToRemove){
@@ -81,5 +85,9 @@ public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 
 	public int EtatSelectionnable { 
 		get{ return etatSelection; }
+	}
+
+	public NetworkInstanceId NetIdJoueur {
+		get{ return netIdJoueurPossesseur;}
 	}
 }

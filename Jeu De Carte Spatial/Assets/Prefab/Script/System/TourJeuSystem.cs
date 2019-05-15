@@ -127,7 +127,7 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				phase = FIN_TOUR;
 
-				ActionEventManager.EventActionManager.CmdCreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid);
+				ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid);
 				//TODO remove ActionEventManager.EventActionManager.CmdEndTurn (joueurTour.netId, phasePrecedente);
 
 				GameObject goBtnLastPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
@@ -155,7 +155,7 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
 			
-				ActionEventManager.EventActionManager.CmdCreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, NetworkInstanceId.Invalid);
+				ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, NetworkInstanceId.Invalid);
 				//TODO remove ActionEventManager.EventActionManager.CmdStartTurn (joueurTour.netId);
 
 				bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.CartePlaneteJoueur.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
@@ -211,7 +211,7 @@ public class TourJeuSystem : NetworkBehaviour {
 					foreach (EmplacementAtomsphereMetier emplacementAtmosJoueur in listEmplacementAtmosJoueurLibre) {
 						if (emplacementAttaqueJoueur.NumColonne == emplacementAtmosJoueur.NumColonne) {
 							CarteConstructionMetierAbstract carteADeplacer = emplacementAttaqueJoueur.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
-							emplacementAtmosJoueur.putCard (carteADeplacer);
+							emplacementAtmosJoueur.RpcPutCard (carteADeplacer.netId);
 							listEmplacementAttaqueToujoursOccuper.Remove (emplacementAttaqueJoueur);
 							listEmplacementAtmosToujoursLibre.Remove (emplacementAtmosJoueur);
 							break;
@@ -224,7 +224,7 @@ public class TourJeuSystem : NetworkBehaviour {
 				listEmplacementAtmosToujoursLibre.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
 				while (0 < listEmplacementAttaqueToujoursOccuper.Count && 0 < listEmplacementAtmosToujoursLibre.Count) {
 					CarteConstructionMetierAbstract carteADeplacer = listEmplacementAttaqueToujoursOccuper [0].gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
-					listEmplacementAtmosToujoursLibre [0].putCard (carteADeplacer);
+					listEmplacementAtmosToujoursLibre [0].RpcPutCard (carteADeplacer.netId);
 					listEmplacementAttaqueToujoursOccuper.RemoveAt (0);
 					listEmplacementAtmosToujoursLibre.RemoveAt (0);
 				}
@@ -254,7 +254,7 @@ public class TourJeuSystem : NetworkBehaviour {
 							if (emplacementSolJoueur.NumColonne == emplacementAtmosJoueur.NumColonne) {
 								CarteConstructionMetierAbstract carteADeplacer = emplacementSolJoueur.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
 								if (null != carteADeplacer && carteADeplacer is CarteVaisseauMetier) {
-									emplacementAtmosJoueur.putCard (carteADeplacer);
+									emplacementAtmosJoueur.RpcPutCard (carteADeplacer.netId);
 									listEmplacementSolAvecCarteVaisseau.Remove (emplacementSolJoueur);
 									listEmplacementAtmosToujoursLibre2.Remove (emplacementAtmosJoueur);
 								} else {
@@ -270,7 +270,7 @@ public class TourJeuSystem : NetworkBehaviour {
 					listEmplacementAtmosToujoursLibre.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
 					while (0 < listEmplacementSolAvecCarteVaisseau.Count && 0 < listEmplacementAtmosToujoursLibre.Count) {
 						CarteConstructionMetierAbstract carteADeplacer = listEmplacementSolAvecCarteVaisseau [0].gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
-						listEmplacementAtmosToujoursLibre [0].putCard (carteADeplacer);
+						listEmplacementAtmosToujoursLibre [0].RpcPutCard (carteADeplacer.netId);
 						listEmplacementSolAvecCarteVaisseau.RemoveAt (0);
 						listEmplacementAtmosToujoursLibre.RemoveAt (0);
 					}

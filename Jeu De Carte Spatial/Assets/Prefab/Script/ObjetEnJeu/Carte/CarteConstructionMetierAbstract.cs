@@ -88,9 +88,8 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	[Command]
 	public override void CmdPiocheCard(){
-		Mains main = this.joueurProprietaire.Main;
 
-		main.putCard (this);
+		this.joueurProprietaire.RpcPutCardInHand (this.netId);
 
 		byte[] carteRefData = SerializeUtils.SerializeToByteArray(this.getCarteRef());
 		this.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
@@ -392,7 +391,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 				&& joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 
 				//TODO vérifier l'emplacement sol
-				ActionEventManager.EventActionManager.CmdCreateTask(joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid);
+				getJoueurProprietaire().CmdCreateTask(joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid);
 			} else {
 				base.onClick ();
 			}

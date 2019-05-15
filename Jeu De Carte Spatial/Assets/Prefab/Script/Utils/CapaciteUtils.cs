@@ -46,8 +46,8 @@ public class CapaciteUtils {
 
 	public static void callCapacite(CarteMetierAbstract carteSourceCapacite, CarteMetierAbstract carteSourceAction, ISelectionnable cible, CapaciteDTO capaciteSource, NetworkInstanceId netIdJoueur, int actionAppelante, NetworkInstanceId netIdEventTaskAction){
 		SelectionCiblesExecutionCapacite selectionCiblesResult = getCiblesOfCapacity (carteSourceCapacite,carteSourceAction, cible, capaciteSource, netIdJoueur,actionAppelante);
-
-		ActionEventManager.EventActionManager.CmdCreateTaskChooseTarget (selectionCiblesResult, carteSourceAction.netId, netIdJoueur, cible.IdISelectionnable, actionAppelante, netIdEventTaskAction);
+		int idSelection = null != cible ? cible.IdISelectionnable : -1;
+		ActionEventManager.EventActionManager.CmdCreateTaskChooseTarget (selectionCiblesResult, carteSourceAction.netId, netIdJoueur, idSelection, actionAppelante, netIdEventTaskAction);
 	}
 		
 	public static void executeCapacity(SelectionCiblesExecutionCapacite selectionCiblesResult, NetworkInstanceId netIdTaskEvent){

@@ -45,7 +45,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 			}
 
 			if (cible is IDefendre) {
-				ActionEventManager.EventActionManager.CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdEventTask);
+				getJoueurProprietaire().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdEventTask);
 				AttaqueCeTour = true;
 			} else if (cible is IVulnerable) {
 				((IVulnerable)cible).recevoirAttaque (this, netIdEventTask);
@@ -62,7 +62,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 
 		//TODO point de degat ou cout carte?
 		cartePlanete.recevoirDegat(getPointDegat (),this, NetworkInstanceId.Invalid);
-		ActionEventManager.EventActionManager.CmdCreateTask (this.netId, this.idJoueurProprietaire, cartePlanete.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, NetworkInstanceId.Invalid); //TODO idEventTask provenance?
+		getJoueurProprietaire().CmdCreateTask (this.netId, this.idJoueurProprietaire, cartePlanete.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, NetworkInstanceId.Invalid); //TODO idEventTask provenance?
 
 	}
 
@@ -74,7 +74,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 			choixDefensePlanete (cible.getJoueurProprietaire ().netId, netIdTaskEvent);
 		} 
 
-		ActionEventManager.EventActionManager.CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent);
+		getJoueurProprietaire().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent);
 	}
 
 	public bool isCapableAttaquer (){
@@ -155,10 +155,10 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 	/*************************Methode IDefendre********************/
 
 	public void preDefense (CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){
-		ActionEventManager.EventActionManager.CmdCreateTask (vaisseauAttaquant.netId, vaisseauAttaquant.idJoueurProprietaire, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent);
+		getJoueurProprietaire().CmdCreateTask (vaisseauAttaquant.netId, vaisseauAttaquant.idJoueurProprietaire, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent);
 
 		if (vaisseauAttaquant.OnBoard) {
-			ActionEventManager.EventActionManager.CmdCreateTask (this.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent);
+			getJoueurProprietaire().CmdCreateTask (this.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent);
 		}
 	}
 

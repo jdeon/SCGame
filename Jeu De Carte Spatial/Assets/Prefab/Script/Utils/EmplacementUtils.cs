@@ -175,4 +175,17 @@ public class EmplacementUtils {
 
 		return listEmplacementRetour;
 	}
+
+	public static void putCardFromServer(IConteneurCarte emplacementCible, CarteMetierAbstract carteDeplacer){
+		if (emplacementCible is EmplacementMetierAbstract) {
+			((EmplacementMetierAbstract)emplacementCible).RpcPutCard (carteDeplacer.netId);
+		} else if (emplacementCible is Mains) {
+			Joueur joueur = JoueurUtils.getJoueur (((Mains)emplacementCible).NetIdJoueur);
+			joueur.RpcPutCardInHand (carteDeplacer.netId);
+		} else if (emplacementCible is DeckMetierAbstract) {
+			((DeckMetierAbstract)emplacementCible).RpcPutCard (carteDeplacer.netId);
+		} else if (emplacementCible is CartePlaneteMetier) {
+			((CartePlaneteMetier)emplacementCible).RpcPutCard (carteDeplacer.netId);
+		}
+	}
 }

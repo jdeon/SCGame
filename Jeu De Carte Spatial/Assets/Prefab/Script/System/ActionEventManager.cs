@@ -191,25 +191,28 @@ public class ActionEventManager : NetworkBehaviour {
 		}
 	}
 		
-	[Command]
-	public void CmdCreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask){
-		GameObject eventTaskGO = Instantiate<GameObject> (ConstanteInGame.eventTaskPrefab);
+	public void CreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask){
+		if (isServer) {
+			GameObject eventTaskGO = Instantiate<GameObject> (ConstanteInGame.eventTaskPrefab);
 
 
-		GameObject eventParnetTaskGO;
-		if (netIdParentTask == NetworkInstanceId.Invalid) {
-			eventParnetTaskGO = GameObject.Find ("SystemActionEvent");
+			GameObject eventParnetTaskGO;
+			if (netIdParentTask == NetworkInstanceId.Invalid) {
+				eventParnetTaskGO = GameObject.Find ("SystemActionEvent");
+			} else {
+				eventParnetTaskGO = NetworkServer.FindLocalObject (netIdParentTask);
+			}
+
+			eventTaskGO.transform.SetParent (eventParnetTaskGO.transform);
+
+			EventTask eventTask = eventTaskGO.GetComponent<EventTask> ();
+
+			eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction);
+
+			NetworkServer.Spawn (eventTaskGO);
 		} else {
-			eventParnetTaskGO = NetworkServer.FindLocalObject (netIdParentTask);
+			print ("Create Task call on client");
 		}
-
-		eventTaskGO.transform.SetParent (eventParnetTaskGO.transform);
-
-		EventTask eventTask = eventTaskGO.GetComponent<EventTask> ();
-
-		eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction);
-
-		NetworkServer.Spawn (eventTaskGO);
 	}
 
 	[Command]
