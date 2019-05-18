@@ -76,7 +76,7 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 			//TODO ungenerated card on client
 
 			Transform trfmCard = carte.transform;
-			trfmCard.SetParent (transform);
+			trfmCard.parent = transform;
 
 			//TODO délpacer à un index au hasard
 			carte.CmdChangeParent (this.NetIdJoueur, JoueurUtils.getPathJoueur (this));

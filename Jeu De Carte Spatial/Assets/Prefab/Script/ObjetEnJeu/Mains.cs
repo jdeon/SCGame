@@ -28,7 +28,7 @@ public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 		//CarteMetierAbstract carteAdded = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdcarteAdded, true);
 		if (null != carteAdded && null != carteAdded.getJoueurProprietaire () && carteAdded.getJoueurProprietaire ().isLocalPlayer) {
 			carteEnMains.Add (carteAdded);
-			carteAdded.transform.SetParent (transform);
+			carteAdded.transform.parent = transform;
 
 			carteAdded.CmdChangeParent (netIdJoueurPossesseur, JoueurUtils.getPathJoueur (this));
 
@@ -37,10 +37,10 @@ public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 			Vector3 position = Vector3.zero;
 			if (carteAdded is CarteConstructionMetierAbstract) {
 				//On ajoute a gauche
-				position.x = carteAdded.transform.localScale.x * (nbCarteEnMains - .5f);
+				position.x =  (nbCarteEnMains - .5f) /* * carteAdded.transform.localScale.x*/;
 			} else if (carteAdded is CarteMetierAbstract) {
 				//TODO nbCarte ne doit compter separement les ameliration et les construction
-				position.x = -carteAdded.transform.localScale.x * (nbCarteEnMains - .5f);
+				position.x = -(nbCarteEnMains - .5f) /* * carteAdded.transform.localScale.x*/;
 			}
 
 			carteAdded.transform.localPosition = position;

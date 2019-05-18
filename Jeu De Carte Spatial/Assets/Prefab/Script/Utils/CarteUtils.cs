@@ -74,4 +74,31 @@ public class CarteUtils {
 
 		return listCarteCibleReorientation;
 	}
+
+	public static Vector3 getParentScale(Transform tfmChild){
+		Vector3 vectorParent = Vector3.one;
+		Transform tfmParent = tfmChild.parent;
+
+		while (null != tfmParent) {
+			vectorParent.x *= tfmParent.localScale.x;
+			vectorParent.y *= tfmParent.localScale.y;
+			vectorParent.z *= tfmParent.localScale.z;
+
+			tfmParent = tfmParent.parent;
+		}
+
+		return vectorParent;
+	}
+
+	public static Vector3 inverseVector (Vector3 vectorParam){
+		Vector3 vectorResult = Vector3.zero;
+
+		for (int i = 0; i < 3; i++) {
+			if (vectorParam [i] != 0) {
+				vectorResult [i] = 1 / vectorParam [i];
+			}
+		}
+
+		return vectorResult;
+	}
 }

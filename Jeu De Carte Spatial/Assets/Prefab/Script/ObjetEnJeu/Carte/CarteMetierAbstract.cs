@@ -325,7 +325,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	[Command]
 	public void CmdChangeParent (NetworkInstanceId netIdParent, string pathParent){
-		NetworkBehaviour scriptParent = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (netIdParent, true);
+		NetworkBehaviour scriptParent = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (netIdParent, false);
 
 		Transform trfParent;
 
@@ -335,8 +335,31 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 			trfParent = null;
 		}
 
-		transform.SetParent (trfParent);
+		transform.parent = trfParent;
+		//transform.localScale = Vector3.one;  
+		transform.localScale = Vector3.Scale(ConstanteInGame.tailleCarte, CarteUtils.inverseVector(CarteUtils.getParentScale (transform)));
+		RpcChangeParentOtherClient (netIdParent, pathParent);
 
+	}
+
+	[ClientRpc]
+	public void RpcChangeParentOtherClient (NetworkInstanceId netIdParent, string pathParent){
+
+		if (! this.getJoueurProprietaire ().isLocalPlayer) {
+			NetworkBehaviour scriptParent = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (netIdParent, true);
+
+			Transform trfParent;
+
+			if (null != scriptParent && null != pathParent) {
+				trfParent = scriptParent.transform.Find (pathParent);
+			} else {
+				trfParent = null;
+			}
+
+			transform.parent = trfParent;
+			//transform.localScale = Vector3.one;
+			transform.localScale = Vector3.Scale(ConstanteInGame.tailleCarte, CarteUtils.inverseVector(CarteUtils.getParentScale (transform)));
+		}
 	}
 
 	/**********************************Getter Setter***************************/

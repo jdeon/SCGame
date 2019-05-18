@@ -46,7 +46,7 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 
 		if (null != cartePoser && null != cartePoser.getJoueurProprietaire () && cartePoser.getJoueurProprietaire ().isLocalPlayer) {
 			Transform trfmCard = cartePoser.transform;
-			trfmCard.SetParent (transform);
+			trfmCard.parent = transform;;
 
 			cartePoser.CmdChangeParent (this.netId, "");
 
