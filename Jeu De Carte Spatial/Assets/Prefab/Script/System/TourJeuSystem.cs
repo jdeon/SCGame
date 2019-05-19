@@ -127,53 +127,59 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				phase = FIN_TOUR;
 
-				ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid);
-				//TODO remove ActionEventManager.EventActionManager.CmdEndTurn (joueurTour.netId, phasePrecedente);
-
-				GameObject goBtnLastPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
-
-				if (null != goBtnLastPlayer && null != goBtnLastPlayer.GetComponent<BoutonTour> ()) {
-					BoutonTour boutonTour = goBtnLastPlayer.GetComponent<BoutonTour> ();
-					boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.enAttente);
-				}
-				
-
-				bool tourSupJoueur = 0 < CapaciteUtils.valeurAvecCapacite (0, joueurTour.CartePlaneteJoueur.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
-
-				if (!tourSupJoueur) { //Pas de tour supplementaire
-
-					if (indexPlayerPlaying < listJoueurs.Count - 1) {
-						indexPlayerPlaying++;
-					} else {
-						indexPlayerPlaying = 0;
-						nbTurn++;
-					}
-
-					this.idJoueurTour = listJoueurs [indexPlayerPlaying].netIdJoueur;
-					joueurTour = JoueurUtils.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
-				}
-
-				RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
-			
-				ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, NetworkInstanceId.Invalid);
-				//TODO remove ActionEventManager.EventActionManager.CmdStartTurn (joueurTour.netId);
-
-				bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.CartePlaneteJoueur.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
-				initTour(joueurTour);
-
-				if (perteTour) {//Perte de tour
-					progressStepServer(FIN_TOUR);
+				if (phasePrecedente == PHASE_ATTAQUE) {
+					ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE, NetworkInstanceId.Invalid);
 				} else {
-					phase++;
-					GameObject goBtnNewPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
-
-					if (null != goBtnNewPlayer && null != goBtnNewPlayer.GetComponent<BoutonTour> ()) {
-						BoutonTour boutonTour = goBtnNewPlayer.GetComponent<BoutonTour> ();
-						boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.terminerTour);
-					}
+					ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid);
 				}
 			}
 		}
+	}
+
+	public void debutTour(Joueur joueurTour){
+		bool perteTour = 0 > CapaciteUtils.valeurAvecCapacite (0, joueurTour.CartePlaneteJoueur.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
+		initTour(joueurTour);
+
+		if (perteTour) {//Perte de tour
+			progressStepServer(FIN_TOUR);
+		} else {
+			phase++;
+			GameObject goBtnNewPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
+
+			if (null != goBtnNewPlayer && null != goBtnNewPlayer.GetComponent<BoutonTour> ()) {
+				BoutonTour boutonTour = goBtnNewPlayer.GetComponent<BoutonTour> ();
+				boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.terminerTour);
+			}
+		}
+	}
+
+	public void finTour(Joueur joueurTour){
+		GameObject goBtnLastPlayer = NetworkServer.FindLocalObject (listJoueurs [indexPlayerPlaying].netIdBtnTour);
+
+		if (null != goBtnLastPlayer && null != goBtnLastPlayer.GetComponent<BoutonTour> ()) {
+			BoutonTour boutonTour = goBtnLastPlayer.GetComponent<BoutonTour> ();
+			boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.enAttente);
+		}
+
+
+		bool tourSupJoueur = 0 < CapaciteUtils.valeurAvecCapacite (0, joueurTour.CartePlaneteJoueur.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
+
+		if (!tourSupJoueur) { //Pas de tour supplementaire
+
+			if (indexPlayerPlaying < listJoueurs.Count - 1) {
+				indexPlayerPlaying++;
+			} else {
+				indexPlayerPlaying = 0;
+				nbTurn++;
+			}
+
+			this.idJoueurTour = listJoueurs [indexPlayerPlaying].netIdJoueur;
+			joueurTour = JoueurUtils.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
+		}
+
+		RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
+
+		ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, NetworkInstanceId.Invalid);
 	}
 
 	private void initTour(Joueur joueurInitTour){
@@ -182,6 +188,7 @@ public class TourJeuSystem : NetworkBehaviour {
 		RpcRemiseEnPlaceCarte (joueurInitTour.netId);
 		joueurInitTour.DeckConstruction.piocheDeckConstructionByServer ();
 	}
+
 
 	[ClientRpc]
 	public void RpcRemiseEnPlaceCarte(NetworkInstanceId netIdJoueur){

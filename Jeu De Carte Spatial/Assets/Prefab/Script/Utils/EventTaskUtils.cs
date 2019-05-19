@@ -77,7 +77,8 @@ public class EventTaskUtils  {
 			//TODO
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION 
 			|| idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_POSE_AMELIORATION
-			|| idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART) {
+			|| idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART
+			|| idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE) {
 
 			ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionCible);
 
@@ -91,9 +92,23 @@ public class EventTaskUtils  {
 			}
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR) {
-			//TODO
+			
+			Joueur joueur = ConvertUtils.convertNetIdToScript<Joueur> (netIdJoueurSourceAction, false);
+			if (null != joueur) {
+				TourJeuSystem.getTourSystem ().debutTour (joueur);
+			} else {
+				aucuneActionEffectuer ();
+			}
+				
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR) {
-			//TODO
+
+			Joueur joueur = ConvertUtils.convertNetIdToScript<Joueur> (netIdJoueurSourceAction, false);
+			if (null != joueur) {
+				TourJeuSystem.getTourSystem ().finTour (joueur);
+			} else {
+				aucuneActionEffectuer ();
+			}
+
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE && scriptSource is IAttaquer) {
 			ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionCible);
 
@@ -122,7 +137,7 @@ public class EventTaskUtils  {
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE) {
 
-			//TODO
+			ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, netIdJoueurSourceAction, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid);
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_GAIN_XP) {
 
@@ -141,10 +156,6 @@ public class EventTaskUtils  {
 			} else {
 				aucuneActionEffectuer ();
 			}
-
-		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE) {
-
-			//TODO
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE) {
 			

@@ -46,6 +46,7 @@ public class EventTaskChoixCible : EventTask {
 
 	protected override void launchEventAction (){
 		//TODO annimation
+		endOfTask();
 	}
 
 	[ClientRpc]	
