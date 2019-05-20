@@ -192,6 +192,8 @@ public class TourJeuSystem : NetworkBehaviour {
 
 	[ClientRpc]
 	public void RpcRemiseEnPlaceCarte(NetworkInstanceId netIdJoueur){
+
+		if(JoueurUtils.getJoueurLocal().netId == netIdJoueur){
 		List<CarteMetierAbstract> listCarteJoueur = CarteUtils.getListCarteJoueur (netIdJoueur);
 
 		foreach (CarteMetierAbstract carteJoueur in listCarteJoueur) {
@@ -210,79 +212,79 @@ public class TourJeuSystem : NetworkBehaviour {
 			List<EmplacementAtomsphereMetier> listEmplacementAtmosJoueurLibre = EmplacementUtils.getListEmplacementLibreJoueur <EmplacementAtomsphereMetier> (netIdJoueur);
 				
 			//On essaye d'abord de replacer les vaisseaux au bonne endroit
-			if (listEmplacementAtmosJoueurLibre.Count > 0) {
-				List<EmplacementAttaque> listEmplacementAttaqueToujoursOccuper = new List<EmplacementAttaque> (listEmplacementAttaqueOccuper);
-				List<EmplacementAtomsphereMetier> listEmplacementAtmosToujoursLibre = new List<EmplacementAtomsphereMetier> (listEmplacementAtmosJoueurLibre);
+				if (listEmplacementAtmosJoueurLibre.Count > 0) {
+					List<EmplacementAttaque> listEmplacementAttaqueToujoursOccuper = new List<EmplacementAttaque> (listEmplacementAttaqueOccuper);
+					List<EmplacementAtomsphereMetier> listEmplacementAtmosToujoursLibre = new List<EmplacementAtomsphereMetier> (listEmplacementAtmosJoueurLibre);
 
-				foreach (EmplacementAttaque emplacementAttaqueJoueur in listEmplacementAttaqueOccuper) {
-					foreach (EmplacementAtomsphereMetier emplacementAtmosJoueur in listEmplacementAtmosJoueurLibre) {
-						if (emplacementAttaqueJoueur.NumColonne == emplacementAtmosJoueur.NumColonne) {
-							CarteConstructionMetierAbstract carteADeplacer = emplacementAttaqueJoueur.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
-							emplacementAtmosJoueur.RpcPutCard (carteADeplacer.netId);
-							listEmplacementAttaqueToujoursOccuper.Remove (emplacementAttaqueJoueur);
-							listEmplacementAtmosToujoursLibre.Remove (emplacementAtmosJoueur);
-							break;
-						}
-					}
-				}
-
-
-				listEmplacementAttaqueToujoursOccuper.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
-				listEmplacementAtmosToujoursLibre.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
-				while (0 < listEmplacementAttaqueToujoursOccuper.Count && 0 < listEmplacementAtmosToujoursLibre.Count) {
-					CarteConstructionMetierAbstract carteADeplacer = listEmplacementAttaqueToujoursOccuper [0].gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
-					listEmplacementAtmosToujoursLibre [0].RpcPutCard (carteADeplacer.netId);
-					listEmplacementAttaqueToujoursOccuper.RemoveAt (0);
-					listEmplacementAtmosToujoursLibre.RemoveAt (0);
-				}
-
-				if (listEmplacementAttaqueToujoursOccuper.Count > 0) {
-					foreach (EmplacementAttaque emplacementAVider   in listEmplacementAttaqueToujoursOccuper) {
-						CarteConstructionMetierAbstract carteADeplacer = emplacementAVider.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
-
-						if (carteADeplacer is CarteVaisseauMetier) {
-							((CarteVaisseauMetier)carteADeplacer).sacrificeCarte ();
-						} else {
-							//TODO
-						}
-					}
-				}
-
-				//On fait de même avec les emplacement de sol
-				if (listEmplacementAtmosToujoursLibre.Count > 0) {
-					List<EmplacementSolMetier> listEmplacementSolJoueur = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementSolMetier> (netIdJoueur);
-
-
-					List<EmplacementSolMetier> listEmplacementSolAvecCarteVaisseau = new List<EmplacementSolMetier> (listEmplacementSolJoueur);
-					List<EmplacementAtomsphereMetier> listEmplacementAtmosToujoursLibre2 = new List<EmplacementAtomsphereMetier> (listEmplacementAtmosJoueurLibre);
-
-					foreach (EmplacementSolMetier emplacementSolJoueur in listEmplacementSolJoueur) {
+					foreach (EmplacementAttaque emplacementAttaqueJoueur in listEmplacementAttaqueOccuper) {
 						foreach (EmplacementAtomsphereMetier emplacementAtmosJoueur in listEmplacementAtmosJoueurLibre) {
-							if (emplacementSolJoueur.NumColonne == emplacementAtmosJoueur.NumColonne) {
-								CarteConstructionMetierAbstract carteADeplacer = emplacementSolJoueur.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
-								if (null != carteADeplacer && carteADeplacer is CarteVaisseauMetier) {
-									emplacementAtmosJoueur.RpcPutCard (carteADeplacer.netId);
-									listEmplacementSolAvecCarteVaisseau.Remove (emplacementSolJoueur);
-									listEmplacementAtmosToujoursLibre2.Remove (emplacementAtmosJoueur);
-								} else {
-									listEmplacementSolAvecCarteVaisseau.Remove (emplacementSolJoueur);
-								}
-									break;
+							if (emplacementAttaqueJoueur.NumColonne == emplacementAtmosJoueur.NumColonne) {
+								CarteConstructionMetierAbstract carteADeplacer = emplacementAttaqueJoueur.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
+								emplacementAtmosJoueur.putCard (carteADeplacer);
+								listEmplacementAttaqueToujoursOccuper.Remove (emplacementAttaqueJoueur);
+								listEmplacementAtmosToujoursLibre.Remove (emplacementAtmosJoueur);
+								break;
 							}
 						}
 					}
 
 
-					listEmplacementSolAvecCarteVaisseau.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
+					listEmplacementAttaqueToujoursOccuper.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
 					listEmplacementAtmosToujoursLibre.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
-					while (0 < listEmplacementSolAvecCarteVaisseau.Count && 0 < listEmplacementAtmosToujoursLibre.Count) {
-						CarteConstructionMetierAbstract carteADeplacer = listEmplacementSolAvecCarteVaisseau [0].gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
-						listEmplacementAtmosToujoursLibre [0].RpcPutCard (carteADeplacer.netId);
-						listEmplacementSolAvecCarteVaisseau.RemoveAt (0);
+					while (0 < listEmplacementAttaqueToujoursOccuper.Count && 0 < listEmplacementAtmosToujoursLibre.Count) {
+						CarteConstructionMetierAbstract carteADeplacer = listEmplacementAttaqueToujoursOccuper [0].gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
+						listEmplacementAtmosToujoursLibre [0].putCard (carteADeplacer);
+						listEmplacementAttaqueToujoursOccuper.RemoveAt (0);
 						listEmplacementAtmosToujoursLibre.RemoveAt (0);
 					}
-				}
 
+					if (listEmplacementAttaqueToujoursOccuper.Count > 0) {
+						foreach (EmplacementAttaque emplacementAVider   in listEmplacementAttaqueToujoursOccuper) {
+							CarteConstructionMetierAbstract carteADeplacer = emplacementAVider.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
+
+							if (carteADeplacer is CarteVaisseauMetier) {
+								((CarteVaisseauMetier)carteADeplacer).sacrificeCarte ();
+							} else {
+								//TODO
+							}
+						}
+					}
+
+					//On fait de même avec les emplacement de sol
+					if (listEmplacementAtmosToujoursLibre.Count > 0) {
+						List<EmplacementSolMetier> listEmplacementSolJoueur = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementSolMetier> (netIdJoueur);
+
+
+						List<EmplacementSolMetier> listEmplacementSolAvecCarteVaisseau = new List<EmplacementSolMetier> (listEmplacementSolJoueur);
+						List<EmplacementAtomsphereMetier> listEmplacementAtmosToujoursLibre2 = new List<EmplacementAtomsphereMetier> (listEmplacementAtmosJoueurLibre);
+
+						foreach (EmplacementSolMetier emplacementSolJoueur in listEmplacementSolJoueur) {
+							foreach (EmplacementAtomsphereMetier emplacementAtmosJoueur in listEmplacementAtmosJoueurLibre) {
+								if (emplacementSolJoueur.NumColonne == emplacementAtmosJoueur.NumColonne) {
+									CarteConstructionMetierAbstract carteADeplacer = emplacementSolJoueur.gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
+									if (null != carteADeplacer && carteADeplacer is CarteVaisseauMetier) {
+										emplacementAtmosJoueur.putCard (carteADeplacer);
+										listEmplacementSolAvecCarteVaisseau.Remove (emplacementSolJoueur);
+										listEmplacementAtmosToujoursLibre2.Remove (emplacementAtmosJoueur);
+									} else {
+										listEmplacementSolAvecCarteVaisseau.Remove (emplacementSolJoueur);
+									}
+									break;
+								}
+							}
+						}
+
+
+						listEmplacementSolAvecCarteVaisseau.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
+						listEmplacementAtmosToujoursLibre.Sort ((p1, p2) => p1.NumColonne.CompareTo (p2.NumColonne));
+						while (0 < listEmplacementSolAvecCarteVaisseau.Count && 0 < listEmplacementAtmosToujoursLibre.Count) {
+							CarteConstructionMetierAbstract carteADeplacer = listEmplacementSolAvecCarteVaisseau [0].gameObject.GetComponentInChildren<CarteConstructionMetierAbstract> ();
+							listEmplacementAtmosToujoursLibre [0].putCard (carteADeplacer);
+							listEmplacementSolAvecCarteVaisseau.RemoveAt (0);
+							listEmplacementAtmosToujoursLibre.RemoveAt (0);
+						}
+					}
+				}
 			}
 		}
 	}
