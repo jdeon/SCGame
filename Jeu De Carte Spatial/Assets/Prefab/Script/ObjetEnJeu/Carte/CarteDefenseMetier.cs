@@ -83,10 +83,10 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 	}
 
 	public void preDefense (CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){
-		vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent);
+		vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent, false);
 
 		if (vaisseauAttaquant.OnBoard) {
-			this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent);
+			this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent, false);
 		}
 	}
 
@@ -111,14 +111,14 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 				int degatRecu = vaisseauAttaquant.getPointDegat ();
 
 				if (attaquePriorite) {
-					this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent);
+					this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent,false);
 
 					if (this.PV > 0) {
-						vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent);
+						vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent, false);
 					}
 				} else {
-					vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent);
-					this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent);
+					vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent, true);
+					this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent, true);
 				}
 			}
 		}

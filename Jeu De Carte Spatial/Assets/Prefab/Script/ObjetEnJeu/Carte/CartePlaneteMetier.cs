@@ -73,15 +73,15 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 	}
 
 	/****************** IVulnerable **********************/
-	public void recevoirAttaque (CarteMetierAbstract sourceDegat, NetworkInstanceId netIdEventTask){
-		getJoueurProprietaire().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask);
+	public void recevoirAttaque (CarteMetierAbstract sourceDegat, NetworkInstanceId netIdEventTask, bool attaqueSimultane){
+		JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask, attaqueSimultane);
 	}
 
 	public int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat, NetworkInstanceId netIdEventTask){
 		pointVie -= nbDegat;
 
 		if (pointVie <= 0) {
-			getJoueurProprietaire().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netIdEventTask);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netIdEventTask, false);
 		}
 
 		return pointVie;
@@ -126,7 +126,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 			    && null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.getJoueurProprietaire () != joueurProprietaire
 			    && joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 				//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
-				getJoueurProprietaire().CmdCreateTask (joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid);
+				JoueurUtils.getJoueurLocal ().CmdCreateTask (joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid, false);
 			} else {
 				base.onClick ();
 			}

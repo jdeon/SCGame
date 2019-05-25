@@ -43,7 +43,11 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	}
 
 	public IConteneurCarte getConteneur (){
-		return transform.GetComponentInParent<IConteneurCarte> ();
+		if (null != this && gameObject.activeInHierarchy){
+			return transform.GetComponentInParent<IConteneurCarte> ();
+		} else {
+			return null;
+		}
 	}
 
 	//public abstract string initCarte (); //Besoin carte Ref
@@ -77,7 +81,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 			if (nouveauEmplacement is EmplacementMetierAbstract) {
 				((EmplacementMetierAbstract) nouveauEmplacement).putCard (this, this.getConteneur () is Mains, netIdTaskEvent);
 			} else if (nouveauEmplacement is ISelectionnable) {
-				getJoueurProprietaire().CmdCreateTask (this.netId, this.idJoueurProprietaire, ((ISelectionnable) nouveauEmplacement).IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, NetworkInstanceId.Invalid);
+				JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, ((ISelectionnable) nouveauEmplacement).IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, NetworkInstanceId.Invalid, false);
 			}else if (!isServer) {
 				//TODO bon comportement si emplacement pa sselectionnable?
 				nouveauEmplacement.putCard (this);

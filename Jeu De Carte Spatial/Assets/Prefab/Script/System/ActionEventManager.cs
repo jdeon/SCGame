@@ -191,7 +191,7 @@ public class ActionEventManager : NetworkBehaviour {
 		}
 	}
 		
-	public void CreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask){
+	public void CreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask, bool createTaskBrother){
 		if (isServer) {
 			GameObject eventTaskGO = Instantiate<GameObject> (ConstanteInGame.eventTaskPrefab);
 
@@ -207,32 +207,35 @@ public class ActionEventManager : NetworkBehaviour {
 
 			EventTask eventTask = eventTaskGO.GetComponent<EventTask> ();
 
-			eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction);
+			eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, createTaskBrother);
 
 			NetworkServer.Spawn (eventTaskGO);
 		} else {
 			print ("Create Task call on client");
 		}
 	}
+		
+	public void createTaskChooseTarget(SelectionCiblesExecutionCapacite selectionCibles,NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask){
+		if (isServer) {
+			GameObject eventTaskChooseTargetGO = Instantiate<GameObject> (ConstanteInGame.eventTaskChooseTargetPrefab);
 
-	[Command]
-	public void CmdCreateTaskChooseTarget(SelectionCiblesExecutionCapacite selectionCibles,NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask){
-		GameObject eventTaskChooseTargetGO = Instantiate<GameObject> (ConstanteInGame.eventTaskChooseTargetPrefab);
+			GameObject eventParnetTaskGO;
+			if (netIdParentTask == NetworkInstanceId.Invalid) {
+				eventParnetTaskGO = GameObject.Find (ConstanteInGame.strSystemActionEvent);
+			} else {
+				eventParnetTaskGO = NetworkServer.FindLocalObject (netIdParentTask);
+			}
 
-		GameObject eventParnetTaskGO;
-		if (netIdParentTask == NetworkInstanceId.Invalid) {
-			eventParnetTaskGO = GameObject.Find (ConstanteInGame.strSystemActionEvent);
+			eventTaskChooseTargetGO.transform.SetParent (eventParnetTaskGO.transform);
+
+			EventTaskChoixCible eventTask = eventTaskChooseTargetGO.GetComponent<EventTaskChoixCible> ();
+			eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, false);
+			eventTask.SelectionCibles = selectionCibles;
+
+			NetworkServer.Spawn (eventTaskChooseTargetGO);
 		} else {
-			eventParnetTaskGO = NetworkServer.FindLocalObject (netIdParentTask);
+			print ("Create TaskChooseTarget call on client");
 		}
-
-		eventTaskChooseTargetGO.transform.SetParent (eventParnetTaskGO.transform);
-
-		EventTaskChoixCible eventTask = eventTaskChooseTargetGO.GetComponent<EventTaskChoixCible> ();
-		eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction,idSelectionCible, typeAction);
-		eventTask.SelectionCibles = selectionCibles;
-
-		NetworkServer.Spawn (eventTaskChooseTargetGO);
 	}
 
 

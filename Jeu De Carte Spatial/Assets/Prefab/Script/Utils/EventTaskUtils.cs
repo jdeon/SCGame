@@ -137,7 +137,7 @@ public class EventTaskUtils  {
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE) {
 
-			ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, netIdJoueurSourceAction, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid);
+			ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, netIdJoueurSourceAction, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid, false);
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_GAIN_XP) {
 
@@ -153,6 +153,8 @@ public class EventTaskUtils  {
 
 			if (null != cible && cible is CarteVaisseauMetier) {
 				((IVulnerable)scriptSource).recevoirDegat (((CarteVaisseauMetier)cible).getPointDegat(), (CarteVaisseauMetier)cible, netIdEventTask);
+			} else if (null != cible && cible is CarteDefenseMetier) {
+				((IVulnerable)scriptSource).recevoirDegat (((CarteDefenseMetier)cible).getPointDegat(), (CarteDefenseMetier)cible, netIdEventTask);
 			} else {
 				aucuneActionEffectuer ();
 			}

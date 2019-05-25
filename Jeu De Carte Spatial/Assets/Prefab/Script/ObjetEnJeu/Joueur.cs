@@ -25,6 +25,7 @@ public class Joueur : NetworkBehaviour {
 	[SerializeField]
 	private DeckConstructionMetier deckConstruction;
 
+	[SerializeField]
 	private DeckConstructionMetier cimetiereConstruction;
 
 
@@ -38,6 +39,8 @@ public class Joueur : NetworkBehaviour {
 		main.init(this);
 
 		deckConstruction.intiDeck (this, isServer);
+		cimetiereConstruction.intiDeck (this, isServer);
+
 		ressourceXP.init (this);
 		ressourceMetal.init (this);
 		ressourceCarburant.init (this);
@@ -133,8 +136,8 @@ public class Joueur : NetworkBehaviour {
 	}
 
 	[Command]
-	public void CmdCreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask){
-		ActionEventManager.EventActionManager.CreateTask (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, netIdParentTask);
+	public void CmdCreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask, bool createTaskBrother){
+		ActionEventManager.EventActionManager.CreateTask (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, netIdParentTask, createTaskBrother);
 	}
 
 

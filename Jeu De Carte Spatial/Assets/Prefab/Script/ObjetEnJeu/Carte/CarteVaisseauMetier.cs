@@ -45,10 +45,10 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 			}
 
 			if (cible is IDefendre) {
-				getJoueurProprietaire().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdEventTask);
+				JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdEventTask, false);
 				AttaqueCeTour = true;
 			} else if (cible is IVulnerable) {
-				((IVulnerable)cible).recevoirAttaque (this, netIdEventTask);
+				((IVulnerable)cible).recevoirAttaque (this, netIdEventTask, false);
 
 				AttaqueCeTour = true;
 			}
@@ -62,7 +62,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 
 		//TODO point de degat ou cout carte?
 		cartePlanete.recevoirDegat(getPointDegat (),this, NetworkInstanceId.Invalid);
-		getJoueurProprietaire().CmdCreateTask (this.netId, this.idJoueurProprietaire, cartePlanete.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, NetworkInstanceId.Invalid); //TODO idEventTask provenance?
+		JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, cartePlanete.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, NetworkInstanceId.Invalid, false); //TODO idEventTask provenance?
 
 	}
 
@@ -74,7 +74,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 			choixDefensePlanete (cible.getJoueurProprietaire ().netId, netIdTaskEvent);
 		} 
 
-		getJoueurProprietaire().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent);
+		JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
 	}
 
 	public bool isCapableAttaquer (){
@@ -155,10 +155,10 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 	/*************************Methode IDefendre********************/
 
 	public void preDefense (CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){
-		getJoueurProprietaire().CmdCreateTask (vaisseauAttaquant.netId, vaisseauAttaquant.idJoueurProprietaire, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent);
+		JoueurUtils.getJoueurLocal ().CmdCreateTask (vaisseauAttaquant.netId, vaisseauAttaquant.idJoueurProprietaire, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
 
 		if (vaisseauAttaquant.OnBoard) {
-			getJoueurProprietaire().CmdCreateTask (this.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
 		}
 	}
 
@@ -182,14 +182,14 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 				bool attaquePriorite = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ATTAQUE_OPPORTUNITE);
 
 				if (attaquePriorite) {
-					this.recevoirAttaque(vaisseauAttaquant, netIdTaskEvent);
+					this.recevoirAttaque(vaisseauAttaquant, netIdTaskEvent, false);
 
 					if (this.PV > 0) {
-						vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent);
+						vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent, false);
 					}
 				} else {
-					vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent);
-					this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent);
+					vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent, true);
+					this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent, true);
 				}
 			}
 		}

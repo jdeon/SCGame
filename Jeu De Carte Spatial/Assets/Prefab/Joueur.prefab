@@ -218,6 +218,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1620400080220008
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4140595418784630}
+  - component: {fileID: 114491315225174284}
+  - component: {fileID: 114220803696632462}
+  m_Layer: 0
+  m_Name: CimetiereConstruction
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1677873898403630
 GameObject:
   m_ObjectHideFlags: 1
@@ -433,6 +450,19 @@ Transform:
   m_Father: {fileID: 4710496579454786}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 75, y: 0, z: 0}
+--- !u!4 &4140595418784630
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1620400080220008}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4710496579454786}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4338590875764794
 Transform:
   m_ObjectHideFlags: 1
@@ -501,7 +531,7 @@ Transform:
   - {fileID: 4504849758263752}
   - {fileID: 4008156721825038}
   m_Father: {fileID: 4710496579454786}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4504849758263752
 Transform:
@@ -587,6 +617,7 @@ Transform:
   - {fileID: 4799246838751668}
   - {fileID: 4508391299673702}
   - {fileID: 4778824373845764}
+  - {fileID: 4140595418784630}
   - {fileID: 4496940427014378}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1556,6 +1587,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typeRessource: XP
+--- !u!114 &114220803696632462
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1620400080220008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed7bc2101051a32458941e4d3b40c294, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deckContructionRef: {fileID: 0}
 --- !u!114 &114321535449874198
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1585,6 +1628,7 @@ MonoBehaviour:
   ressourceMetal: {fileID: 114356209914825730}
   ressourceCarburant: {fileID: 114321535449874198}
   deckConstruction: {fileID: 114844135531084482}
+  cimetiereConstruction: {fileID: 114220803696632462}
 --- !u!114 &114356209914825730
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1608,6 +1652,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61120ee61b68cde44bc61961f5052781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114491315225174284
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1620400080220008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 228
+    i1: 4
+    i2: 212
+    i3: 26
+    i4: 187
+    i5: 230
+    i6: 60
+    i7: 100
+    i8: 57
+    i9: 138
+    i10: 173
+    i11: 122
+    i12: 40
+    i13: 42
+    i14: 136
+    i15: 226
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114501413854658998
 MonoBehaviour:
   m_ObjectHideFlags: 1

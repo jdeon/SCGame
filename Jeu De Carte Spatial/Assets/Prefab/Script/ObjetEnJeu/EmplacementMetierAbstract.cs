@@ -34,11 +34,11 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	public void putCard(CarteMetierAbstract cartePoser, bool isNewCard, NetworkInstanceId netIdTaskEvent){
 		//Si c'est une nouvelle carte, on lance les capacités pour les cartes posées
 		if (isNewCard) {
-			cartePoser.getJoueurProprietaire().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable,ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION, netIdTaskEvent);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable,ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION, netIdTaskEvent, false);
 		} else if (this is EmplacementAttaque) {
-			cartePoser.getJoueurProprietaire().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE, netIdTaskEvent);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE, netIdTaskEvent, false);
 		} else {
-			cartePoser.getJoueurProprietaire().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, netIdTaskEvent);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, netIdTaskEvent, false);
 		}
 	}
 		

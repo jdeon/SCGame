@@ -128,9 +128,9 @@ public class TourJeuSystem : NetworkBehaviour {
 				phase = FIN_TOUR;
 
 				if (phasePrecedente == PHASE_ATTAQUE) {
-					ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE, NetworkInstanceId.Invalid);
+					ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE, NetworkInstanceId.Invalid, false);
 				} else {
-					ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid);
+					ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid, false);
 				}
 			}
 		}
@@ -179,7 +179,7 @@ public class TourJeuSystem : NetworkBehaviour {
 
 		RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
 
-		ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, NetworkInstanceId.Invalid);
+		ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, NetworkInstanceId.Invalid, false);
 	}
 
 	private void initTour(Joueur joueurInitTour){

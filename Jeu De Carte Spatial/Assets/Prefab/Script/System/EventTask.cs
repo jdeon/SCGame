@@ -17,33 +17,47 @@ public class EventTask : NetworkBehaviour {
 	[SyncVar]
 	protected int typeEvent;
 
+	/**Dans le cas les tasks doivent être executer dans l'odre de creation
+	 * on impose que les taches filles soit crée en tant que tache de frère de même hiérachie
+	 * */
+	[SyncVar]
+	protected bool createTaskBrother = false;
+
 	[SyncVar]
 	protected bool activate = false;
 
 	[SyncVar]
 	protected bool pause = true;
 
-	public void initVariable(NetworkInstanceId origin, NetworkInstanceId joueur, int target, int typeEvent){
+	[SyncVar]
+	protected bool finish = false;
+
+	public void initVariable(NetworkInstanceId origin, NetworkInstanceId joueur, int target, int typeEvent, bool createTaskBrother){
 		this.originAction = origin;
 		this.idSelectionnableTarget = target;
 		this.typeEvent = typeEvent;
 		this.joueur = joueur;
+		this.createTaskBrother = createTaskBrother;
 	}
 
 	public void Update(){
 		if (isServer) {
-			if (transform.GetSiblingIndex () == 0 && transform.childCount == 0) {
-				if (this.activate) {
-					this.pause = false;
-				} else {
-					activateTask ();
+			if (finish) {
+				endOfTask ();
+			} else {
+				if (transform.GetSiblingIndex () == 0 && transform.childCount == 0) {
+					if (this.activate) {
+						this.pause = false;
+					} else {
+						activateTask ();
+					}
+				} else if (this.activate) {
+					this.pause = true;
 				}
-			} else if (this.activate) {
-				this.pause = true;
-			}
 
-			if (this.activate && !this.pause) {
-				launchEventAction ();
+				if (this.activate && !this.pause) {
+					launchEventAction ();
+				}
 			}
 		}
 	}
@@ -54,7 +68,18 @@ public class EventTask : NetworkBehaviour {
 	}
 
 	protected virtual void launchEventAction (){
-		EventTaskUtils.launchEventAction (this.typeEvent, this.originAction, this.joueur, this.idSelectionnableTarget, this.netId);
+		NetworkInstanceId netIdParentFuturTask;
+
+		if (!createTaskBrother) {
+			netIdParentFuturTask = this.netId;
+		} else if (null != transform.parent && null != transform.parent.gameObject.GetComponent<EventTask> ()) {
+			EventTask taskParent = transform.parent.gameObject.GetComponent<EventTask> ();
+			netIdParentFuturTask = taskParent.netId;
+		} else {
+			netIdParentFuturTask = NetworkInstanceId.Invalid;
+		}
+
+		EventTaskUtils.launchEventAction (this.typeEvent, this.originAction, this.joueur, this.idSelectionnableTarget, netIdParentFuturTask);
 		//TODO annimation 
 		endOfTask();
 	}
@@ -62,7 +87,9 @@ public class EventTask : NetworkBehaviour {
 	public void endOfTask(){
 		GameObject goParent = transform.parent.gameObject;
 		EventTask eventParent = goParent.GetComponent<EventTask> ();
-		if (null != eventParent) { //appartient a une tache parent
+		if (transform.childCount > 0) {
+			finish = true;
+		}else if (null != eventParent) { //appartient a une tache parent
 			eventParent.CmdNextTask ();
 		} else {
 			CmdDestroyTask ();

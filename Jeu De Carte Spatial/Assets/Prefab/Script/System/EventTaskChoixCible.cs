@@ -13,7 +13,7 @@ public class EventTaskChoixCible : EventTask {
 
 	private List<ISelectionnable> listCiblesSelectionnes;
 
-	public void initVariable(NetworkInstanceId origin, NetworkInstanceId joueur, int target, int typeEvent){
+	public void initVariable(NetworkInstanceId origin, NetworkInstanceId joueur, int target, int typeEvent, bool createTaskBrother){
 		this.originAction = origin;
 		this.idSelectionnableTarget = target;
 		this.typeEvent = ConstanteIdObjet.ID_CONDITION_ACTION_EFFET_CAPACITE;

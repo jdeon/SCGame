@@ -34,7 +34,8 @@ public class NetworkUtils : MonoBehaviour {
 			instance.init(false,netIdObject,playerId,delay);
 
 		} else if (null != netIdObject) {
-			netIdObject.localPlayerAuthority = false;     
+			//TODO verifier si necessaire exception envoyer sinon
+			//netIdObject.localPlayerAuthority = false;     
 			netIdObject.RemoveClientAuthority (playerId.connectionToClient);
 		}
 	}

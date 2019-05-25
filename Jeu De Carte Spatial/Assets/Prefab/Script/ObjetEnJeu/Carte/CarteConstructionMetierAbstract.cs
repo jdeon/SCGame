@@ -339,12 +339,11 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	/***********************IVulnerable*****************/
 
 	//Retourne PV restant
-	public void recevoirAttaque (CarteMetierAbstract sourceDegat, NetworkInstanceId netdTaskEvent){
+	public void recevoirAttaque (CarteMetierAbstract sourceDegat, NetworkInstanceId netdTaskEvent, bool attaqueSimultane){
 		bool invulnerable = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_INVULNERABLE);
 
 		if (!invulnerable) { //TODO calcul degat
-			//TODO comande eventTask avec point dega?
-			ActionEventManager.EventActionManager.CmdRecoitDegat (joueurProprietaire.netId, this.netId, sourceDegat.IdISelectionnable, netdTaskEvent); 
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netdTaskEvent, attaqueSimultane); 
 		}
 	}
 
@@ -355,27 +354,19 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		if (!invulnerable && nbDegat > 0) {
 			PV -= nbDegat;
 			if (PV <= 0) {
-				destruction (netdTaskEvent);
+				JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netdTaskEvent, false); 
 			}
 		}
 
 		return PV;
 	}
 
+
 	public void destruction (NetworkInstanceId netdTaskEvent){
-		if (!joueurProprietaire.isServer) {
-			ActionEventManager.EventActionManager.CmdDestruction (joueurProprietaire.netId, this.netId, -1, NetworkInstanceId.Invalid); //TODO create EventTask);
-
-			CmdDestuction ();
-			Destroy (gameObject);
+		if (joueurProprietaire.isServer) {
+			NetworkUtils.unassignObjectFromPlayer (GetComponent<NetworkIdentity> (), getJoueurProprietaire ().GetComponent<NetworkIdentity> (), -1);
+			getJoueurProprietaire ().CimetiereConstruction.addCarte (this);
 		}
-	}
-
-	[Command]
-	public void CmdDestuction(){
-		NetworkUtils.unassignObjectFromPlayer (GetComponent<NetworkIdentity> (), getJoueurProprietaire ().GetComponent<NetworkIdentity> (), -1);
-
-		getJoueurProprietaire ().CimetiereConstruction.addCarte (this);
 	}
 
 	/*****************ISelectionnable*****************/
@@ -391,7 +382,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 				&& joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 
 				//TODO vérifier l'emplacement sol
-				getJoueurProprietaire().CmdCreateTask(joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid);
+				JoueurUtils.getJoueurLocal ().CmdCreateTask(joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid, false);
 			} else {
 				base.onClick ();
 			}
