@@ -42,6 +42,17 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		}
 	}
 
+	void OnMouseOver()
+	{
+		EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+	}
+
+	void OnMouseExit()
+	{
+		EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+	}
+
+
 	public IConteneurCarte getConteneur (){
 		if (null != this && gameObject.activeInHierarchy){
 			return transform.GetComponentInParent<IConteneurCarte> ();
@@ -283,17 +294,22 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		}
 	}
 
-	public void miseEnBrillance(int etat){
-		etatSelectionne = etat;
-		//TODO mise en brillance
-	}
-
 	public int IdISelectionnable {
 		get { return idSelectionnable; }
 	}
 
 	public int EtatSelectionnable {
 		get { return etatSelectionne; }
+		set {
+			if (value == SelectionnableUtils.ETAT_RETOUR_ATTIERE) {
+				SelectionnableUtils.miseEnBrillance (etatSelectionne, transform);
+			} else {
+				SelectionnableUtils.miseEnBrillance (value, transform);
+				if (value != SelectionnableUtils.ETAT_MOUSE_OVER) {
+					etatSelectionne = value;
+				}
+			}
+		}
 	}
 
 	/************************Hook***********************************/

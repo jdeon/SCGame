@@ -31,6 +31,16 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 		onClick ();
 	}
 
+	void OnMouseOver()
+	{
+		EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+	}
+
+	void OnMouseExit()
+	{
+		EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+	}
+
 	public void putCard(CarteMetierAbstract cartePoser, bool isNewCard, NetworkInstanceId netIdTaskEvent){
 		//Si c'est une nouvelle carte, on lance les capacités pour les cartes posées
 		if (isNewCard) {
@@ -108,16 +118,22 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	/*******************ISelectionnable****************/
 	public abstract void onClick ();
 
-	public void miseEnBrillance(int etat){
-		//TODO mise en brillance
-	}
-		
 	public int IdISelectionnable {
 		get { return idSelectionnable; }
 	}
 
 	public int EtatSelectionnable{
 		get {return etatSelectionnable;}
+		set {
+			if (value == SelectionnableUtils.ETAT_RETOUR_ATTIERE) {
+				SelectionnableUtils.miseEnBrillance (etatSelectionnable, transform);
+			} else {
+				SelectionnableUtils.miseEnBrillance (value, transform);
+				if (value != SelectionnableUtils.ETAT_MOUSE_OVER) {
+					etatSelectionnable = value;
+				}
+			}
+		}
 	}
 
 	[ClientRpc]

@@ -24,6 +24,16 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 
 	private int etatSelectionne;
 
+	void OnMouseOver()
+	{
+		EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+	}
+
+	void OnMouseExit()
+	{
+		EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+	}
+
 	//TODO cree des constante
 	private static string getPrefixeProd(string typeRessource){
 		string result;
@@ -108,12 +118,18 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 
 	}
 
-	public void miseEnBrillance(int etat){
-		//TODO mise en brillance
-	}
-
 	public int EtatSelectionnable {
 		get { return etatSelectionne; }
+		set {
+			if (value == SelectionnableUtils.ETAT_RETOUR_ATTIERE) {
+				SelectionnableUtils.miseEnBrillance (etatSelectionne, transform);
+			} else {
+				SelectionnableUtils.miseEnBrillance (value, transform);
+				if (value != SelectionnableUtils.ETAT_MOUSE_OVER) {
+					etatSelectionne = value;
+				}
+			}
+		}
 	}
 
 	public int IdISelectionnable {

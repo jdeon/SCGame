@@ -56,7 +56,7 @@ public class EventTaskChoixCible : EventTask {
 			foreach (int idCible in selectionCibles.ListIdCiblesProbables) {
 				ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idCible);
 				if (null != cible) {
-					cible.miseEnBrillance (1);
+					cible.EtatSelectionnable = SelectionnableUtils.ETAT_SELECTIONNABLE;
 					listCibleSelectionnable.Add (cible);
 				}
 			}

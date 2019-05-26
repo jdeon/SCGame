@@ -79,6 +79,9 @@ public class ConstanteInGame {
 
 	public static readonly Material materialBackgroundCarte = Resources.Load<Material>("Materials/Material Carte/BackgroundMat");
 
+	public static readonly Material materialGlow = Resources.Load<Material>("Materials/MaterialGlow");
+
+
 
 	public static readonly GameObject planePrefab = Resources.Load<GameObject>("Basic/goPlane");
 

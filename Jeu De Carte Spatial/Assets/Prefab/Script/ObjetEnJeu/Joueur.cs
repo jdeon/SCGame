@@ -345,7 +345,17 @@ public class Joueur : NetworkBehaviour {
 
 	public CarteMetierAbstract CarteSelectionne {
 		get { return carteSelectionne; }
-		set { carteSelectionne = value; }
+		set { 
+			if (null != carteSelectionne) {
+				carteSelectionne.EtatSelectionnable = SelectionnableUtils.ETAT_NON_SELECTION;
+			}
+
+			carteSelectionne = value; 
+
+			if (null != carteSelectionne) {
+				carteSelectionne.EtatSelectionnable = SelectionnableUtils.ETAT_SELECTIONNE;
+			} 
+		}
 	}
 
 	public bool CarteEnVisuel {

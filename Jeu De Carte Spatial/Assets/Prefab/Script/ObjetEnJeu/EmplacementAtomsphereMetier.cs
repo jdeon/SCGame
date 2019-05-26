@@ -15,7 +15,7 @@ public class EmplacementAtomsphereMetier : EmplacementMetierAbstract {
 
 			if (isMovableByPlayer (joueur) && (joueur.CarteSelectionne is CarteVaisseauMetier || listNomCarteExeption.Contains (joueur.CarteSelectionne.name))) {
 				EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
-				if (this.etatSelectionnable == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
+				if (this.etatSelectionnable == SelectionnableUtils.ETAT_SELECTIONNABLE && null != eventTask && eventTask is EventTaskChoixCible) {
 					((EventTaskChoixCible) eventTask).ListCibleChoisie.Add (this);
 
 				} else if (isCardCostPayable (joueur.RessourceMetal, joueur.CarteSelectionne)) {

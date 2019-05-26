@@ -6,9 +6,13 @@ public interface ISelectionnable  {
 
 	void onClick ();
 
-	void miseEnBrillance(int etat);
-
 	int IdISelectionnable{ get; }
 
-	int EtatSelectionnable{ get; }
+	/**
+	 * 0:rien
+	 * 1:selectionnable
+	 * 2 : mouseOver
+	 * 3 : Selectionne
+	 * */
+	int EtatSelectionnable{ get; set;}
 }

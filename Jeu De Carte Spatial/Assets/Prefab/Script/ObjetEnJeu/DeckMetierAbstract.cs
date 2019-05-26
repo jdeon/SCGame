@@ -37,6 +37,16 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 		onClick ();
 	}
 
+	void OnMouseOver()
+	{
+		EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+	}
+
+	void OnMouseExit()
+	{
+		EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+	}
+
 	public virtual void intiDeck (Joueur joueurInitiateur, bool isServer){
 		this.joueurProprietaire = joueurInitiateur;
 	}
@@ -169,16 +179,11 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 	public void onClick (){
 		//TODO selectionne
 		EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
-		if (this.etatSelectionnable == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
+		if (this.etatSelectionnable == SelectionnableUtils.ETAT_SELECTIONNABLE && null != eventTask && eventTask is EventTaskChoixCible) {
 			((EventTaskChoixCible) eventTask).ListCibleChoisie.Add (this);
 		}
 
 	}
-
-	public void miseEnBrillance(int etat){
-		//TODO mise en brillance
-	}
-
 
 	public int IdISelectionnable {
 		get { return idSelectionnable; }
@@ -191,6 +196,16 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 
 	public int EtatSelectionnable{
 		get { return etatSelectionnable; }
+		set {
+			if (value == SelectionnableUtils.ETAT_RETOUR_ATTIERE) {
+				SelectionnableUtils.miseEnBrillance (etatSelectionnable, transform);
+			} else {
+				SelectionnableUtils.miseEnBrillance (value, transform);
+				if (value != SelectionnableUtils.ETAT_MOUSE_OVER) {
+					etatSelectionnable = value;
+				}
+			}
+		}
 	}
 
 

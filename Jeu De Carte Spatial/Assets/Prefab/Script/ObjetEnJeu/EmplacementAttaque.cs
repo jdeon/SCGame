@@ -17,7 +17,7 @@ public class EmplacementAttaque : EmplacementMetierAbstract {
 
 			if (isMovableByPlayer (joueur)) {		
 				EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
-				if (this.etatSelectionnable == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
+				if (this.etatSelectionnable == SelectionnableUtils.ETAT_SELECTIONNABLE && null != eventTask && eventTask is EventTaskChoixCible) {
 					((EventTaskChoixCible) eventTask).ListCibleChoisie.Add (this);
 
 				} else if (joueur.CarteSelectionne is CarteVaisseauMetier && ((CarteVaisseauMetier)joueur.CarteSelectionne).isCapableAttaquer ()

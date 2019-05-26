@@ -70,10 +70,6 @@ public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 		//TODO
 	}
 
-	public void miseEnBrillance(int etat){
-		//TODO
-	}
-
 	public int IdISelectionnable{ 
 		get{return idSelectionnable;}
 		set{
@@ -85,6 +81,16 @@ public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 
 	public int EtatSelectionnable { 
 		get{ return etatSelection; }
+		set {
+			if (value == SelectionnableUtils.ETAT_RETOUR_ATTIERE) {
+				SelectionnableUtils.miseEnBrillance (etatSelection, transform);
+			} else {
+				SelectionnableUtils.miseEnBrillance (value, transform);
+				if (value != SelectionnableUtils.ETAT_MOUSE_OVER) {
+					etatSelection = value;
+				}
+			}
+		}
 	}
 
 	public NetworkInstanceId NetIdJoueur {
