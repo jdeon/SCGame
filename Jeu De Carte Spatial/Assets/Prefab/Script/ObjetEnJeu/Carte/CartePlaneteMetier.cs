@@ -128,10 +128,10 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 				//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
 				JoueurUtils.getJoueurLocal ().CmdCreateTask (joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid, false);
 			} else {
-				base.onClick ();
+				//base.onClick ();
 			}
 		} else {
-			base.onClick ();
+			//base.onClick ();
 		}	
 	}
 

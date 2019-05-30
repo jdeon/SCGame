@@ -70,11 +70,14 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		//TODO
 		bool modeFurtif = 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_FURTIF); 
 
-		if (!modeFurtif) {
-			choixDefensePlanete (cible.getJoueurProprietaire ().netId, netIdTaskEvent);
+		//Mode furtif permet d'attaquer sans déclancher de réponse
+		if (modeFurtif) {
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
+		} else {
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdTaskEvent, false);
 		} 
 
-		JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
+
 	}
 
 	public bool isCapableAttaquer (){
@@ -106,7 +109,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		}
 	}
 
-
+	//TODO fonction plus appeler transformer en eventTask à choix multiple
 	private IEnumerator choixDefensePlanete(NetworkInstanceId idJoueurAttaque, NetworkInstanceId netIdTaskEvent){
 		List<IDefendre> listDefenseurPlanete = new List<IDefendre> ();
 
@@ -197,7 +200,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 
 	public bool isCapableDefendre (){
 		IConteneurCarte conteneur = getConteneur ();
-		bool result = conteneur is EmplacementSolMetier && 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_DESARME);
+		bool result = conteneur is EmplacementSolMetier && 0 <= CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_DESARME);
 
 		if (defenduCeTour) {
 			result = false;

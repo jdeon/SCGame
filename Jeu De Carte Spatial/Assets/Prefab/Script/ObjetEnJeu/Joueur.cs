@@ -136,6 +136,19 @@ public class Joueur : NetworkBehaviour {
 	}
 
 	[Command]
+	public void CmdSyncIdSelectionnableCarte (NetworkInstanceId netIdCarte){
+		CarteMetierAbstract carte = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarte, false);
+
+		if (null != carte) {
+			if (null == carte.IdISelectionnable || carte.IdISelectionnable <= 0) {
+				carte.initIdSelection ();
+			}
+
+			carte.RpcInitIdSelectionnable (carte.IdISelectionnable);
+		}
+	}
+
+	[Command]
 	public void CmdCreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask, bool createTaskBrother){
 		ActionEventManager.EventActionManager.CreateTask (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, netIdParentTask, createTaskBrother);
 	}

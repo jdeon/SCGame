@@ -30,7 +30,7 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		}
 	}
 
-	public override void OnMouseDown(){
+	public override void onClick(){
 		Joueur joueurLocal = JoueurUtils.getJoueurLocal ();
 
 		//Selection de la defense lors de la phase attaque adverse
@@ -42,10 +42,10 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 			defenseSelectionne = true;
 			defenduCeTour = true;
 			} else {
-			base.OnMouseDown ();
+				base.onClick ();
 			}
 		} else {
-			base.OnMouseDown ();
+			base.onClick ();
 		}
 	}
 
@@ -86,7 +86,7 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent, false);
 
 		if (vaisseauAttaquant.OnBoard) {
-			this.recevoirAttaque (vaisseauAttaquant, netIdTaskEvent, false);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.joueurProprietaire.CartePlaneteJoueur.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false); 
 		}
 	}
 
@@ -126,7 +126,7 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 
 	public bool isCapableDefendre (){
 		IConteneurCarte conteneur = getConteneur ();
-		bool result = conteneur is EmplacementSolMetier && 0 < CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_DESARME);
+		bool result = conteneur is EmplacementSolMetier && 0 <= CapaciteUtils.valeurAvecCapacite (0, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_ETAT_DESARME);
 
 		if (defenduCeTour) {
 			result = false;

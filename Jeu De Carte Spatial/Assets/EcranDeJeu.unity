@@ -448,7 +448,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   idSelectionnable: 0
-  etatSelectionne: 0
 --- !u!4 &106286655
 Transform:
   m_ObjectHideFlags: 0
@@ -5771,7 +5770,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b828a8f6a8965c419f9184818ebc437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tester: 1
+  tester: 0
 --- !u!1 &1967535830
 GameObject:
   m_ObjectHideFlags: 0

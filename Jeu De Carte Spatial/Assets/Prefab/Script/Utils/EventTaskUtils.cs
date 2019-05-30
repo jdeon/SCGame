@@ -114,16 +114,35 @@ public class EventTaskUtils  {
 
 			if (null != cible && cible is CarteConstructionMetierAbstract) {
 				((IAttaquer)scriptSource).attaqueCarte ((CarteConstructionMetierAbstract)cible, netIdEventTask);
+			} else if (null != cible && cible is CartePlaneteMetier) {
+				((IAttaquer)scriptSource).attaquePlanete ((CartePlaneteMetier)cible, netIdEventTask);
 			} else {
 				aucuneActionEffectuer ();
 			}
 				
-		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND && scriptSource is IDefendre) {
+		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND  && scriptSource is CarteMetierAbstract) {
 			ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionCible);
 
-			if (null != cible && cible is CarteVaisseauMetier) {
+			if (null != cible && cible is CarteVaisseauMetier && scriptSource is IDefendre) {
 				((IDefendre)scriptSource).defenseSimultanee ((CarteVaisseauMetier)cible, netIdEventTask);
-			} else {
+			} else if (scriptSource is CartePlaneteMetier) {
+
+				List<CarteConstructionMetierAbstract> listDefenseur = CarteUtils.getListCarteCapableDefendrePlanete (((CartePlaneteMetier)scriptSource).getJoueurProprietaire ());
+
+				if (null != listDefenseur && listDefenseur.Count > 0) {
+					SelectionCiblesExecutionCapacite selectionCible = new SelectionCiblesExecutionCapacite (1, (CartePlaneteMetier)scriptSource, idActionEvent);
+
+					foreach (CarteConstructionMetierAbstract defenseur in listDefenseur) {
+						selectionCible.ListIdCiblesProbables.Add (defenseur.IdISelectionnable);
+					}
+
+					ActionEventManager.EventActionManager.createTaskChooseTarget (selectionCible, scriptSource.netId, ((CartePlaneteMetier)scriptSource).getJoueurProprietaire ().netId, cible.IdISelectionnable, idActionEvent, netIdEventTask);
+
+				} else {
+					ActionEventManager.EventActionManager.CreateTask (scriptSource.netId, ((CartePlaneteMetier)scriptSource).getJoueurProprietaire ().netId, cible.IdISelectionnable , ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask, false);
+				}
+					
+			}else {
 				aucuneActionEffectuer ();
 			}
 

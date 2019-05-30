@@ -43,6 +43,22 @@ public struct SelectionCiblesExecutionCapacite {
 		this.listIdRessouceCible = null;
 	}
 
+	//Constructeur pour le choix de cible sans capacite
+	public SelectionCiblesExecutionCapacite (int nbCibleMax, CarteMetierAbstract carteSource, int idActionAppelante){
+		this.idTypeCapacite = -1;
+		this.idCapaciteSource = -1;
+		this.libelleCapacite = "Action type" + idActionAppelante; // TODO rajouter fonction descriptive de action
+		this.choixManuelle = true;
+		this.nbChoixCible = nbCibleMax;
+
+		this.idActionAppelante = idActionAppelante;
+		this.idCarteSource = carteSource.netId;
+		this.idJoueurCarteSource = carteSource.getJoueurProprietaire().netId;
+		this.listIdCiblesProbables = new List<int> ();
+
+		this.listIdRessouceCible = null;
+	}
+
 	public void initModeRessourceCapa(List<RessourceMetier> listeRessourceMetier){
 		this.listIdRessouceCible = new List<int> ();
 

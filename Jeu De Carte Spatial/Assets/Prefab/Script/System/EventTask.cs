@@ -113,6 +113,6 @@ public class EventTask : NetworkBehaviour {
 	}
 
 	public bool EnCours {
-		get {return this.activate && !this.pause;}
+		get {return this.activate && !(this.pause || this.finish);}
 	}
 }

@@ -21,9 +21,10 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	protected GameObject faceCarteGO;
 
-	public int idSelectionnable;
+	[SerializeField]
+	protected int idSelectionnable;
 
-	public int etatSelectionne;
+	protected int etatSelectionne;
 
 
 	public abstract CarteDTO getCarteDTORef ();
@@ -39,6 +40,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		if (isServer) {
 			idSelectionnable = ++SelectionnableUtils.sequenceSelectionnable;
 			RpcInitIdSelectionnable (idSelectionnable);
+		} else if (null == idSelectionnable || idSelectionnable <= 0) {
+			JoueurUtils.getJoueurLocal().CmdSyncIdSelectionnableCarte (netId);
 		}
 	}
 
@@ -291,6 +294,12 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 			joueurProprietaire.CarteSelectionne = null;	//On deselectionne au second click
 		} else {
 			joueurProprietaire.CarteSelectionne = this;
+		}
+	}
+
+	public void initIdSelection(){
+		if (null == idSelectionnable || idSelectionnable <= 0) {
+			idSelectionnable = ++SelectionnableUtils.sequenceSelectionnable;
 		}
 	}
 

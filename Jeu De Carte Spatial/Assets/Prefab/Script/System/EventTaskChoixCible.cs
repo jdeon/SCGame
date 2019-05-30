@@ -28,7 +28,7 @@ public class EventTaskChoixCible : EventTask {
 	}*/
 
 	protected override void activateTask (){
-		base.activateTask ();
+		this.activate = true;
 		if (SelectionCibles.ListIdCiblesProbables.Count > 0) {
 			if (selectionCibles.ChoixCible) {
 				RpcDisplayCapacityChoice ();
@@ -46,12 +46,15 @@ public class EventTaskChoixCible : EventTask {
 
 	protected override void launchEventAction (){
 		//TODO annimation
-		endOfTask();
+
+		if (finish) {
+			endOfTask ();
+		}
 	}
 
 	[ClientRpc]	
 	private void RpcDisplayCapacityChoice (){
-		if (isLocalPlayer && JoueurUtils.getJoueurLocal().netId == joueur) {
+		if (null != JoueurUtils.getJoueurLocal() && JoueurUtils.getJoueurLocal().netId == joueur) {
 			List<ISelectionnable> listCibleSelectionnable = new List<ISelectionnable> ();
 			foreach (int idCible in selectionCibles.ListIdCiblesProbables) {
 				ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idCible);
@@ -70,23 +73,41 @@ public class EventTaskChoixCible : EventTask {
 
 	public IEnumerator phaseChoixCible(List<ISelectionnable> listCibleSelectionnable){
 		float tempsDecision = 30;
-		bool finChoix = false;
 		//La phase dure 30 secondes ou jusqu' demande d'arret ou si le nombre de carte selectionne est correct
-		while (tempsDecision > 0 && !finChoix && listCiblesSelectionnes.Count < selectionCibles.NbCible) {
+		while (tempsDecision > 0 && !finish && listCiblesSelectionnes.Count < selectionCibles.NbCible) {
 			tempsDecision -= .25f;
 			yield return new WaitForSeconds (.25f);
 		}
 
-		finChoix = true;
+		finish = true;
 
 		//TODO vérifier listCiblesSelectionnes présent dans cibleProbale
 		if (listCiblesSelectionnes.Count > 0) {
 			selectionCibles.ListIdCiblesProbables.Clear ();
-			foreach (ISelectionnable cible in listCiblesSelectionnes) {
-				selectionCibles.ListIdCiblesProbables.Add(cible.IdISelectionnable);
+
+			if (selectionCibles.IdCapaciteSource > 0 && selectionCibles.IdTypeCapacite > 0) {
+				//Cas où l'on choisi les cibles d'une capacité
+				foreach (ISelectionnable cible in listCiblesSelectionnes) {
+					selectionCibles.ListIdCiblesProbables.Add(cible.IdISelectionnable);
+				}
+
+				ActionEventManager.EventActionManager.CmdExecuteCapacity (selectionCibles, netId);
+			} else {
+				NetworkBehaviour netBehaviour = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (originAction, true);
+				ISelectionnable cible = SelectionnableUtils.getSelectiobleById (this.idSelectionnableTarget);
+
+				if (typeEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND && netBehaviour is CartePlaneteMetier && cible is CarteVaisseauMetier) {
+					//Cas où le choix de cible provient de la défense d'une plante
+					foreach (ISelectionnable selection in listCiblesSelectionnes) {
+						if (selection is IDefendre) {
+							((IDefendre) selection).preDefense((CarteVaisseauMetier) cible, netId);
+						}
+					}
+				}
+
 			}
-				
-			ActionEventManager.EventActionManager.CmdExecuteCapacity (selectionCibles, netId);
+
+
 
 			//TODO miseHorsBrillance toute les cartes
 		}
@@ -100,7 +121,16 @@ public class EventTaskChoixCible : EventTask {
 
 	public SelectionCiblesExecutionCapacite SelectionCibles { 
 		get { return selectionCibles; }
-		set { selectionCibles = value; }
+		set { 
+			selectionCibles = value;
+
+			if (selectionCibles.IdCapaciteSource > 0 && selectionCibles.IdTypeCapacite > 0) {
+				this.typeEvent = ConstanteIdObjet.ID_CONDITION_ACTION_EFFET_CAPACITE;
+			} else {
+				//Cas où le choix ne vienne pas d'une capacité
+				this.typeEvent = selectionCibles.IdActionAppelante;
+			}
+		}
 	}
 
 	public List<ISelectionnable> ListCibleChoisie{

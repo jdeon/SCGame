@@ -101,4 +101,22 @@ public class CarteUtils {
 
 		return vectorResult;
 	}
+
+	public static List<CarteConstructionMetierAbstract> getListCarteCapableDefendrePlanete(Joueur joueurPlanete){
+		List<CarteConstructionMetierAbstract> listeDefenseur = new List<CarteConstructionMetierAbstract> ();
+
+		List<EmplacementSolMetier> listEmplacementSolJoueur = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementSolMetier> (joueurPlanete.netId);
+
+		foreach(EmplacementSolMetier emplacementSolJoueur in listEmplacementSolJoueur){
+			List<CarteMetierAbstract> listCarteContenu = emplacementSolJoueur.getCartesContenu ();
+			if (null != listCarteContenu && listCarteContenu.Count > 0) {
+				CarteMetierAbstract carteContenue = listCarteContenu [0];
+				if (null != carteContenue && carteContenue is IDefendre && ((IDefendre)carteContenue).isCapableDefendre () && carteContenue is CarteConstructionMetierAbstract) {
+					listeDefenseur.Add ((CarteConstructionMetierAbstract)carteContenue);
+				}
+			}
+		}
+
+		return listeDefenseur;
+	}
 }
