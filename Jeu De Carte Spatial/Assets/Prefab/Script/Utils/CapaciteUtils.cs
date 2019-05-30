@@ -167,7 +167,7 @@ public class CapaciteUtils {
 
 		if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE
 		    || capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE
-		    || (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_VOL_RESSOURCE && null != carteSourceCapacite && null != carteSourceCapacite.getJoueurProprietaire ())
+		    || (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_VOL_RESSOURCE && null != carteSourceCapacite && null != carteSourceCapacite.JoueurProprietaire)
 		    || capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_TYPE_RESSOURCE) {
 
 			selectionCible = new SelectionCiblesExecutionCapacite (capacite, carteSourceCapacite, actionAppelante);
@@ -283,7 +283,7 @@ public class CapaciteUtils {
 			GameObject carteGO = CarteUtils.convertCarteDTOToGameobject (capaciteReference.CarteInvocation, true);
 
 			//TODO ne prends pas en compte l'emplacement cible ou l invocation chez l ennemie
-			joueur.invoquerCarteServer (carteGO, capaciteReference.NiveauInvocation, joueur.Main);
+			CarteUtils.invoquerCarteServer (carteGO, capaciteReference.NiveauInvocation, joueur.Main, joueur);
 
 		} else if (capaciteReference.Capacite == ConstanteIdObjet.ID_CAPACITE_REVELE_CARTE) {
 			//TODO RPC carteCibleCapacite.generateVisualCard ();
@@ -477,9 +477,9 @@ public class CapaciteUtils {
 			if ((conditionCible.Contains (ConstanteIdObjet.ID_CONDITION_CIBLE_BATIMENT.ToString ()) && carteTest is CarteBatimentMetier)
 				|| (conditionCible.Contains (ConstanteIdObjet.ID_CONDITION_CIBLE_DEFENSE.ToString ()) && carteTest is CarteDefenseMetier)
 				|| (conditionCible.Contains (ConstanteIdObjet.ID_CONDITION_CIBLE_VAISSEAU.ToString ()) && carteTest is CarteVaisseauMetier)) {
-				if (null != carteTest && null != carteTest.getJoueurProprietaire () &&
-					((conditionCible.Contains (ConstanteIdObjet.STR_CONDITION_POUR_ALLIER) && carteTest.getJoueurProprietaire ().netId == netIdJoueur)
-						|| (conditionCible.Contains (ConstanteIdObjet.STR_CONDITION_POUR_ALLIER) && carteTest.getJoueurProprietaire ().netId != netIdJoueur)
+				if (null != carteTest && null != carteTest.JoueurProprietaire &&
+					((conditionCible.Contains (ConstanteIdObjet.STR_CONDITION_POUR_ALLIER) && carteTest.JoueurProprietaire.netId == netIdJoueur)
+						|| (conditionCible.Contains (ConstanteIdObjet.STR_CONDITION_POUR_ALLIER) && carteTest.JoueurProprietaire.netId != netIdJoueur)
 						|| (conditionCible.Contains (ConstanteIdObjet.STR_CONDITION_POUR_PROVENANCE)))) {
 
 					result = true;
@@ -546,8 +546,8 @@ public class CapaciteUtils {
 			joueursCible.Add(JoueurUtils.getJoueur (netIdJoueurSource));
 		} 
 
-		if (null != carteSource && null != carteSource.getJoueurProprietaire () && conditionCible.Contains (ConstanteIdObjet.STR_CONDITION_POUR_PROVENANCE)) {
-			joueursCible.Add(carteSource.getJoueurProprietaire ());
+		if (null != carteSource && null != carteSource.JoueurProprietaire && conditionCible.Contains (ConstanteIdObjet.STR_CONDITION_POUR_PROVENANCE)) {
+			joueursCible.Add(carteSource.JoueurProprietaire);
 		}
 
 		return joueursCible;

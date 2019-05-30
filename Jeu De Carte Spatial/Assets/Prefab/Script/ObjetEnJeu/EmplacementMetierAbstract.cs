@@ -44,17 +44,17 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	public void putCard(CarteMetierAbstract cartePoser, bool isNewCard, NetworkInstanceId netIdTaskEvent){
 		//Si c'est une nouvelle carte, on lance les capacités pour les cartes posées
 		if (isNewCard) {
-			JoueurUtils.getJoueurLocal ().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable,ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION, netIdTaskEvent, false);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (cartePoser.netId, cartePoser.JoueurProprietaire.netId, this.IdISelectionnable,ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION, netIdTaskEvent, false);
 		} else if (this is EmplacementAttaque) {
-			JoueurUtils.getJoueurLocal ().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE, netIdTaskEvent, false);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (cartePoser.netId, cartePoser.JoueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_LIGNE_ATTAQUE, netIdTaskEvent, false);
 		} else {
-			JoueurUtils.getJoueurLocal ().CmdCreateTask (cartePoser.netId, cartePoser.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, netIdTaskEvent, false);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (cartePoser.netId, cartePoser.JoueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, netIdTaskEvent, false);
 		}
 	}
 		
 	public void putCard(CarteMetierAbstract cartePoser){
 
-		if (null != cartePoser && null != cartePoser.getJoueurProprietaire () && cartePoser.getJoueurProprietaire ().isLocalPlayer) {
+		if (null != cartePoser && null != cartePoser.JoueurProprietaire && cartePoser.JoueurProprietaire.isLocalPlayer) {
 			Transform trfmCard = cartePoser.transform;
 			trfmCard.parent = transform;;
 
@@ -65,7 +65,7 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 			trfmCard.localRotation = Quaternion.identity;
 			trfmCard.localScale = Vector3.one;
 
-			cartePoser.getJoueurProprietaire ().CarteSelectionne = null;
+			cartePoser.JoueurProprietaire.CarteSelectionne = null;
 		}
 	}
 
@@ -96,7 +96,7 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
 
 			if (systemTour.getPhase (joueur.netId) == TourJeuSystem.PHASE_DEPLACEMENT
-			   && null != joueur.CarteSelectionne && joueur.netId == joueur.CarteSelectionne.getJoueurProprietaire ().netId) {
+			   && null != joueur.CarteSelectionne && joueur.netId == joueur.CarteSelectionne.JoueurProprietaire.netId) {
 				movable = true;
 			}
 		}

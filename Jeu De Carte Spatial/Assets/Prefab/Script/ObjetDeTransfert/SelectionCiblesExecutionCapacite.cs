@@ -37,7 +37,7 @@ public struct SelectionCiblesExecutionCapacite {
 		//this.capaciteBase = capacite.Clone ();
 		this.idActionAppelante = idActionAppelante;
 		this.idCarteSource = carteSource.netId;
-		this.idJoueurCarteSource = carteSource.getJoueurProprietaire().netId;
+		this.idJoueurCarteSource = carteSource.JoueurProprietaire.netId;
 		this.listIdCiblesProbables = new List<int> ();
 
 		this.listIdRessouceCible = null;
@@ -53,7 +53,7 @@ public struct SelectionCiblesExecutionCapacite {
 
 		this.idActionAppelante = idActionAppelante;
 		this.idCarteSource = carteSource.netId;
-		this.idJoueurCarteSource = carteSource.getJoueurProprietaire().netId;
+		this.idJoueurCarteSource = carteSource.JoueurProprietaire.netId;
 		this.listIdCiblesProbables = new List<int> ();
 
 		this.listIdRessouceCible = null;

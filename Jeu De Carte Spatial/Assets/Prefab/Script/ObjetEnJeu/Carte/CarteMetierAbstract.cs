@@ -10,10 +10,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	[SyncVar]
 	protected string id;
 
-	[SyncVar  (hook = "onChangeNetIdJoueur")]
+	[SyncVar]
 	protected NetworkInstanceId idJoueurProprietaire;
-
-	protected Joueur joueurProprietaire;
 
 	protected List<CapaciteMetier> listEffetCapacite = new List<CapaciteMetier> ();
 
@@ -80,11 +78,11 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	[Command]
 	protected void CmdAssignCard(){
-		NetworkUtils.assignObjectToPlayer (GetComponent<NetworkIdentity> (), joueurProprietaire.GetComponent<NetworkIdentity> (), .1f);
+		NetworkUtils.assignObjectToPlayer (GetComponent<NetworkIdentity> (), JoueurProprietaire.GetComponent<NetworkIdentity> (), .1f);
 	}
 
 	[Command]
-	public abstract void CmdPiocheCard ();
+	public abstract void CmdPiocheCard (NetworkInstanceId netIdJoueurSourceAction);
 
 
 	public void deplacerCarte(IConteneurCarte nouveauEmplacement, NetworkInstanceId netIdNouveauPossesseur, NetworkInstanceId netIdTaskEvent){
@@ -112,7 +110,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	}
 
 	public virtual void generateVisualCard(){
-		string pseudo = joueurProprietaire.Pseudo;
+		string pseudo = JoueurProprietaire.Pseudo;
 		GameObject canvasGO = GameObject.Find("Canvas_" + pseudo);
 		Text text;
 
@@ -290,10 +288,10 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		if (this.etatSelectionne == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
 			((EventTaskChoixCible) eventTask).ListCibleChoisie.Add (this);
 
-		} else if (joueurProprietaire.CarteSelectionne == this) {
-			joueurProprietaire.CarteSelectionne = null;	//On deselectionne au second click
+		} else if (JoueurProprietaire.CarteSelectionne == this) {
+			JoueurProprietaire.CarteSelectionne = null;	//On deselectionne au second click
 		} else {
-			joueurProprietaire.CarteSelectionne = this;
+			JoueurProprietaire.CarteSelectionne = this;
 		}
 	}
 
@@ -321,22 +319,10 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		}
 	}
 
-	/************************Hook***********************************/
-	protected void onChangeNetIdJoueur(NetworkInstanceId netIdJoueur){
-		this.idJoueurProprietaire = netIdJoueur;
-		joueurProprietaire = JoueurUtils.getJoueur (netIdJoueur);
-	}
-
-
 	/********************************Dialogue serveur client**************/
 	[ClientRpc]
 	public void RpcDestroyClientCard(){
 		Destroy (gameObject);
-	}
-
-	[Command]
-	public void CmdSetJoueurProprietaire(NetworkInstanceId netIdJoueur){
-		this.idJoueurProprietaire = netIdJoueur;
 	}
 		
 	[ClientRpc]
@@ -350,6 +336,11 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	[ClientRpc]
 	public void RpcInitIdSelectionnable(int idSelectionnableFromServer){
 		this.idSelectionnable = idSelectionnableFromServer;
+	}
+
+	[ClientRpc]
+	public void RpcSyncNetIdJoueur(NetworkInstanceId netIdJoueur){
+		this.NetIdJoueurProprietaire = netIdJoueur;
 	}
 
 	[Command]
@@ -374,7 +365,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	[ClientRpc]
 	public void RpcChangeParentOtherClient (NetworkInstanceId netIdParent, string pathParent){
 
-		if (! this.getJoueurProprietaire ().isLocalPlayer) {
+		if (! this.JoueurProprietaire.isLocalPlayer) {
 			NetworkBehaviour scriptParent = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (netIdParent, true);
 
 			Transform trfParent;
@@ -396,11 +387,19 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		return id;
 	}
 
-	public void setJoueurProprietaireServer(NetworkInstanceId netIdJoueur){
-		this.idJoueurProprietaire = netIdJoueur;
+	public NetworkInstanceId NetIdJoueurProprietaire {
+		get{ return this.idJoueurProprietaire; }
+		set {
+			Joueur joueur = JoueurUtils.getJoueur (value);
+				if (joueur.isServer) {
+				this.idJoueurProprietaire = value;
+				//RpcSyncNetIdJoueur (idJoueurProprietaire);
+			}
+		}
 	}
 
-	public Joueur getJoueurProprietaire(){
-		return joueurProprietaire;
+
+	public Joueur JoueurProprietaire {
+		get { return JoueurUtils.getJoueur (this.idJoueurProprietaire); }
 	}
 }

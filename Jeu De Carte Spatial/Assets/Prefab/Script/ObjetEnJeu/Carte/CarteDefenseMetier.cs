@@ -23,9 +23,9 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 
 	public override void generateVisualCard()
 	{
-		if (!joueurProprietaire.CarteEnVisuel) {
+		if (!JoueurProprietaire.CarteEnVisuel) {
 			base.generateVisualCard ();
-			joueurProprietaire.CarteEnVisuel = true;
+			JoueurProprietaire.CarteEnVisuel = true;
 			designCarte.setPA (carteRef.PointAttaque);
 		}
 	}
@@ -86,7 +86,7 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent, false);
 
 		if (vaisseauAttaquant.OnBoard) {
-			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.joueurProprietaire.CartePlaneteJoueur.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false); 
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.JoueurProprietaire.CartePlaneteJoueur.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false); 
 		}
 	}
 

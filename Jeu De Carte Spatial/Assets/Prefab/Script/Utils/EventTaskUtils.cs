@@ -69,7 +69,7 @@ public class EventTaskUtils  {
 		if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION) {
 
 			if (scriptSource is CarteConstructionMetierAbstract) {
-				((CarteConstructionMetierAbstract)scriptSource).CmdPiocheCard ();
+				((CarteConstructionMetierAbstract)scriptSource).CmdPiocheCard (netIdJoueurSourceAction);
 			} else {
 				aucuneActionEffectuer ();
 			}
@@ -127,7 +127,7 @@ public class EventTaskUtils  {
 				((IDefendre)scriptSource).defenseSimultanee ((CarteVaisseauMetier)cible, netIdEventTask);
 			} else if (scriptSource is CartePlaneteMetier) {
 
-				List<CarteConstructionMetierAbstract> listDefenseur = CarteUtils.getListCarteCapableDefendrePlanete (((CartePlaneteMetier)scriptSource).getJoueurProprietaire ());
+				List<CarteConstructionMetierAbstract> listDefenseur = CarteUtils.getListCarteCapableDefendrePlanete (((CartePlaneteMetier)scriptSource).JoueurProprietaire);
 
 				if (null != listDefenseur && listDefenseur.Count > 0) {
 					SelectionCiblesExecutionCapacite selectionCible = new SelectionCiblesExecutionCapacite (1, (CartePlaneteMetier)scriptSource, idActionEvent);
@@ -136,10 +136,10 @@ public class EventTaskUtils  {
 						selectionCible.ListIdCiblesProbables.Add (defenseur.IdISelectionnable);
 					}
 
-					ActionEventManager.EventActionManager.createTaskChooseTarget (selectionCible, scriptSource.netId, ((CartePlaneteMetier)scriptSource).getJoueurProprietaire ().netId, cible.IdISelectionnable, idActionEvent, netIdEventTask);
+					ActionEventManager.EventActionManager.createTaskChooseTarget (selectionCible, scriptSource.netId, ((CartePlaneteMetier)scriptSource).JoueurProprietaire.netId, cible.IdISelectionnable, idActionEvent, netIdEventTask);
 
 				} else {
-					ActionEventManager.EventActionManager.CreateTask (scriptSource.netId, ((CartePlaneteMetier)scriptSource).getJoueurProprietaire ().netId, cible.IdISelectionnable , ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask, false);
+					ActionEventManager.EventActionManager.CreateTask (scriptSource.netId, ((CartePlaneteMetier)scriptSource).JoueurProprietaire.netId, cible.IdISelectionnable , ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask, false);
 				}
 					
 			}else {

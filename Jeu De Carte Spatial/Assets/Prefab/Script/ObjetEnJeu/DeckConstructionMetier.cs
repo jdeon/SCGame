@@ -35,7 +35,7 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 			carteTiree.transform.parent = null; //Carte pioche en attente de plassement
 
 			CarteConstructionMetierAbstract carteConstructionScript = carteTiree.GetComponent<CarteConstructionMetierAbstract> ();
-			ActionEventManager.EventActionManager.CreateTask (carteConstructionScript.netId, carteConstructionScript.getJoueurProprietaire().netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION, NetworkInstanceId.Invalid, false);
+			ActionEventManager.EventActionManager.CreateTask (carteConstructionScript.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION, NetworkInstanceId.Invalid, false);
 		}
 	}
 
@@ -60,7 +60,7 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		if(null != cartePioche){
 			cartePioche.SetActive (true);
 			CarteConstructionMetierAbstract carteConstruction = cartePioche.GetComponent<CarteConstructionMetierAbstract> ();
-			carteConstruction.setJoueurProprietaireServer (NetIdJoueur);
+			carteConstruction.NetIdJoueurProprietaire = NetIdJoueur;
 		}
 
 		Debug.Log ("End tirerCarte()");

@@ -35,7 +35,7 @@ public class CarteUtils {
 
 		if (null != listCarte && listCarte.Length > 0) {
 			foreach (CarteMetierAbstract carte in listCarte) {
-				if (null != carte.getJoueurProprietaire() && carte.getJoueurProprietaire().netId == idJoueur) {
+				if (null != carte.JoueurProprietaire && carte.JoueurProprietaire.netId == idJoueur) {
 					listCarteJoueur.Add (carte);
 				}
 			}
@@ -47,7 +47,7 @@ public class CarteUtils {
 	public static List<CarteMetierAbstract> getListCarteCibleReorientation (CarteMetierAbstract carteSource, CarteMetierAbstract carteCible){
 		List<CarteMetierAbstract> listCarteCibleReorientation = new List<CarteMetierAbstract> ();
 
-		List<EmplacementAttaque> listEmplacementAttaqueAllier = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementAttaque>(carteSource.getJoueurProprietaire().netId);
+		List<EmplacementAttaque> listEmplacementAttaqueAllier = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementAttaque>(carteSource.JoueurProprietaire.netId);
 		foreach (EmplacementMetierAbstract emplacement in listEmplacementAttaqueAllier) {
 			foreach (CarteMetierAbstract carteContenu in emplacement.getCartesContenu()) {
 				if (carteContenu is CarteConstructionMetierAbstract && carteContenu != carteSource) {
@@ -56,7 +56,7 @@ public class CarteUtils {
 			}
 		}
 
-		List<EmplacementSolMetier> listEmplacementSolEnnemie = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementSolMetier>(carteCible.getJoueurProprietaire().netId);
+		List<EmplacementSolMetier> listEmplacementSolEnnemie = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementSolMetier>(carteCible.JoueurProprietaire.netId);
 		foreach (EmplacementMetierAbstract emplacement in listEmplacementSolEnnemie) {
 			foreach (CarteMetierAbstract carteContenu in emplacement.getCartesContenu()) {
 				if (carteContenu is CarteConstructionMetierAbstract && carteContenu != carteSource) {
@@ -66,7 +66,7 @@ public class CarteUtils {
 		}
 
 
-		listCarteCibleReorientation.Add (carteCible.getJoueurProprietaire ().CartePlaneteJoueur);
+		listCarteCibleReorientation.Add (carteCible.JoueurProprietaire.CartePlaneteJoueur);
 
 		if (listCarteCibleReorientation.Contains (carteSource)) {
 			listCarteCibleReorientation.Remove (carteSource);
@@ -118,5 +118,30 @@ public class CarteUtils {
 		}
 
 		return listeDefenseur;
+	}
+
+	public static void invoquerCarteServer(GameObject carteAInvoquer, int niveauInvocation, IConteneurCarte emplacementCible, Joueur joueurPossesseur){
+
+		NetworkServer.Spawn (carteAInvoquer);
+
+		CarteMetierAbstract carteScript = carteAInvoquer.GetComponent<CarteMetierAbstract> ();
+
+		if (carteScript is CarteConstructionMetierAbstract) {
+			((CarteConstructionMetierAbstract)carteScript).NiveauActuel = niveauInvocation;
+		}
+
+		if (joueurPossesseur.isServer) {
+			EmplacementUtils.putCardFromServer (emplacementCible, carteScript);
+		} else {
+			emplacementCible.putCard (carteScript);
+		}
+
+		NetworkUtils.assignObjectToPlayer (carteScript.GetComponent<NetworkIdentity> (), joueurPossesseur.GetComponent<NetworkIdentity> (), .2f);
+		byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteScript.getCarteDTORef ());
+
+
+		if (carteScript is CarteConstructionMetierAbstract) {
+			((CarteConstructionMetierAbstract)carteScript).RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
+		} //TODO carte amelioration
 	}
 }

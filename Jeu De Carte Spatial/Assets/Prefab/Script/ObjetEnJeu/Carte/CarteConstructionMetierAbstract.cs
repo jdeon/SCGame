@@ -87,9 +87,10 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	}
 
 	[Command]
-	public override void CmdPiocheCard(){
+	public override void CmdPiocheCard(NetworkInstanceId netIdJoueurPioche){
+		this.idJoueurProprietaire = netIdJoueurPioche;
 
-		this.joueurProprietaire.RpcPutCardInHand (this.netId);
+		this.JoueurProprietaire.RpcPutCardInHand (this.netId);
 
 		byte[] carteRefData = SerializeUtils.SerializeToByteArray(this.getCarteRef());
 		this.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
@@ -97,9 +98,9 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	//Affiche la carte si clique dessus
 	public virtual void generateVisualCard() {
-		if (!joueurProprietaire.CarteEnVisuel) {
+		if (!JoueurProprietaire.CarteEnVisuel) {
 			base.generateVisualCard ();
-			joueurProprietaire.CarteEnVisuel = true;
+			JoueurProprietaire.CarteEnVisuel = true;
 			float height = panelGO.GetComponent<RectTransform> ().rect.height;
 			float width = panelGO.GetComponent<RectTransform> ().rect.width;
 
@@ -112,7 +113,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 			}
 
 			//TODO le joueur envoyé devrait être celui qui clique
-			designCarte = new DesignCarteConstructionV2 (panelGO, height, width, nbNiveau,joueurProprietaire);
+			designCarte = new DesignCarteConstructionV2 (panelGO, height, width, nbNiveau,JoueurProprietaire);
 
 			designCarte.setTitre (carteSource.TitreCarte);
 			designCarte.setImage (Resources.Load<Sprite>(carteSource.ImagePath));
@@ -363,9 +364,9 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 
 	public void destruction (NetworkInstanceId netdTaskEvent){
-		if (joueurProprietaire.isServer) {
-			NetworkUtils.unassignObjectFromPlayer (GetComponent<NetworkIdentity> (), getJoueurProprietaire ().GetComponent<NetworkIdentity> (), -1);
-			getJoueurProprietaire ().CimetiereConstruction.addCarte (this);
+		if (JoueurProprietaire.isServer) {
+			NetworkUtils.unassignObjectFromPlayer (GetComponent<NetworkIdentity> (), JoueurProprietaire .GetComponent<NetworkIdentity> (), -1);
+			JoueurProprietaire.CimetiereConstruction.addCarte (this);
 		}
 	}
 
@@ -378,7 +379,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
 			if (systemTour.getPhase (joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
-				&& null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.getJoueurProprietaire () != joueurProprietaire
+				&& null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.JoueurProprietaire != JoueurProprietaire
 				&& joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 
 				//TODO vérifier l'emplacement sol

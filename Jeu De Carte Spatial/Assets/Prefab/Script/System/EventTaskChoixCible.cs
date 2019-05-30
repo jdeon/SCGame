@@ -40,7 +40,11 @@ public class EventTaskChoixCible : EventTask {
 				}
 
 				ActionEventManager.EventActionManager.CmdExecuteCapacity (SelectionCibles, netId);
+
+				finish = true;
 			}
+		} else {
+			finish = true;
 		}
 	}
 

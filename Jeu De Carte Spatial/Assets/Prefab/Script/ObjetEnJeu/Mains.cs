@@ -26,7 +26,7 @@ public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 	public void putCard(CarteMetierAbstract carteAdded){
 
 		//CarteMetierAbstract carteAdded = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdcarteAdded, true);
-		if (null != carteAdded && null != carteAdded.getJoueurProprietaire () && carteAdded.getJoueurProprietaire ().isLocalPlayer) {
+		if (null != carteAdded && null != carteAdded.JoueurProprietaire && carteAdded.JoueurProprietaire.isLocalPlayer) {
 			carteEnMains.Add (carteAdded);
 			carteAdded.transform.parent = transform;
 

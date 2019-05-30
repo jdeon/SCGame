@@ -45,7 +45,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 			}
 
 			if (cible is IDefendre) {
-				JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdEventTask, false);
+				JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, JoueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdEventTask, false);
 				AttaqueCeTour = true;
 			} else if (cible is IVulnerable) {
 				((IVulnerable)cible).recevoirAttaque (this, netIdEventTask, false);
@@ -58,7 +58,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 	}
 
 	public void sacrificeCarte (){
-		CartePlaneteMetier cartePlanete = CartePlaneteMetier.getPlaneteEnnemie (getJoueurProprietaire ().netId);
+		CartePlaneteMetier cartePlanete = CartePlaneteMetier.getPlaneteEnnemie (idJoueurProprietaire);
 
 		//TODO point de degat ou cout carte?
 		cartePlanete.recevoirDegat(getPointDegat (),this, NetworkInstanceId.Invalid);
@@ -72,9 +72,9 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 
 		//Mode furtif permet d'attaquer sans déclancher de réponse
 		if (modeFurtif) {
-			JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, JoueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
 		} else {
-			JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, joueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdTaskEvent, false);
+			JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, JoueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdTaskEvent, false);
 		} 
 
 
@@ -247,9 +247,9 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 
 	public override void generateVisualCard()
 	{
-		if (!joueurProprietaire.CarteEnVisuel) {
+		if (!JoueurProprietaire.CarteEnVisuel) {
 			base.generateVisualCard ();
-			joueurProprietaire.CarteEnVisuel = true;
+			JoueurProprietaire.CarteEnVisuel = true;
 			designCarte.setCarburant (carteRef.ConsommationCarburant);
 			designCarte.setPA (carteRef.PointAttaque);
 		}

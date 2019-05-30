@@ -37,12 +37,11 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 
 		//TODO remettre stocke base à 0
 		this.idJoueurProprietaire = netIdJoueur;
-		onChangeNetIdJoueur (netIdJoueur);
 		pointVie = maxPVPlanete;
 
 	}
 	[Command]
-	public override void CmdPiocheCard (){
+	public override void CmdPiocheCard (NetworkInstanceId netIdJoueurSourceAction){
 		//TODO
 	}
 
@@ -60,7 +59,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 		
 	public void putCard(CarteMetierAbstract carte){
 
-		if (null != carte && null != carte.getJoueurProprietaire () && carte.getJoueurProprietaire ().isLocalPlayer) {
+		if (null != carte && null != carte.JoueurProprietaire && carte.JoueurProprietaire.isLocalPlayer) {
 		//TODO ajout de module ou changer héros?
 		}
 	}
@@ -123,7 +122,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 
 			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
 			if (systemTour.getPhase (joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
-			    && null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.getJoueurProprietaire () != joueurProprietaire
+			    && null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.JoueurProprietaire != JoueurProprietaire
 			    && joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
 				//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
 				JoueurUtils.getJoueurLocal ().CmdCreateTask (joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid, false);

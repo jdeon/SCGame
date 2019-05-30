@@ -45,8 +45,8 @@ public class ConditionCarteUtils {
 				if (null != conteneur.getCartesContenu()) {
 					foreach (CarteMetierAbstract carteContenu in conteneur.getCartesContenu()) {
 						if (carteContenu is T && carteContenu && (
-							(conditionAlegence.Contains(ConstanteIdObjet.STR_CONDITION_POUR_ALLIER) && carteContenu.getJoueurProprietaire().netId == idJoueur)
-							|| (conditionAlegence.Contains(ConstanteIdObjet.STR_CONDITION_POUR_ENNEMIE) && carteContenu.getJoueurProprietaire().netId != idJoueur)
+							(conditionAlegence.Contains(ConstanteIdObjet.STR_CONDITION_POUR_ALLIER) && carteContenu.JoueurProprietaire.netId == idJoueur)
+							|| (conditionAlegence.Contains(ConstanteIdObjet.STR_CONDITION_POUR_ENNEMIE) && carteContenu.JoueurProprietaire.netId != idJoueur)
 								|| (conditionAlegence.Contains(ConstanteIdObjet.STR_CONDITION_POUR_PROVENANCE) && carteContenu == carteProvenance))) {
 
 							listCarteCible.Add(carteContenu);

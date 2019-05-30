@@ -82,7 +82,7 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 		
 	public void putCard(CarteMetierAbstract carte){
 
-		if (null != carte && null != carte.getJoueurProprietaire () && carte.getJoueurProprietaire ().isLocalPlayer) {
+		if (null != carte && null != carte.JoueurProprietaire && carte.JoueurProprietaire.isLocalPlayer) {
 			//TODO ungenerated card on client
 
 			Transform trfmCard = carte.transform;
@@ -91,7 +91,7 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 			//TODO délpacer à un index au hasard
 			carte.CmdChangeParent (this.NetIdJoueur, JoueurUtils.getPathJoueur (this));
 
-			carte.getJoueurProprietaire ().CarteSelectionne = null;
+			carte.JoueurProprietaire.CarteSelectionne = null;
 		}
 	}
 

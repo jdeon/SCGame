@@ -36,6 +36,15 @@ public class Joueur : NetworkBehaviour {
 	private bool carteEnVisuel;
 
 	void Start (){
+		JoueurUtils.initAllJoueurDictionnary ();
+
+		if (isServer) {
+			//TODO rechercher autrement
+			pseudo = "Pseudo" + GameObject.FindObjectsOfType<Joueur> ().Length;
+		} else {
+			CmdReInitAllJoueurDict ();
+		}
+			
 		main.init(this);
 
 		deckConstruction.intiDeck (this, isServer);
@@ -54,11 +63,6 @@ public class Joueur : NetworkBehaviour {
 			string nomPlateau = transform.localPosition.z < 0 ? "Plateau1" : "Plateau2"; //TODO mettre en constante
 			goPlateau = GameObject.Find(nomPlateau);
 			transform.Find ("VueJoueur").gameObject.SetActive(false); //TODO créer en constante
-		}
-
-		if (isServer) {
-			//TODO rechercher autrement
-			pseudo = "Pseudo" + GameObject.FindObjectsOfType<Joueur> ().Length;
 		}
 	}
 
@@ -123,7 +127,7 @@ public class Joueur : NetworkBehaviour {
 		carteplaneteGO.transform.localScale =Vector3.one;
 
 		cartePlanetJoueur = carteplaneteGO.GetComponent<CartePlaneteMetier> ();
-		cartePlanetJoueur.setJoueurProprietaireServer (NetworkInstanceId.Invalid);
+
 		if (null != cartePlanetJoueur) {
 			cartePlanetJoueur.initPlaneteServer(this.netId, pseudo);
 		}
@@ -133,50 +137,6 @@ public class Joueur : NetworkBehaviour {
 		RpcGeneratePlanete(carteplaneteGO, NetworkInstanceId.Invalid);
 
 		Debug.Log ("End CmdInitPlanete");
-	}
-
-	[Command]
-	public void CmdSyncIdSelectionnableCarte (NetworkInstanceId netIdCarte){
-		CarteMetierAbstract carte = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarte, false);
-
-		if (null != carte) {
-			if (null == carte.IdISelectionnable || carte.IdISelectionnable <= 0) {
-				carte.initIdSelection ();
-			}
-
-			carte.RpcInitIdSelectionnable (carte.IdISelectionnable);
-		}
-	}
-
-	[Command]
-	public void CmdCreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask, bool createTaskBrother){
-		ActionEventManager.EventActionManager.CreateTask (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, netIdParentTask, createTaskBrother);
-	}
-
-
-	public void invoquerCarteServer(GameObject carteAInvoquer, int niveauInvocation, IConteneurCarte emplacementCible){
-
-		NetworkServer.Spawn (carteAInvoquer);
-
-		CarteMetierAbstract carteScript = carteAInvoquer.GetComponent<CarteMetierAbstract> ();
-
-		if (carteScript is CarteConstructionMetierAbstract) {
-			((CarteConstructionMetierAbstract)carteScript).NiveauActuel = niveauInvocation;
-		}
-
-		if (isServer) {
-			EmplacementUtils.putCardFromServer (emplacementCible, carteScript);
-		} else {
-			emplacementCible.putCard (carteScript);
-		}
-
-		NetworkUtils.assignObjectToPlayer (carteScript.GetComponent<NetworkIdentity> (), GetComponent<NetworkIdentity> (), .2f);
-		byte[] carteRefData = SerializeUtils.SerializeToByteArray(carteScript.getCarteDTORef ());
-
-
-		if (carteScript is CarteConstructionMetierAbstract) {
-			((CarteConstructionMetierAbstract)carteScript).RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
-		} //TODO carte amelioration
 	}
 
 	/**
@@ -198,6 +158,35 @@ public class Joueur : NetworkBehaviour {
 		}
 
 		Debug.Log ("End RpcGeneratePlanete");
+	}
+
+	[Command]
+	public void CmdSyncIdSelectionnableCarte (NetworkInstanceId netIdCarte){
+		CarteMetierAbstract carte = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarte, false);
+
+		if (null != carte) {
+			if (null == carte.IdISelectionnable || carte.IdISelectionnable <= 0) {
+				carte.initIdSelection ();
+			}
+
+			carte.RpcInitIdSelectionnable (carte.IdISelectionnable);
+		}
+	}
+
+	[Command]
+	public void CmdCreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask, bool createTaskBrother){
+		ActionEventManager.EventActionManager.CreateTask (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, netIdParentTask, createTaskBrother);
+	}
+
+	[Command]
+	private void CmdReInitAllJoueurDict(){
+		JoueurUtils.initAllJoueurDictionnary ();
+		RpcReInitAllJoueurDict ();
+	}
+
+	[ClientRpc]
+	private void RpcReInitAllJoueurDict(){
+		JoueurUtils.initAllJoueurDictionnary ();
 	}
 
 	/******************Gestion Deck********************/
