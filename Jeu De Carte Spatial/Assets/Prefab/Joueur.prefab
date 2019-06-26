@@ -1844,7 +1844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed7bc2101051a32458941e4d3b40c294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deckContructionRef: {fileID: 11400000, guid: 82c8bbb3a2fffb34b805ef6c9b9ba479, type: 2}
+  deckContructionRef: {fileID: 11400000, guid: 57de9eb91a4853b43a39b5ae206e8947, type: 2}
 --- !u!124 &124148337636789230
 Behaviour:
   m_ObjectHideFlags: 1
