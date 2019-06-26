@@ -77,12 +77,14 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 	}
 
 	public int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat, NetworkInstanceId netIdEventTask){
-		pointVie -= nbDegat;
+		if(null != sourceDegat && (! (sourceDegat is CarteConstructionMetierAbstract) || ((CarteConstructionMetierAbstract) sourceDegat).OnBoard)){
 
-		if (pointVie <= 0) {
-			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netIdEventTask, false);
+			pointVie -= nbDegat;
+
+			if (pointVie <= 0) {
+				JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netIdEventTask, false);
+			}
 		}
-
 		return pointVie;
 	}
 

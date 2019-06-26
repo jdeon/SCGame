@@ -85,9 +85,6 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 	public void preDefense (CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){
 		vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent, false);
 
-		if (vaisseauAttaquant.OnBoard) {
-			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.JoueurProprietaire.CartePlaneteJoueur.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false); 
-		}
 		defenduCeTour = true;
 	}
 

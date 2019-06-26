@@ -160,10 +160,6 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 	public void preDefense (CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){
 		JoueurUtils.getJoueurLocal ().CmdCreateTask (vaisseauAttaquant.netId, vaisseauAttaquant.idJoueurProprietaire, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
 
-		if (vaisseauAttaquant.OnBoard) {
-			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
-		}
-
 		defenduCeTour = true;
 	}
 

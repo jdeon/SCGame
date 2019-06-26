@@ -138,9 +138,9 @@ public class EventTaskUtils  {
 
 					ActionEventManager.EventActionManager.createTaskChooseTarget (selectionCible, scriptSource.netId, ((CartePlaneteMetier)scriptSource).JoueurProprietaire.netId, cible.IdISelectionnable, idActionEvent, netIdEventTask);
 
-				} else {
-					ActionEventManager.EventActionManager.CreateTask (scriptSource.netId, ((CartePlaneteMetier)scriptSource).JoueurProprietaire.netId, cible.IdISelectionnable , ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask, false);
-				}
+				} 
+					
+				ActionEventManager.EventActionManager.CreateTask (scriptSource.netId, ((CartePlaneteMetier)scriptSource).JoueurProprietaire.netId, cible.IdISelectionnable , ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask, false);
 					
 			}else {
 				aucuneActionEffectuer ();
