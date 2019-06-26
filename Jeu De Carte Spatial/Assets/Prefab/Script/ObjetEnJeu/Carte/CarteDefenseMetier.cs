@@ -88,6 +88,7 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		if (vaisseauAttaquant.OnBoard) {
 			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.JoueurProprietaire.CartePlaneteJoueur.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false); 
 		}
+		defenduCeTour = true;
 	}
 
 	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){

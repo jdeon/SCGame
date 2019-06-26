@@ -76,7 +76,7 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		} else {
 			JoueurUtils.getJoueurLocal ().CmdCreateTask (cible.netId, JoueurProprietaire.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND, netIdTaskEvent, false);
 		} 
-
+		AttaqueCeTour = true;
 
 	}
 
@@ -163,6 +163,8 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		if (vaisseauAttaquant.OnBoard) {
 			JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, vaisseauAttaquant.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
 		}
+
+		defenduCeTour = true;
 	}
 
 	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){
