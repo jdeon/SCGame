@@ -230,9 +230,10 @@ public class ActionEventManager : NetworkBehaviour {
 
 			EventTaskChoixCible eventTask = eventTaskChooseTargetGO.GetComponent<EventTaskChoixCible> ();
 			eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, false);
-			eventTask.SelectionCibles = selectionCibles;
 
 			NetworkServer.Spawn (eventTaskChooseTargetGO);
+
+			eventTask.SelectionCibles = selectionCibles;
 		} else {
 			print ("Create TaskChooseTarget call on client");
 		}
@@ -240,11 +241,15 @@ public class ActionEventManager : NetworkBehaviour {
 
 
 	[Command]
-	public void CmdExecuteCapacity(SelectionCiblesExecutionCapacite selectionCibles, NetworkInstanceId netIdEventTask){
+	public void CmdExecuteCapacity(int[] listCibleProbable, NetworkInstanceId netIdEventTask){
+		EventTaskChoixCible eventSource = ConvertUtils.convertNetIdToScript<EventTaskChoixCible>(netIdEventTask,false);
+		eventSource.SelectionCibles.ListIdCiblesProbables.Clear();
+		eventSource.SelectionCibles.ListIdCiblesProbables.AddRange (listCibleProbable);
+
 		//TODO modifier
-		CapaciteUtils.executeCapacity (selectionCibles, netIdEventTask);
+		CapaciteUtils.executeCapacity (eventSource.SelectionCibles, netIdEventTask);
 		//TODO display capa
-		EventTask eventSource = ConvertUtils.convertNetIdToScript<EventTask>(netIdEventTask,false);
+
 		eventSource.endOfTask ();
 	}
 }

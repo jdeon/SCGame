@@ -69,6 +69,12 @@ public class Joueur : NetworkBehaviour {
 	private void initPlateau (){
 		string nomPlateau = transform.localPosition.z < 0 ? "Plateau1" : "Plateau2"; //TODO mettre en constante
 		goPlateau = GameObject.Find(nomPlateau);
+		CmdInitPlateau (nomPlateau);
+	}
+
+	[Command]
+	private void CmdInitPlateau (string nomPlateau){
+		goPlateau = GameObject.Find(nomPlateau);
 
 		EmplacementMetierAbstract[] tabEmplacement = goPlateau.GetComponentsInChildren<EmplacementMetierAbstract> ();
 
@@ -78,6 +84,30 @@ public class Joueur : NetworkBehaviour {
 		}
 
 		CmdInitPlanete (this.netId, nomPlateau);
+	}
+
+	[Command]
+	public void CmdInitPlanete(NetworkInstanceId networkIdJoueur, string nomPlateau){
+		Debug.Log ("Begin CmdInitPlanete");
+		GameObject goPlateau = GameObject.Find(nomPlateau);
+
+		GameObject carteplaneteGO = Instantiate<GameObject> (ConstanteInGame.cartePlanetePrefab);
+		carteplaneteGO.transform.SetParent (goPlateau.transform);
+		carteplaneteGO.transform.localPosition = new Vector3 (0, 0, -3);
+		carteplaneteGO.transform.localRotation =Quaternion.identity;
+		carteplaneteGO.transform.localScale =Vector3.one;
+
+		cartePlanetJoueur = carteplaneteGO.GetComponent<CartePlaneteMetier> ();
+
+		if (null != cartePlanetJoueur) {
+			cartePlanetJoueur.initPlaneteServer(this.netId, pseudo);
+		}
+
+		NetworkServer.Spawn (carteplaneteGO);
+
+		RpcGeneratePlanete(carteplaneteGO, NetworkInstanceId.Invalid);
+
+		Debug.Log ("End CmdInitPlanete");
 	}
 
 	[Command]
@@ -113,30 +143,6 @@ public class Joueur : NetworkBehaviour {
 		}
 
 		Debug.Log ("End CmdGenerateCardAlreadyLaid");
-	}
-
-	[Command]
-	public void CmdInitPlanete(NetworkInstanceId networkIdJoueur, string nomPlateau){
-		Debug.Log ("Begin CmdInitPlanete");
-		GameObject goPlateau = GameObject.Find(nomPlateau);
-
-		GameObject carteplaneteGO = Instantiate<GameObject> (ConstanteInGame.cartePlanetePrefab);
-		carteplaneteGO.transform.SetParent (goPlateau.transform);
-		carteplaneteGO.transform.localPosition = new Vector3 (0, 0, -3);
-		carteplaneteGO.transform.localRotation =Quaternion.identity;
-		carteplaneteGO.transform.localScale =Vector3.one;
-
-		cartePlanetJoueur = carteplaneteGO.GetComponent<CartePlaneteMetier> ();
-
-		if (null != cartePlanetJoueur) {
-			cartePlanetJoueur.initPlaneteServer(this.netId, pseudo);
-		}
-		
-		NetworkServer.Spawn (carteplaneteGO);
-
-		RpcGeneratePlanete(carteplaneteGO, NetworkInstanceId.Invalid);
-
-		Debug.Log ("End CmdInitPlanete");
 	}
 
 	/**

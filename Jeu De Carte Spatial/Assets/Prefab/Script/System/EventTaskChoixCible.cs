@@ -5,13 +5,14 @@ using UnityEngine.Networking;
 
 public class EventTaskChoixCible : EventTask {
 
-	[SyncVar]
 	private SelectionCiblesExecutionCapacite selectionCibles;
 
 	[SyncVar]
 	private int actionOrigineCapacite;
 
 	private List<ISelectionnable> listCiblesSelectionnes;
+
+	private static readonly float TEMPS_DECISION_MAX = 30f;
 
 	public void initVariable(NetworkInstanceId origin, NetworkInstanceId joueur, int target, int typeEvent, bool createTaskBrother){
 		this.originAction = origin;
@@ -39,7 +40,7 @@ public class EventTaskChoixCible : EventTask {
 					SelectionCibles.ListIdCiblesProbables.RemoveAt (indexToDelete);
 				}
 
-				ActionEventManager.EventActionManager.CmdExecuteCapacity (SelectionCibles, netId);
+				ActionEventManager.EventActionManager.CmdExecuteCapacity (SelectionCibles.ListIdCiblesProbables.ToArray(), netId);
 
 				finish = true;
 			}
@@ -70,13 +71,14 @@ public class EventTaskChoixCible : EventTask {
 
 			StartCoroutine(phaseChoixCible(listCibleSelectionnable));
 		} else {
-			//TODO mise en attente
-			//TODO coroutine pour fin de mise en attente
+			StartCoroutine (waitOtherPlayer ());
 		}
 	}
 
 	public IEnumerator phaseChoixCible(List<ISelectionnable> listCibleSelectionnable){
-		float tempsDecision = 30;
+		float tempsDecision = TEMPS_DECISION_MAX;
+		listCiblesSelectionnes = new List<ISelectionnable> ();
+
 		//La phase dure 30 secondes ou jusqu' demande d'arret ou si le nombre de carte selectionne est correct
 		while (tempsDecision > 0 && !finish && listCiblesSelectionnes.Count < selectionCibles.NbCible) {
 			tempsDecision -= .25f;
@@ -95,7 +97,7 @@ public class EventTaskChoixCible : EventTask {
 					selectionCibles.ListIdCiblesProbables.Add(cible.IdISelectionnable);
 				}
 
-				ActionEventManager.EventActionManager.CmdExecuteCapacity (selectionCibles, netId);
+				ActionEventManager.EventActionManager.CmdExecuteCapacity (selectionCibles.ListIdCiblesProbables.ToArray(), netId);
 			} else {
 				NetworkBehaviour netBehaviour = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (originAction, true);
 				ISelectionnable cible = SelectionnableUtils.getSelectiobleById (this.idSelectionnableTarget);
@@ -117,9 +119,25 @@ public class EventTaskChoixCible : EventTask {
 		}
 	}
 
+	public IEnumerator waitOtherPlayer(){
+		float tempsDecision = TEMPS_DECISION_MAX;
+		//La phase dure 30 secondes ou jusqu' demande d'arret ou si le nombre de carte selectionne est correct
+		while (tempsDecision > 0 && !finish ) {
+			tempsDecision -= .25f;
+			yield return new WaitForSeconds (.25f);
+		}
+
+		finish = true;
+	}
+
 	[ClientRpc]
-	public void RpcInitSelection(SelectionCiblesExecutionCapacite selectCibleServer){
-		selectionCibles = selectCibleServer;
+	public void RpcInitSelectionForClient(int[] arrayCibleProbable, int nbChoixMax, int idCapacite, int idTypeCapacite){
+		if (!isServer) { //On ecrase pas les données de l'hote
+
+			List <int> listCibleProbable = new List<int> (arrayCibleProbable);
+
+			selectionCibles.initSelectionForClient(listCibleProbable, nbChoixMax, idCapacite, idTypeCapacite);
+		}
 	}
 
 
@@ -134,6 +152,8 @@ public class EventTaskChoixCible : EventTask {
 				//Cas où le choix ne vienne pas d'une capacité
 				this.typeEvent = selectionCibles.IdActionAppelante;
 			}
+
+			RpcInitSelectionForClient (selectionCibles.ListIdCiblesProbables.ToArray(), selectionCibles.NbCible, selectionCibles.IdCapaciteSource, selectionCibles.IdTypeCapacite);
 		}
 	}
 

@@ -67,6 +67,13 @@ public struct SelectionCiblesExecutionCapacite {
 		}
 	}
 
+	public void initSelectionForClient(List<int> listCibleProbable, int nbChoixMax, int idCapacite, int idTypeCapacite){
+		this.listIdCiblesProbables = listCibleProbable;
+		this.nbChoixCible = nbChoixMax;
+		this.idCapaciteSource = idCapacite;
+		this.idTypeCapacite = idTypeCapacite;
+	}
+
 	public int IdTypeCapacite {
 		get{ return idTypeCapacite; }
 	}
