@@ -55,6 +55,10 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		} else {
 			//TODO anim evite
 		}
+
+		if (! isCapableAttaquer ()) {
+			this.JoueurProprietaire.CarteSelectionne = null;
+		}
 	}
 
 	public void sacrificeCarte (){
@@ -78,6 +82,9 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		} 
 		AttaqueCeTour = true;
 
+		if (! isCapableAttaquer ()) {
+			this.JoueurProprietaire.CarteSelectionne = null;
+		}
 	}
 
 	public bool isCapableAttaquer (){
@@ -109,50 +116,6 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		}
 	}
 
-	//TODO fonction plus appeler transformer en eventTask à choix multiple
-	private IEnumerator choixDefensePlanete(NetworkInstanceId idJoueurAttaque, NetworkInstanceId netIdTaskEvent){
-		List<IDefendre> listDefenseurPlanete = new List<IDefendre> ();
-
-		List<EmplacementSolMetier> listEmplacementDefenseEnnemie = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementSolMetier> (idJoueurAttaque);
-		foreach(EmplacementSolMetier emplacementDefenseEnnemie in listEmplacementDefenseEnnemie){
-			if (null != emplacementDefenseEnnemie && null != emplacementDefenseEnnemie.NetIdCartePosee && NetworkInstanceId.Invalid != emplacementDefenseEnnemie.NetIdCartePosee) {
-				GameObject goCarte = NetworkServer.FindLocalObject (emplacementDefenseEnnemie.NetIdCartePosee);
-
-				if (null != goCarte && null != goCarte.GetComponent<IDefendre> ()) {
-					IDefendre defenseur = goCarte.GetComponent<IDefendre> ();
-					defenseur.SelectionnableDefense = true;
-					listDefenseurPlanete.Add (defenseur);
-				}
-			}
-		}
-
-		if (listDefenseurPlanete.Count > 0) {
-			float tempsRetant = ConstanteInGame.tempChoixDefense;
-			IDefendre defenseurChoisi = null;
-
-			while (tempsRetant > 0 && null != defenseurChoisi) {
-				foreach(IDefendre defenseurPlanete in listDefenseurPlanete){
-					if (defenseurPlanete.DefenseSelectionne) {
-						defenseurChoisi = defenseurPlanete;
-					}
-				}
-
-				tempsRetant -= .5f;
-				yield return new WaitForSeconds (.5f);
-			}
-
-			if (null != defenseurChoisi) {
-				defenseurChoisi.preDefense (this, netIdTaskEvent);
-			}
-
-			foreach(IDefendre defenseurPlanete in listDefenseurPlanete){
-				defenseurPlanete.reinitDefenseSelect();
-			}
-		}
-
-		yield return null;
-	}
-
 
 
 	/*************************Methode IDefendre********************/
@@ -161,6 +124,11 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		JoueurUtils.getJoueurLocal ().CmdCreateTask (vaisseauAttaquant.netId, vaisseauAttaquant.idJoueurProprietaire, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdTaskEvent, false);
 
 		defenduCeTour = true;
+
+		if (! isCapableDefendre ()) {
+			this.JoueurProprietaire.CarteSelectionne = null;
+			this.EtatSelectionnable = SelectionnableUtils.ETAT_NON_SELECTION;
+		}
 	}
 
 	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){

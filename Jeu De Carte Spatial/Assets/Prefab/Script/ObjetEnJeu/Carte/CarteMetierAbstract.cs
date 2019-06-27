@@ -295,6 +295,13 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		}
 	}
 
+	[ClientRpc]
+	public void RpcSetEtatSelectionPlayer(NetworkInstanceId netIdPlayer, int etat){
+		if (netIdPlayer == NetworkInstanceId.Invalid || JoueurUtils.getJoueurLocal ().netId == netIdPlayer) {
+			EtatSelectionnable = etat;
+		}
+	}
+
 	public void initIdSelection(){
 		if (null == idSelectionnable || idSelectionnable <= 0) {
 			idSelectionnable = ++SelectionnableUtils.sequenceSelectionnable;

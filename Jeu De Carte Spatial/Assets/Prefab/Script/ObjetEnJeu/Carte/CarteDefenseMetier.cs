@@ -86,6 +86,11 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent, false);
 
 		defenduCeTour = true;
+
+		if (! isCapableDefendre ()) {
+			this.JoueurProprietaire.CarteSelectionne = null;
+			this.EtatSelectionnable = SelectionnableUtils.ETAT_NON_SELECTION;
+		}
 	}
 
 	public void defenseSimultanee(CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){

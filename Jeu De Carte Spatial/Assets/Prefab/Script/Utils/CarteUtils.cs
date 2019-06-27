@@ -120,6 +120,24 @@ public class CarteUtils {
 		return listeDefenseur;
 	}
 
+	public static List<CarteConstructionMetierAbstract> getListCarteCapableAttaque(NetworkInstanceId netIdJoueurAttaque){
+		List<CarteConstructionMetierAbstract> listeAttaque = new List<CarteConstructionMetierAbstract> ();
+
+		List<EmplacementAttaque> listEmplacementAttaqueJoueur = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementAttaque> (netIdJoueurAttaque);
+
+		foreach(EmplacementAttaque emplacementAttaqueJoueur in listEmplacementAttaqueJoueur){
+			List<CarteMetierAbstract> listCarteContenu = emplacementAttaqueJoueur.getCartesContenu ();
+			if (null != listCarteContenu && listCarteContenu.Count > 0) {
+				CarteMetierAbstract carteContenue = listCarteContenu [0];
+				if (null != carteContenue && carteContenue is IAttaquer && ((IAttaquer)carteContenue).isCapableAttaquer () && carteContenue is CarteConstructionMetierAbstract) {
+					listeAttaque.Add ((CarteConstructionMetierAbstract)carteContenue);
+				}
+			}
+		}
+
+		return listeAttaque;
+	}
+
 	public static void invoquerCarteServer(GameObject carteAInvoquer, int niveauInvocation, IConteneurCarte emplacementCible, Joueur joueurPossesseur){
 
 		NetworkServer.Spawn (carteAInvoquer);

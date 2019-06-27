@@ -120,6 +120,12 @@ public class TourJeuSystem : NetworkBehaviour {
 					boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.terminerTour);
 				}
 
+				List<CarteConstructionMetierAbstract> listAttaquant = CarteUtils.getListCarteCapableAttaque (listJoueurs [indexPlayerPlaying].netIdJoueur);
+				foreach (CarteConstructionMetierAbstract attaquant in listAttaquant) {
+					attaquant.RpcSetEtatSelectionPlayer (listJoueurs [indexPlayerPlaying].netIdJoueur, SelectionnableUtils.ETAT_SELECTIONNABLE);
+				}
+
+
 			} else if (actionPlayer == FIN_TOUR) {
 				Joueur joueurTour = JoueurUtils.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
 
