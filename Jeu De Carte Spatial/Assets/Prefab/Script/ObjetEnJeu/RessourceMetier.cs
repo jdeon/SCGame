@@ -206,6 +206,10 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 		byte[] listeCapaData = SerializeUtils.SerializeToByteArray(this.listCapaciteRessource);
 		joueur.RpcSyncCapaciteListRessource (listeCapaData, TypeRessource);
 	}
+		
+	public NetworkInstanceId NetIdJoueurPossesseur {
+		get { return joueur.netId; }
+	}
 
 	/*************************Getter et setter*************/
 	public NetworkInstanceId NetIdJoueur {

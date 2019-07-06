@@ -164,28 +164,32 @@ public class TourJeuSystem : NetworkBehaviour {
 
 		if (null != goBtnLastPlayer && null != goBtnLastPlayer.GetComponent<BoutonTour> ()) {
 			BoutonTour boutonTour = goBtnLastPlayer.GetComponent<BoutonTour> ();
-			boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.enAttente);
-		}
 
+			if (boutonTour.getEtatBouton () == BoutonTour.enumEtatBouton.terminerTour) {
+				boutonTour.setEtatBoutonServer (BoutonTour.enumEtatBouton.enAttente);
 
-		bool tourSupJoueur = 0 < CapaciteUtils.valeurAvecCapacite (0, joueurTour.CartePlaneteJoueur.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
+				CapaciteUtils.endOfTurnOfCapacityPlayer (listJoueurs [indexPlayerPlaying].netIdJoueur);
 
-		if (!tourSupJoueur) { //Pas de tour supplementaire
+				bool tourSupJoueur = 0 < CapaciteUtils.valeurAvecCapacite (0, joueurTour.CartePlaneteJoueur.containCapacityOfType (ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU), ConstanteIdObjet.ID_CAPACITE_PERTE_TOUR_JEU);
 
-			if (indexPlayerPlaying < listJoueurs.Count - 1) {
-				indexPlayerPlaying++;
-			} else {
-				indexPlayerPlaying = 0;
-				nbTurn++;
+				if (!tourSupJoueur) { //Pas de tour supplementaire
+
+					if (indexPlayerPlaying < listJoueurs.Count - 1) {
+						indexPlayerPlaying++;
+					} else {
+						indexPlayerPlaying = 0;
+						nbTurn++;
+					}
+
+					this.idJoueurTour = listJoueurs [indexPlayerPlaying].netIdJoueur;
+					joueurTour = JoueurUtils.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
+				}
+
+				RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
+
+				ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, NetworkInstanceId.Invalid, false);
 			}
-
-			this.idJoueurTour = listJoueurs [indexPlayerPlaying].netIdJoueur;
-			joueurTour = JoueurUtils.getJoueur (listJoueurs [indexPlayerPlaying].netIdJoueur);
 		}
-
-		RpcAffichagePseudo (listJoueurs [indexPlayerPlaying].Pseudo);
-
-		ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, joueurTour.netId, -1, ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR, NetworkInstanceId.Invalid, false);
 	}
 
 	private void initTour(Joueur joueurInitTour){

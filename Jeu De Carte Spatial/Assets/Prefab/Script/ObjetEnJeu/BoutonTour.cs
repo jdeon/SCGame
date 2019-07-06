@@ -70,6 +70,10 @@ public class BoutonTour : NetworkBehaviour {
 			this.etatBouton = etatBouton;
 		}
 	}
+
+	public enumEtatBouton getEtatBouton(){
+		return this.etatBouton;
+	}
 		
 	[Command]
 	public void CmdProgressStep(int actionPlayer){

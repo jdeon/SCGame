@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -7,16 +8,30 @@ public class CapaciteUtils {
 
 	public static List<int> listIdCapaciteEffetImmediat = getListIdCapaciteEffetImmediat();
 
+	public static void endOfTurnOfCapacityPlayer(NetworkInstanceId netIdJoueur){
+		List<CapaciteMetier> listCapacite = new List<CapaciteMetier> ();
+
+		List<IAvecCapacite> listAvecCapacite = GameObject.FindObjectsOfType<MonoBehaviour> ().OfType<IAvecCapacite>().ToList<IAvecCapacite>();
+
+		foreach (IAvecCapacite possesseurCapacite in listAvecCapacite) {
+			if (possesseurCapacite.NetIdJoueurPossesseur == netIdJoueur) {
+				possesseurCapacite.capaciteFinTour ();
+			}
+		}
+	}
+
 	public static int valeurAvecCapacite(int valeurBase, List<CapaciteMetier> listCapaciteCarte, int idTypCapacite){
 		int valeurAvecCapacite = valeurBase;
 		int valeurIncapacite = 0;
 
 		if( null != listCapaciteCarte){
 			foreach(CapaciteMetier capaciteCourante in listCapaciteCarte){
-				if(capaciteCourante.IdTypeCapacite ==ConstanteIdObjet.ID_CAPACITE_ETAT_SANS_EFFET){
-					valeurIncapacite = capaciteCourante.getNewValue (valeurIncapacite);
-				} else if (capaciteCourante.IdTypeCapacite == idTypCapacite) {
-					valeurAvecCapacite = capaciteCourante.getNewValue (valeurAvecCapacite);
+				if (capaciteCourante.isActif()) {
+					if (capaciteCourante.IdTypeCapacite == ConstanteIdObjet.ID_CAPACITE_ETAT_SANS_EFFET) {
+						valeurIncapacite = capaciteCourante.getNewValue (valeurIncapacite);
+					} else if (capaciteCourante.IdTypeCapacite == idTypCapacite) {
+						valeurAvecCapacite = capaciteCourante.getNewValue (valeurAvecCapacite);
+					}
 				}
 			}
 		}
@@ -134,7 +149,7 @@ public class CapaciteUtils {
 
 	public static CapaciteMetier convertCapaciteDTOToMetier(CapaciteDTO capaciteDTO, NetworkInstanceId netIdCard){
 		//TODO prendre en compte module
-		return new CapaciteMetier (capaciteDTO.Capacite,capaciteDTO.Id,capaciteDTO.ModeCalcul,capaciteDTO.Quantite,netIdCard, capaciteDTO.LierACarte);
+		return new CapaciteMetier (capaciteDTO.Capacite,capaciteDTO.Id,capaciteDTO.ModeCalcul,capaciteDTO.Quantite,netIdCard, capaciteDTO.LierACarte, capaciteDTO.Duree);
 	}
 
 	private static SelectionCiblesExecutionCapacite getCiblesOfCapacity (CarteMetierAbstract carteSourceCapacite, CarteMetierAbstract carteSourceAction,ISelectionnable cible, CapaciteDTO capaciteSource, NetworkInstanceId netIdJoueur, int actionAppelante){

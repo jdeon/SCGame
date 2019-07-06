@@ -17,5 +17,7 @@ public interface IAvecCapacite {
 
 	bool containCapacityWithId (int idCapacityDTO);
 
-	void synchroniseListCapacite (); 
+	void synchroniseListCapacite ();
+
+	NetworkInstanceId NetIdJoueurPossesseur { get; }
 }

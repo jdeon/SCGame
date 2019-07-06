@@ -23,9 +23,9 @@ public class CapaciteMetier  {
 
 	private int valeurOperation;
 
-	private float nbTourRestant;
+	private int nbTourRestant;
 
-	public CapaciteMetier(int idTypeCapacite,int idCapaciteDTO, ConstanteEnum.TypeCalcul idTypeOperation, int valeurOperation, NetworkInstanceId idCarteProvenance, bool reversible){
+	public CapaciteMetier(int idTypeCapacite,int idCapaciteDTO, ConstanteEnum.TypeCalcul idTypeOperation, int valeurOperation, NetworkInstanceId idCarteProvenance, bool reversible, int nbTourRestant){
 		id = "Capa_" + sequenceId++;
 		this.idCapaciteProvenance = idCapaciteDTO;
 		this.idTypeCapacite = idTypeCapacite;
@@ -33,6 +33,7 @@ public class CapaciteMetier  {
 		this.idTypeOperation = idTypeOperation;
 		this.valeurOperation = valeurOperation;
 		this.reversible = reversible;
+		this.nbTourRestant = nbTourRestant;
 	}
 
 
@@ -96,5 +97,9 @@ public class CapaciteMetier  {
 		}
 
 		return newValue;
+	}
+
+	public bool isActif(){
+		return nbTourRestant >= 0;
 	}
 }

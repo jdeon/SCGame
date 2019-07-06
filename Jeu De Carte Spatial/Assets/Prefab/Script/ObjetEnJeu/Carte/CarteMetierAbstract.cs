@@ -347,7 +347,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	[ClientRpc]
 	public void RpcSyncNetIdJoueur(NetworkInstanceId netIdJoueur){
-		this.NetIdJoueurProprietaire = netIdJoueur;
+		this.NetIdJoueurPossesseur = netIdJoueur;
 	}
 
 	[Command]
@@ -394,7 +394,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		return id;
 	}
 
-	public NetworkInstanceId NetIdJoueurProprietaire {
+	public NetworkInstanceId NetIdJoueurPossesseur {
 		get{ return this.idJoueurProprietaire; }
 		set {
 			Joueur joueur = JoueurUtils.getJoueur (value);

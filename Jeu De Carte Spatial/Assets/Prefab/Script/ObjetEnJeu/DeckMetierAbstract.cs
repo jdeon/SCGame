@@ -89,7 +89,7 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 			trfmCard.parent = transform;
 
 			//TODO délpacer à un index au hasard
-			carte.CmdChangeParent (this.NetIdJoueur, JoueurUtils.getPathJoueur (this));
+			carte.CmdChangeParent (this.NetIdJoueurPossesseur, JoueurUtils.getPathJoueur (this));
 
 			carte.JoueurProprietaire.CarteSelectionne = null;
 		}
@@ -175,6 +175,10 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 
 	}
 
+	public NetworkInstanceId NetIdJoueurPossesseur{
+		get{return joueurProprietaire.netId; }
+	}
+
 	/*******************ISelectionnable****************/
 	public void onClick (){
 		//TODO selectionne
@@ -210,10 +214,6 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 
 
 	/********************Getter et Setter************************/
-	public NetworkInstanceId NetIdJoueur {
-		get { return joueurProprietaire.netId; }
-	}
-
 	public List<CapaciteMetier> ListCapaciteDeck {
 		get{ return listCapaciteDeck; }
 	}

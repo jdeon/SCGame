@@ -60,7 +60,7 @@ public class DeckConstructionMetier : DeckMetierAbstract {
 		if(null != cartePioche){
 			cartePioche.SetActive (true);
 			CarteConstructionMetierAbstract carteConstruction = cartePioche.GetComponent<CarteConstructionMetierAbstract> ();
-			carteConstruction.NetIdJoueurProprietaire = NetIdJoueur;
+			carteConstruction.NetIdJoueurPossesseur = NetIdJoueurPossesseur;
 		}
 
 		Debug.Log ("End tirerCarte()");

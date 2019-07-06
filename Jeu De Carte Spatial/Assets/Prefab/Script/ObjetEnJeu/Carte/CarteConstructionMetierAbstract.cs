@@ -538,7 +538,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		int valeurIncapacite = 0;
 		if( null != listEffetCapacite){
 			foreach(CapaciteMetier capaciteCourante in listEffetCapacite){
-				if(capaciteCourante.IdTypeCapacite.Equals (ConstanteIdObjet.ID_CAPACITE_ETAT_SANS_EFFET)){
+				if(capaciteCourante.isActif() && capaciteCourante.IdTypeCapacite.Equals (ConstanteIdObjet.ID_CAPACITE_ETAT_SANS_EFFET)){
 					valeurIncapacite = capaciteCourante.getNewValue (valeurIncapacite);
 				} 
 			}
