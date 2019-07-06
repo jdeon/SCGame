@@ -162,4 +162,9 @@ public class CarteUtils {
 			((CarteConstructionMetierAbstract)carteScript).RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
 		} //TODO carte amelioration
 	}
+
+	public static bool checkCarteActive (CarteMetierAbstract carte){
+		//This equals null est étrange mais est du à l'operateur == custom qui fait des faut negatif
+		return (null != carte && !carte.Equals (null) && carte.gameObject.activeInHierarchy);
+	}
 }

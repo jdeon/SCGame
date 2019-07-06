@@ -55,7 +55,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 
 	public IConteneurCarte getConteneur (){
-		if (null != this && gameObject.activeInHierarchy){
+		if (CarteUtils.checkCarteActive(this)){
 			return transform.GetComponentInParent<IConteneurCarte> ();
 		} else {
 			return null;

@@ -378,9 +378,11 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
 
 			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
+			EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
 			if (systemTour.getPhase (joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
 				&& null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.JoueurProprietaire != JoueurProprietaire
-				&& joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
+				&& joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()
+				&&! (null != eventTask && eventTask is EventTaskChoixCible)) {//On ne peut attaquer si choix de defense en cours
 
 				//TODO vérifier l'emplacement sol
 				JoueurUtils.getJoueurLocal ().CmdCreateTask(joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid, false);
@@ -443,7 +445,8 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 
 	public void usePiocheConstructionPhaseCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
-		if (this.getConteneur () is EmplacementMetierAbstract || carteSourceAction.netId == this.netId) {
+		if (CarteUtils.checkCarteActive(this) && 
+			(this.getConteneur () is EmplacementMetierAbstract || carteSourceAction.netId == this.netId)) {
 			List<CapaciteDTO> capacitePicheConstr = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION);
 
 			foreach (CapaciteDTO capacite in capacitePicheConstr) {
@@ -453,7 +456,8 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	}
 
 	public void usePoseConstructionCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
-		if (this.getConteneur () is EmplacementMetierAbstract || carteSourceAction.netId == this.netId) {
+		if (CarteUtils.checkCarteActive(this) && 
+			(this.getConteneur () is EmplacementMetierAbstract || carteSourceAction.netId == this.netId)) {
 			List<CapaciteDTO> capacitePoseConstruction = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION);
 
 			foreach (CapaciteDTO capacite in capacitePoseConstruction) {
