@@ -15,6 +15,8 @@ public class SelectionnableUtils {
 
 	public static readonly int ETAT_SELECTIONNE = 3;
 
+	public static readonly int ETAT_HIGH_LIGHT = 4;
+
 
 	public static int sequenceSelectionnable;
 
@@ -53,7 +55,7 @@ public class SelectionnableUtils {
 
 			if (etat == SelectionnableUtils.ETAT_NON_SELECTION) {//Supprime la transform
 				GameObject.Destroy (tfmGlow.gameObject);
-			} else if (etat == SelectionnableUtils.ETAT_SELECTIONNABLE) {
+			} else if (etat == SelectionnableUtils.ETAT_SELECTIONNABLE || etat == SelectionnableUtils.ETAT_HIGH_LIGHT) {
 				Material matSelectionnable = new Material (ConstanteInGame.materialGlow);
 				matSelectionnable.SetColor("_TintColor", Color.yellow);
 				tfmGlow.gameObject.GetComponent<MeshRenderer> ().material = matSelectionnable;

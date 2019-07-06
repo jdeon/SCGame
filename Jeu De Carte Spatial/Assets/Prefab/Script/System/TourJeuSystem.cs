@@ -122,7 +122,7 @@ public class TourJeuSystem : NetworkBehaviour {
 
 				List<CarteConstructionMetierAbstract> listAttaquant = CarteUtils.getListCarteCapableAttaque (listJoueurs [indexPlayerPlaying].netIdJoueur);
 				foreach (CarteConstructionMetierAbstract attaquant in listAttaquant) {
-					attaquant.RpcSetEtatSelectionPlayer (listJoueurs [indexPlayerPlaying].netIdJoueur, SelectionnableUtils.ETAT_SELECTIONNABLE);
+					attaquant.RpcSetEtatSelectionPlayer (listJoueurs [indexPlayerPlaying].netIdJoueur, SelectionnableUtils.ETAT_HIGH_LIGHT);
 				}
 
 

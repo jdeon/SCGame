@@ -12,7 +12,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 
 	private TextMesh txtPointVie;
 
-
+	[SyncVar]
 	private string pseudo;
 
 	public static CartePlaneteMetier getPlaneteEnnemie(NetworkInstanceId idJoueur){
@@ -122,10 +122,12 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 		if (null != joueurLocal) {
 			TourJeuSystem systemTour = TourJeuSystem.getTourSystem ();
 
+			EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
 			//Si un joueur clique sur une carte capable d'attaquer puis sur une carte ennemie cela lance une attaque
 			if (systemTour.getPhase (joueurLocal.netId) == TourJeuSystem.PHASE_ATTAQUE
 			    && null != joueurLocal.CarteSelectionne && joueurLocal.CarteSelectionne.JoueurProprietaire != JoueurProprietaire
-			    && joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()) {
+			    && joueurLocal.CarteSelectionne is IAttaquer && ((IAttaquer)joueurLocal.CarteSelectionne).isCapableAttaquer ()
+				&&! (null != eventTask && eventTask is EventTaskChoixCible)) {//On ne peut attaquer si choix de defense en cours
 				//TODO vérifier aussi l'état cable d'attaquer (capacute en cours, déjà sur une autre attaque)
 				JoueurUtils.getJoueurLocal ().CmdCreateTask (joueurLocal.CarteSelectionne.netId, joueurLocal.netId, this.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE, NetworkInstanceId.Invalid, false);
 			} else {
