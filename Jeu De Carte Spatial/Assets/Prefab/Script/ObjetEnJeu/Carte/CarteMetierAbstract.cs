@@ -220,10 +220,9 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	/*********************************IAvecCapacite*********************/
 	public void addCapacity (CapaciteMetier capaToAdd){
 		listEffetCapacite.Add (capaToAdd);
-		//TODO recalculate visual
 	}
 
-	public void removeLinkCardCapacity (NetworkInstanceId netIdCard){
+	public int removeLinkCardCapacity (NetworkInstanceId netIdCard){
 		List<CapaciteMetier> capacitesToDelete = new List<CapaciteMetier> ();
 
 		foreach (CapaciteMetier capacite in listEffetCapacite) {
@@ -235,7 +234,12 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		foreach (CapaciteMetier capaciteToDelete in capacitesToDelete) {
 			listEffetCapacite.Remove(capaciteToDelete);
 		}
-		//TODO recalculate visual
+
+		if (capacitesToDelete.Count > 0) {
+			synchroniseListCapacite ();
+		}
+
+		return capacitesToDelete.Count;
 	}
 
 	public void capaciteFinTour (){
@@ -338,6 +342,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		if (null != listCapacite) {
 			this.listEffetCapacite = listCapacite;
 		}
+
+		//TODO update visual
 	}
 
 	[ClientRpc]

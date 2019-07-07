@@ -9,8 +9,6 @@ public class CapaciteUtils {
 	public static List<int> listIdCapaciteEffetImmediat = getListIdCapaciteEffetImmediat();
 
 	public static void endOfTurnOfCapacityPlayer(NetworkInstanceId netIdJoueur){
-		List<CapaciteMetier> listCapacite = new List<CapaciteMetier> ();
-
 		List<IAvecCapacite> listAvecCapacite = GameObject.FindObjectsOfType<MonoBehaviour> ().OfType<IAvecCapacite>().ToList<IAvecCapacite>();
 
 		foreach (IAvecCapacite possesseurCapacite in listAvecCapacite) {
@@ -18,6 +16,19 @@ public class CapaciteUtils {
 				possesseurCapacite.capaciteFinTour ();
 			}
 		}
+	}
+
+	//Supprime les capacité en provenance de la carte et retourne le nombre de carte impacté
+	public static int deleteEffectCapacityOfCard (NetworkInstanceId netIdcard){
+		int nbEffectDelete = 0;
+
+		List<IAvecCapacite> listAvecCapacite = GameObject.FindObjectsOfType<MonoBehaviour> ().OfType<IAvecCapacite>().ToList<IAvecCapacite>();
+
+		foreach (IAvecCapacite possesseurCapacite in listAvecCapacite) {
+			nbEffectDelete += possesseurCapacite.removeLinkCardCapacity (netIdcard);
+		}
+
+		return nbEffectDelete;
 	}
 
 	public static int valeurAvecCapacite(int valeurBase, List<CapaciteMetier> listCapaciteCarte, int idTypCapacite){

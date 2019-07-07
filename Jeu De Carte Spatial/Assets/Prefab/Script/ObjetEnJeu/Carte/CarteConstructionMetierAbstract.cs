@@ -365,6 +365,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	public void destruction (NetworkInstanceId netdTaskEvent){
 		if (JoueurProprietaire.isServer) {
+			CapaciteUtils.deleteEffectCapacityOfCard (this.netId);
 			NetworkUtils.unassignObjectFromPlayer (GetComponent<NetworkIdentity> (), JoueurProprietaire .GetComponent<NetworkIdentity> (), -1);
 			JoueurProprietaire.CimetiereConstruction.addCarte (this);
 		}

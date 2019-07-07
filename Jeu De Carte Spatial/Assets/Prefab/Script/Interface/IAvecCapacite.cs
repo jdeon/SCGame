@@ -9,7 +9,7 @@ public interface IAvecCapacite {
 
 	void addCapacity (CapaciteMetier capaToAdd);
 
-	void removeLinkCardCapacity (NetworkInstanceId netIdCard);
+	int removeLinkCardCapacity (NetworkInstanceId netIdCard);
 
 	void capaciteFinTour ();
 

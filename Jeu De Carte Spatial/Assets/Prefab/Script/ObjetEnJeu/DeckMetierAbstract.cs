@@ -106,10 +106,9 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 	/*********************************IAvecCapacite*********************/
 	public void addCapacity (CapaciteMetier capaToAdd){
 		listCapaciteDeck.Add (capaToAdd);
-		//TODO recalculate visual
 	}
 
-	public void removeLinkCardCapacity (NetworkInstanceId netIdCard){
+	public int removeLinkCardCapacity (NetworkInstanceId netIdCard){
 		List<CapaciteMetier> capacitesToDelete = new List<CapaciteMetier> ();
 
 		foreach (CapaciteMetier capacite in listCapaciteDeck) {
@@ -121,7 +120,12 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 		foreach (CapaciteMetier capaciteToDelete in capacitesToDelete) {
 			listCapaciteDeck.Remove(capaciteToDelete);
 		}
-		//TODO recalculate visual
+
+		if (capacitesToDelete.Count > 0) {
+			synchroniseListCapacite ();
+		}
+
+		return capacitesToDelete.Count;
 	}
 
 	public void capaciteFinTour (){
