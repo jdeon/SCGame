@@ -50,7 +50,17 @@ public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 
 	public void removeCarte(CarteMetierAbstract carteToRemove){
 		carteEnMains.Remove (carteToRemove);
-		//TODO
+
+		float position = carteToRemove.transform.position.x;
+
+		foreach (CarteMetierAbstract carte in carteEnMains) {
+			float positionxCarte = carte.transform.position.x;
+			if (position > 0 && positionxCarte > position) {
+				carte.transform.position = new Vector3(positionxCarte - 1f, carte.transform.position.y, carte.transform.position.z);
+			} else if (position < 0 && positionxCarte < position) {
+				carte.transform.position = new Vector3(positionxCarte + 1f, carte.transform.position.y, carte.transform.position.z);
+			}
+		}
 	}
 
 

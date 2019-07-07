@@ -54,6 +54,10 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 		
 	public void putCard(CarteMetierAbstract cartePoser){
 
+		if (null != cartePoser && null != cartePoser.getConteneur () && cartePoser.getConteneur () is Mains) {
+			((Mains)cartePoser.getConteneur ()).removeCarte (cartePoser);
+		}
+
 		if (null != cartePoser && null != cartePoser.JoueurProprietaire && cartePoser.JoueurProprietaire.isLocalPlayer) {
 			Transform trfmCard = cartePoser.transform;
 			trfmCard.parent = transform;;
