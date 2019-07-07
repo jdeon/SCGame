@@ -36,6 +36,18 @@ public class CapaciteMetier  {
 		this.nbTourRestant = nbTourRestant;
 	}
 
+	/**
+	 * Transforme la capacite en mode ajout mais conserve le meme impact
+	 * util si la valeur de base peut changer
+	 * */
+	public void transformToAddMode(int baseValue){
+		if (idTypeOperation != ConstanteEnum.TypeCalcul.Ajout) {
+			int newValue = getNewValue (baseValue);
+
+			idTypeOperation = ConstanteEnum.TypeCalcul.Ajout;
+			valeurOperation = newValue - baseValue;
+		}
+	}
 
 	public bool endOfTurn(){
 		bool existToujours = true;

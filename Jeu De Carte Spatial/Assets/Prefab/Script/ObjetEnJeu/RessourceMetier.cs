@@ -144,6 +144,13 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 	/*******************IAvecCapacity*****************/
 
 	public void addCapacity (CapaciteMetier capaToAdd){
+
+		if (capaToAdd.IdTypeCapacite == ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE) {
+			capaToAdd.transformToAddMode (ProductionWithCapacity);
+		} else if (capaToAdd.IdTypeCapacite == ConstanteIdObjet.ID_CAPACITE_MODIF_STOCK_RESSOURCE){
+			capaToAdd.transformToAddMode (StockWithCapacity);
+		}
+
 		listCapaciteRessource.Add (capaToAdd);
 	}
 
