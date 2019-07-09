@@ -81,6 +81,32 @@ public class ConstanteInGame {
 
 	public static readonly Material materialGlow = Resources.Load<Material>("Materials/MaterialGlow");
 
+	public static readonly Material materialConstructionImage = Resources.Load<Material>("Materials/imageContainer-Centrer");
+
+	public static readonly Material materialCarteBackground = Resources.Load<Material>("Materials/cardSpaceBackground_12");
+	/**
+	 * Materiaux pour carte vaisseau
+	*/
+
+	public static readonly Material materialVaisseauFond = Resources.Load<Material>("Materials/cardBase_08");
+
+	public static readonly Material materialVaisseauCardreTitre = Resources.Load<Material>("Materials/titleBarV2_01-Centrer");
+
+	public static readonly Material materialVaisseauCardreCarbrant = Resources.Load<Material>("Materials/titleBarV4_11-Centrer");
+
+	public static readonly Material materialVaisseauCardreMetal = Resources.Load<Material>("Materials/titleBarV4_11-ReverseCentrer");
+
+	public static readonly Material materialVaisseauCardreNiveau = Resources.Load<Material>("Materials/cardDiamond_02-Centrer");
+
+	public static readonly Material materialVaisseauCardreDescriptionDroite = Resources.Load<Material>("Materials/textBoxV2_06-Centrer");
+				
+	public static readonly Material materialVaisseauCardreDescriptionGauche = Resources.Load<Material>("Materials/textBoxV2_06-ReverseCentrer");
+
+	public static readonly Material materialVaisseauPointAttDef = Resources.Load<Material>("Materials/blueOrb-Centrer");
+
+
+
+
 
 
 	public static readonly GameObject planePrefab = Resources.Load<GameObject>("Basic/goPlane");
