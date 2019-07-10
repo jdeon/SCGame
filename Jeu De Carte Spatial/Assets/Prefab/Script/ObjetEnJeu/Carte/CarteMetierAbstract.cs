@@ -19,6 +19,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	protected GameObject faceCarteGO;
 
+	protected TextesCarteBean beanTextCarte;
+
 	[SerializeField]
 	protected int idSelectionnable;
 
@@ -153,7 +155,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	public virtual void generateGOCard(){
 
-		faceCarteGO = GenerateCardUtils.generateCardBase (this, this.id);
+		beanTextCarte = GenerateCardUtils.generateCardBase (this, this.id);
+		faceCarteGO = beanTextCarte.goFaceCarte;
 	}
 		
 

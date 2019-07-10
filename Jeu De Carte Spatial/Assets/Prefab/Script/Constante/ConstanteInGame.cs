@@ -92,9 +92,9 @@ public class ConstanteInGame {
 
 	public static readonly Material materialVaisseauCardreTitre = Resources.Load<Material>("Materials/titleBarV2_01-Centrer");
 
-	public static readonly Material materialVaisseauCardreCarbrant = Resources.Load<Material>("Materials/titleBarV4_11-Centrer");
+	public static readonly Material materialVaisseauCardreCarbrant = Resources.Load<Material>("Materials/titleBarV4_11-ReverseCentrer"); 
 
-	public static readonly Material materialVaisseauCardreMetal = Resources.Load<Material>("Materials/titleBarV4_11-ReverseCentrer");
+	public static readonly Material materialVaisseauCardreMetal = Resources.Load<Material>("Materials/titleBarV4_11-Centrer");
 
 	public static readonly Material materialVaisseauCardreNiveau = Resources.Load<Material>("Materials/cardDiamond_02-Centrer");
 
