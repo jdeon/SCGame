@@ -84,10 +84,46 @@ public class ConstanteInGame {
 	public static readonly Material materialConstructionImage = Resources.Load<Material>("Materials/imageContainer-Centrer");
 
 	public static readonly Material materialCarteBackground = Resources.Load<Material>("Materials/cardSpaceBackground_12");
+
+
+	/**
+	 * Materiaux pour carte batiment
+	*/
+	public static readonly Material materialBatimentFond = Resources.Load<Material>("Materials/cardBase_08-Jaune");
+
+	public static readonly Material materialBatimentCardreTitre = Resources.Load<Material>("Materials/titleBarV2_06-Centrer");
+
+	public static readonly Material materialBatimentCardreCarbrant = Resources.Load<Material>("Materials/titleBarV4_03-ReverseCentrer"); 
+
+	public static readonly Material materialBatimentCardreMetal = Resources.Load<Material>("Materials/titleBarV4_03-Centrer");
+
+	public static readonly Material materialBatimentCardreNiveau = Resources.Load<Material>("Materials/cardDiamond_05-Centrer");
+
+	public static readonly Material materialBatimentCardreDescription = Resources.Load<Material>("Materials/textBoxV2_04-Double");
+
+	public static readonly Material materialBatimentPointAttDef = Resources.Load<Material>("Materials/goldOrb-Centrer");
+
+
+	/**
+	 * Materiaux pour carte Defense
+	*/
+	public static readonly Material materialDefenseFond = Resources.Load<Material>("Materials/cardBase_09");
+
+	public static readonly Material materialDefenseCardreTitre = Resources.Load<Material>("Materials/titleBarV2_02-Centrer");
+
+	public static readonly Material materialDefenseCardreCarbrant = Resources.Load<Material>("Materials/titleBarV4_02-ReverseCentrer"); 
+
+	public static readonly Material materialDefenseCardreMetal = Resources.Load<Material>("Materials/titleBarV4_02-Centrer");
+
+	public static readonly Material materialDefenseCardreNiveau = Resources.Load<Material>("Materials/cardDiamond_01-Centrer");
+
+	public static readonly Material materialDefenseCardreDescription = Resources.Load<Material>("Materials/textBoxV2_02-Double");
+
+	public static readonly Material materialDefensePointAttDef = Resources.Load<Material>("Materials/greenOrb-Centrer");
+
 	/**
 	 * Materiaux pour carte vaisseau
 	*/
-
 	public static readonly Material materialVaisseauFond = Resources.Load<Material>("Materials/cardBase_08");
 
 	public static readonly Material materialVaisseauCardreTitre = Resources.Load<Material>("Materials/titleBarV2_01-Centrer");
@@ -98,13 +134,9 @@ public class ConstanteInGame {
 
 	public static readonly Material materialVaisseauCardreNiveau = Resources.Load<Material>("Materials/cardDiamond_02-Centrer");
 
-	public static readonly Material materialVaisseauCardreDescriptionDroite = Resources.Load<Material>("Materials/textBoxV2_06-Centrer");
-				
-	public static readonly Material materialVaisseauCardreDescriptionGauche = Resources.Load<Material>("Materials/textBoxV2_06-ReverseCentrer");
+	public static readonly Material materialVaisseauCardreDescription = Resources.Load<Material>("Materials/textBoxV2_06-Double");
 
 	public static readonly Material materialVaisseauPointAttDef = Resources.Load<Material>("Materials/blueOrb-Centrer");
-
-
 
 
 

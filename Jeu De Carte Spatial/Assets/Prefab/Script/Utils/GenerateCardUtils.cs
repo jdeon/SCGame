@@ -16,9 +16,7 @@ public class GenerateCardUtils {
 
 	private static readonly string KEY_CARBURANT = "Carburant";
 
-	private static readonly string KEY_DESCRIPTION_GAUCHE = "Description-Gauche";
-
-	private static readonly string KEY_DESCRIPTION_DROITE = "Description-Droite";
+	private static readonly string KEY_DESCRIPTION = "Description";
 
 	private static readonly string KEY_POINT_DEF_ATT = "PointAttaque/Defense";
 
@@ -144,6 +142,7 @@ public class GenerateCardUtils {
 		niveau.transform.localPosition = new Vector3 (0, 0.01f, -0.9f);
 		niveau.transform.localScale = new Vector3 (.25f, .75f, 0.2f);
 		niveau.transform.localRotation = Quaternion.identity;
+		niveau.transform.Rotate (new Vector3 (0, 180, 0));
 
 		Material matNiveau = new Material (dictionaryMaterialForCardType [KEY_NIVEAU]);
 		matNiveau.EnableKeyword("_DETAIL_MULX2");
@@ -151,38 +150,25 @@ public class GenerateCardUtils {
 		niveau.GetComponent<Renderer> ().material = matNiveau;
 
 
-		GameObject description =  new GameObject ("descriptionPart_" + idCarte);
+		GameObject description = GameObject.CreatePrimitive (PrimitiveType.Plane);
+		description.name = "descriptionPart_" + idCarte;
 		description.transform.SetParent (faceCarteGO.transform);
 		description.transform.localPosition = new Vector3 (-0f, .005f, -2.54f);
-		description.transform.localScale = new Vector3 (.75f, 2.5f, 2.5f);
+		description.transform.localScale = new Vector3 (.75f, 1f, 0.25f);
 		description.transform.localRotation = Quaternion.identity;
+		description.GetComponent<Renderer> ().material = dictionaryMaterialForCardType [KEY_DESCRIPTION];
 
 		description.AddComponent<ClickableCardPart> ().setCarteMere (carteBean);
 		BoxCollider collCadre = description.AddComponent<BoxCollider> ();
-		collCadre.size = new Vector3 (10, .1f, 1);
+		collCadre.size = new Vector3 (10, .1f, 10);
 
-		GameObject cadreDescriptionGauche = GameObject.CreatePrimitive (PrimitiveType.Plane);
-		cadreDescriptionGauche.name = "CadreGDescription_" + idCarte;
-		cadreDescriptionGauche.transform.SetParent (description.transform);
-		cadreDescriptionGauche.transform.localPosition = new Vector3 (2.5f, 0f, 0f);
-		cadreDescriptionGauche.transform.localRotation = Quaternion.identity;
-		cadreDescriptionGauche.transform.localScale = new Vector3 (0.5f, 1f, 0.1f);
-		cadreDescriptionGauche.GetComponent<Renderer> ().material = dictionaryMaterialForCardType [KEY_DESCRIPTION_GAUCHE];;
-
-		GameObject cadreDescriptionDroite = GameObject.CreatePrimitive (PrimitiveType.Plane);
-		cadreDescriptionDroite.name = "CadreGDescription_" + idCarte;
-		cadreDescriptionDroite.transform.SetParent (description.transform);
-		cadreDescriptionDroite.transform.localPosition = new Vector3 (-2.5f, 0f, 0f);
-		cadreDescriptionDroite.transform.localRotation = Quaternion.identity;
-		cadreDescriptionDroite.transform.localScale = new Vector3 (0.5f, 1f, 0.1f);
-		cadreDescriptionDroite.GetComponent<Renderer> ().material = dictionaryMaterialForCardType [KEY_DESCRIPTION_DROITE];;
 
 		GameObject listNiveaux = new GameObject ("TxtListNiv_" + idCarte);
 		listNiveaux.transform.SetParent (description.transform);
 		listNiveaux.transform.localPosition = new Vector3 (0f, .005f, 0f);
 		listNiveaux.transform.localRotation = Quaternion.identity;
 		listNiveaux.transform.Rotate (new Vector3 (90, 0, 0));		//Le titre apparait face à z
-		listNiveaux.transform.localScale = new Vector3 (1f, .15f, 1f);
+		listNiveaux.transform.localScale = new Vector3 (.75f, 1f, 1f);
 		TextMesh txtDescriptionNiveaux = listNiveaux.AddComponent<TextMesh> ();
 		string textNiv = "";
 		for (int index = 0; index < carteRef.ListNiveau.Count; index++) {
@@ -210,7 +196,7 @@ public class GenerateCardUtils {
 		cadrePD.transform.SetParent (faceCarteGO.transform);
 		cadrePD.transform.localPosition = new Vector3 (3.5f, .01f, -4.15f);
 		cadrePD.transform.localRotation = Quaternion.identity;
-		cadrePD.transform.localScale = new Vector3 (1, 1, .4f);
+		cadrePD.transform.localScale = new Vector3 (.25f, 1, .1f);
 		cadrePD.GetComponent<Renderer> ().material = dictionaryMaterialForCardType [KEY_POINT_DEF_ATT];
 
 		GameObject pointDefence = new GameObject ("TxtPD_" + idCarte);
@@ -218,7 +204,7 @@ public class GenerateCardUtils {
 		pointDefence.transform.localPosition = new Vector3 (0, .01f, 0);
 		pointDefence.transform.localRotation = Quaternion.identity;
 		pointDefence.transform.Rotate (new Vector3 (90, 0, 0));		//Le titre apparait face à z
-		pointDefence.transform.localScale = new Vector3 (.4f, 1f, 1f);
+		pointDefence.transform.localScale = new Vector3 (1f, 2f, 1f);
 		TextMesh txtPD = pointDefence.AddComponent<TextMesh> ();
 		txtPD.text = "Def-" + carteRef.PointVieMax;	//TODO modif pour PV reelle
 		txtPD.color = Color.black;
@@ -276,7 +262,7 @@ public class GenerateCardUtils {
 		cadrePA.transform.SetParent (faceCarteGO.transform);
 		cadrePA.transform.localPosition = new Vector3 (-3.5f, .01f, -4.15f);
 		cadrePA.transform.localRotation = Quaternion.identity;
-		cadrePA.transform.localScale = new Vector3 (1, 1, .4f);
+		cadrePA.transform.localScale = new Vector3 (.25f, 1, .1f);
 		cadrePA.GetComponent<Renderer> ().material = dictionaryMaterialForCardType [KEY_POINT_DEF_ATT];
 
 		GameObject pointAttaque = new GameObject ("TxtPA_" + idCarte);
@@ -284,7 +270,7 @@ public class GenerateCardUtils {
 		pointAttaque.transform.localPosition = new Vector3 (0, .01f, 0);
 		pointAttaque.transform.localRotation = Quaternion.identity;
 		pointAttaque.transform.Rotate (new Vector3 (90, 0, 0));		//Le titre apparait face à z
-		pointAttaque.transform.localScale = new Vector3 (.4f, 1f, 1f);
+		pointAttaque.transform.localScale = new Vector3 (1f, 2f, 1f);
 		TextMesh txtPA = pointAttaque.AddComponent<TextMesh> ();
 		txtPA.text = "Att-" + carteRef.PointAttaque;
 		txtPA.color = Color.black;
@@ -323,6 +309,28 @@ public class GenerateCardUtils {
 	private static Dictionary<string,Dictionary<string,Material>> initDictionnaryMaterialCard(){
 		Dictionary<string,Dictionary<string,Material>> resultDictionary = new Dictionary<string, Dictionary<string, Material>> ();
 
+		Dictionary<string,Material> dictionaryBatiment = new Dictionary<string, Material> ();
+		dictionaryBatiment.Add (KEY_FOND, ConstanteInGame.materialBatimentFond);
+		dictionaryBatiment.Add (KEY_TITRE, ConstanteInGame.materialBatimentCardreTitre);
+		dictionaryBatiment.Add (KEY_IMAGE, ConstanteInGame.materialConstructionImage);
+		dictionaryBatiment.Add (KEY_METAL, ConstanteInGame.materialBatimentCardreMetal);
+		dictionaryBatiment.Add (KEY_NIVEAU, ConstanteInGame.materialBatimentCardreNiveau);
+		dictionaryBatiment.Add (KEY_CARBURANT, ConstanteInGame.materialBatimentCardreCarbrant);
+		dictionaryBatiment.Add (KEY_DESCRIPTION, ConstanteInGame.materialBatimentCardreDescription);
+		dictionaryBatiment.Add (KEY_POINT_DEF_ATT, ConstanteInGame.materialBatimentPointAttDef);
+		resultDictionary.Add (ConstanteInGame.strBatiment, dictionaryBatiment);
+
+		Dictionary<string,Material> dictionaryDefense = new Dictionary<string, Material> ();
+		dictionaryDefense.Add (KEY_FOND, ConstanteInGame.materialDefenseFond);
+		dictionaryDefense.Add (KEY_TITRE, ConstanteInGame.materialDefenseCardreTitre);
+		dictionaryDefense.Add (KEY_IMAGE, ConstanteInGame.materialConstructionImage);
+		dictionaryDefense.Add (KEY_METAL, ConstanteInGame.materialDefenseCardreMetal);
+		dictionaryDefense.Add (KEY_NIVEAU, ConstanteInGame.materialDefenseCardreNiveau);
+		dictionaryDefense.Add (KEY_CARBURANT, ConstanteInGame.materialDefenseCardreCarbrant);
+		dictionaryDefense.Add (KEY_DESCRIPTION, ConstanteInGame.materialDefenseCardreDescription);
+		dictionaryDefense.Add (KEY_POINT_DEF_ATT, ConstanteInGame.materialDefensePointAttDef);
+		resultDictionary.Add (ConstanteInGame.strDefense, dictionaryDefense);
+
 		Dictionary<string,Material> dictionaryVaisseau = new Dictionary<string, Material> ();
 		dictionaryVaisseau.Add (KEY_FOND, ConstanteInGame.materialVaisseauFond);
 		dictionaryVaisseau.Add (KEY_TITRE, ConstanteInGame.materialVaisseauCardreTitre);
@@ -330,15 +338,9 @@ public class GenerateCardUtils {
 		dictionaryVaisseau.Add (KEY_METAL, ConstanteInGame.materialVaisseauCardreMetal);
 		dictionaryVaisseau.Add (KEY_NIVEAU, ConstanteInGame.materialVaisseauCardreNiveau);
 		dictionaryVaisseau.Add (KEY_CARBURANT, ConstanteInGame.materialVaisseauCardreCarbrant);
-		dictionaryVaisseau.Add (KEY_DESCRIPTION_GAUCHE, ConstanteInGame.materialVaisseauCardreDescriptionGauche);
-		dictionaryVaisseau.Add (KEY_DESCRIPTION_DROITE, ConstanteInGame.materialVaisseauCardreDescriptionDroite);
+		dictionaryVaisseau.Add (KEY_DESCRIPTION, ConstanteInGame.materialVaisseauCardreDescription);
 		dictionaryVaisseau.Add (KEY_POINT_DEF_ATT, ConstanteInGame.materialVaisseauPointAttDef);
-
 		resultDictionary.Add (ConstanteInGame.strVaisseau, dictionaryVaisseau);
-
-
-		resultDictionary.Add (ConstanteInGame.strBatiment, dictionaryVaisseau);
-		resultDictionary.Add (ConstanteInGame.strDefense, dictionaryVaisseau);
 
 		return resultDictionary;
 	}
