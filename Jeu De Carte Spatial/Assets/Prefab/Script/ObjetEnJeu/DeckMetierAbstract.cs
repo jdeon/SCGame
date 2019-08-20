@@ -34,17 +34,23 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 	}
 
 	public void OnMouseDown(){
-		onClick ();
+		if (!joueurProprietaire.CarteEnVisuel) {
+			onClick ();
+		}
 	}
 
 	void OnMouseOver()
 	{
-		EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+		if (!joueurProprietaire.CarteEnVisuel) {
+			EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+		}
 	}
 
 	void OnMouseExit()
 	{
-		EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+		if (!joueurProprietaire.CarteEnVisuel) {
+			EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+		}
 	}
 
 	public virtual void intiDeck (Joueur joueurInitiateur, bool isServer){

@@ -47,12 +47,16 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	void OnMouseOver()
 	{
-		EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+		if (!JoueurUtils.getJoueur(idJoueurProprietaire).CarteEnVisuel) {
+			EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+		}
 	}
 
 	void OnMouseExit()
 	{
-		EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+		if (!JoueurUtils.getJoueur (idJoueurProprietaire).CarteEnVisuel) {
+			EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+		}
 	}
 
 
@@ -67,15 +71,17 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	//public abstract string initCarte (); //Besoin carte Ref
 
 	public virtual void OnMouseDown(){
-		if (this is CartePlaneteMetier) {
-			((CartePlaneteMetier)this).onClick ();
-		} else if (this is CarteBatimentMetier) {
-			((CarteBatimentMetier)this).onClick ();
-		} else if (this is CarteDefenseMetier) {
-			((CarteDefenseMetier)this).onClick ();
-		} else if (this is CarteVaisseauMetier) {
-			((CarteVaisseauMetier)this).onClick ();
-		} 
+		if (!JoueurUtils.getJoueur (idJoueurProprietaire).CarteEnVisuel) {
+			if (this is CartePlaneteMetier) {
+				((CartePlaneteMetier)this).onClick ();
+			} else if (this is CarteBatimentMetier) {
+				((CarteBatimentMetier)this).onClick ();
+			} else if (this is CarteDefenseMetier) {
+				((CarteDefenseMetier)this).onClick ();
+			} else if (this is CarteVaisseauMetier) {
+				((CarteVaisseauMetier)this).onClick ();
+			} 
+		}
 	}
 
 	[Command]

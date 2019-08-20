@@ -26,12 +26,16 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 
 	void OnMouseOver()
 	{
-		EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+		if (!joueur.CarteEnVisuel) {
+			EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+		}
 	}
 
 	void OnMouseExit()
 	{
-		EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+		if (!joueur.CarteEnVisuel) {
+			EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+		}
 	}
 
 	//TODO cree des constante
@@ -112,7 +116,7 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 	/*******************ISelectionnable****************/
 	public void onClick (){
 		EventTask eventTask = EventTaskUtils.getEventTaskEnCours ();
-		if (this.etatSelectionne == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
+		if (!joueur.CarteEnVisuel && this.etatSelectionne == 1 && null != eventTask && eventTask is EventTaskChoixCible) {
 			((EventTaskChoixCible)eventTask).ListCibleChoisie.Add (this);
 		}
 

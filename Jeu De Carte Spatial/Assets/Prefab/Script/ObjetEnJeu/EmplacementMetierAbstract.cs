@@ -28,17 +28,23 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	}
 		
 	public void OnMouseDown(){
-		onClick ();
+		if (!JoueurUtils.getJoueur (idJoueurPossesseur).CarteEnVisuel) {
+			onClick ();
+		}
 	}
 
 	void OnMouseOver()
 	{
-		EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+		if (!JoueurUtils.getJoueur (idJoueurPossesseur).CarteEnVisuel) {
+			EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
+		}
 	}
 
 	void OnMouseExit()
 	{
-		EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+		if (!JoueurUtils.getJoueur (idJoueurPossesseur).CarteEnVisuel) {
+			EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
+		}
 	}
 
 	public void putCard(CarteMetierAbstract cartePoser, bool isNewCard, NetworkInstanceId netIdTaskEvent){
