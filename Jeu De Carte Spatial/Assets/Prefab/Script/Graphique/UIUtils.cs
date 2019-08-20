@@ -5,6 +5,31 @@ using UnityEngine.UI;
 
 public class UIUtils : MonoBehaviour {
 
+	private static GameObject goCanvas;
+
+	public static GameObject getCanvas(){
+		if(null == goCanvas){
+			goCanvas = GameObject.Find("Canvas");
+		}
+
+		if (null == goCanvas) {
+			goCanvas = new GameObject ("Canvas");
+			Canvas canvas = goCanvas.AddComponent<Canvas> ();
+			canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+			goCanvas.AddComponent<CanvasScaler> ();
+			goCanvas.AddComponent<GraphicRaycaster> ();
+			canvas.pixelPerfect = true;
+		}
+
+		return goCanvas;
+	}
+
+	public static Vector2 getUICardSize (){
+		float height = Screen.height * 3 / 4;
+		float width = height / 1.5f > Screen.width ? Screen.width : height / 1.5f;
+		return new Vector2 (width, height);
+	}
+
 	//Cree un panel
 	public static GameObject createPanel (string name, GameObject goParent, float anchorX, float anchorY, float width, float height){
 		GameObject panelGO = new GameObject (name);

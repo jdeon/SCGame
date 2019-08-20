@@ -70,7 +70,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	//public abstract string initCarte (); //Besoin carte Ref
 
-	public virtual void OnMouseDown(){
+	public virtual void cadreCarburant(){
 		if (!JoueurUtils.getJoueur (idJoueurProprietaire).CarteEnVisuel) {
 			if (this is CartePlaneteMetier) {
 				((CartePlaneteMetier)this).onClick ();
@@ -119,30 +119,19 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	public virtual void generateVisualCard(){
 		string pseudo = JoueurProprietaire.Pseudo;
-		GameObject canvasGO = GameObject.Find("Canvas_" + pseudo);
+		GameObject canvasGO = UIUtils.getCanvas();
 		Text text;
 
-		if (null == canvasGO) {
-			canvasGO = new GameObject ("Canvas_" + pseudo);
-			Canvas canvas = canvasGO.AddComponent<Canvas> ();
-			canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-			canvasGO.AddComponent<CanvasScaler> ();
-			canvasGO.AddComponent<GraphicRaycaster> ();
-			canvas.pixelPerfect = true;
-		}
-
 		//TODO doit on ne pas recreer sans cesse le panel?
-			panelGO = new GameObject ("Panel_" + pseudo);
-			panelGO.AddComponent<CanvasRenderer> ();
-			panelGO.transform.SetParent (canvasGO.transform, false);
+		panelGO = new GameObject ("Panel_" + pseudo);
+		panelGO.AddComponent<CanvasRenderer> ();
+		panelGO.transform.SetParent (canvasGO.transform, false);
 
-			Image i = panelGO.AddComponent<Image> ();
-			i.sprite = ConstanteInGame.spriteBackgroundCarte;
-			i.color = getColorCarte ();
+		Image i = panelGO.AddComponent<Image> ();
+		i.sprite = ConstanteInGame.spriteBackgroundCarte;
+		i.color = getColorCarte ();
 
-			float height = Screen.height * 3 / 4;
-			float width = height / 1.5f > Screen.width ? Screen.width : height / 1.5f;
-			panelGO.GetComponent<RectTransform> ().sizeDelta = new Vector2 (width, height);
+		panelGO.GetComponent<RectTransform> ().sizeDelta = UIUtils.getUICardSize();
 
 		/**
 		(GameObject)Instantiate(Resources.Load("CarteConstructionGraphique"))

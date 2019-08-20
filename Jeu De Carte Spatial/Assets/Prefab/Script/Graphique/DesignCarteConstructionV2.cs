@@ -23,14 +23,13 @@ public class DesignCarteConstructionV2 {
 	private GameObject paternPA;
 
 	private GameObject goParent;
-
-	private Joueur joueurCliquant;
+	private Joueur joueurGenerateur;
 
 	//TODO utilsé l'id de la carte pour le nommage des objet
-	public DesignCarteConstructionV2 (GameObject goParent, float height, float width, int nbNiveau, Joueur joueurClick){
+	public DesignCarteConstructionV2 (GameObject goParent, float height, float width, int nbNiveau, bool isJoueurPossesseur, Joueur joueurGenerateur){
 
 		this.goParent = goParent;
-		this.joueurCliquant = joueurClick;
+		this.joueurGenerateur = joueurGenerateur;
 
 		GameObject paternBoutonCancel = UIUtils.createPanel("BoutonFermeture",goParent,
 			width*(ConstanteInGame.propBoutonRetour.x-0.5f),height*(0.5f-ConstanteInGame.propBoutonRetour.y),
@@ -66,6 +65,10 @@ public class DesignCarteConstructionV2 {
 			widthRessource*ConstanteInGame.propDesignNiveauRessource.z,heightRessource*ConstanteInGame.propDesignNiveauRessource.w);
 		txtNiveauActuel = UIUtils.createText ("textNiveauActuel", paternRessourceNiveauActuel,1, 0, 0,
 			.9f*widthRessource*ConstanteInGame.propDesignNiveauRessource.z, heightRessource*ConstanteInGame.propDesignNiveauRessource.w);
+		if (isJoueurPossesseur) {
+			Button buttonNiveau = paternRessourceNiveauActuel.AddComponent<Button> ();
+			buttonNiveau.onClick.AddListener (showConfirmAddLevel);
+		}
 
 		paternRessourceCarburant = UIUtils.createPanel("RessourceCarburant",paternRessource,
 			widthRessource*(ConstanteInGame.propDesignCarburantRessource.x-0.5f),heightRessource*(0.5f-ConstanteInGame.propDesignCarburantRessource.y),
@@ -110,9 +113,22 @@ public class DesignCarteConstructionV2 {
 			.9f*width*ConstanteInGame.propDesignPointDefense.z,height*ConstanteInGame.propDesignPointDefense.w);
 	}
 
-	void deleteVisual(){
-		joueurCliquant.CarteEnVisuel = false;
+	private void deleteVisual(){
+		joueurGenerateur.CarteEnVisuel = false;
 		GameObject.Destroy (goParent);
+	}
+
+	private void showConfirmAddLevel(){
+		//TODO add cout en métal
+		//TODO afficher si achat possible
+		//TODO afficé impossible si impossible
+		UIConfirmDialog confirmDialog = new UIConfirmDialog ("Souhaitez-vous augmenter le niveau de la carte contre " + "" + " metal");
+		confirmDialog.BtnValid.onClick.AddListener (evolCard);
+		confirmDialog.showDialog ();
+	}
+
+	private void evolCard(){
+		//TODO crée fonction evol
 	}
 
 	public void setTitre (string titre){
