@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class DesignCarteConstructionV2 {
 
@@ -25,11 +26,14 @@ public class DesignCarteConstructionV2 {
 	private GameObject goParent;
 	private Joueur joueurGenerateur;
 
+	private CarteConstructionMetierAbstract carteSource;
+
 	//TODO utilsé l'id de la carte pour le nommage des objet
-	public DesignCarteConstructionV2 (GameObject goParent, float height, float width, int nbNiveau, bool isJoueurPossesseur, Joueur joueurGenerateur){
+	public DesignCarteConstructionV2 (CarteConstructionMetierAbstract carteSource, GameObject goParent, float height, float width, int nbNiveau, bool isJoueurPossesseur, Joueur joueurGenerateur){
 
 		this.goParent = goParent;
 		this.joueurGenerateur = joueurGenerateur;
+		this.carteSource = carteSource;
 
 		GameObject paternBoutonCancel = UIUtils.createPanel("BoutonFermeture",goParent,
 			width*(ConstanteInGame.propBoutonRetour.x-0.5f),height*(0.5f-ConstanteInGame.propBoutonRetour.y),
@@ -119,16 +123,28 @@ public class DesignCarteConstructionV2 {
 	}
 
 	private void showConfirmAddLevel(){
-		//TODO add cout en métal
-		//TODO afficher si achat possible
-		//TODO afficé impossible si impossible
-		UIConfirmDialog confirmDialog = new UIConfirmDialog ("Souhaitez-vous augmenter le niveau de la carte contre " + "" + " metal");
-		confirmDialog.BtnValid.onClick.AddListener (evolCard);
-		confirmDialog.showDialog ();
+
+		int nbMetalNecessaire = carteSource.getCoutMetal (carteSource.NiveauActuel + 1);
+
+		if (nbMetalNecessaire > joueurGenerateur.RessourceMetal.StockWithCapacity) {
+			UIDialogInfo infoDialog = new UIDialogInfo ("Vous n'avez pas assez de metal pour faire évoluer la carte");
+			infoDialog.showDialog ();
+		} else if (carteSource.NiveauActuel >= 5) {
+			UIDialogInfo infoDialog = new UIDialogInfo ("La carte est deja au niveau maximum");
+			infoDialog.showDialog ();
+		} else {
+			UIConfirmDialog confirmDialog = new UIConfirmDialog ("Souhaitez-vous augmenter le niveau de la carte contre " + nbMetalNecessaire + " metal");
+			confirmDialog.BtnValid.onClick.AddListener (evolCard);
+			confirmDialog.BtnValid.onClick.AddListener (confirmDialog.hideDialog);
+			confirmDialog.showDialog ();
+		}
+
 	}
 
 	private void evolCard(){
-		//TODO crée fonction evol
+		ActionEventManager.EventActionManager.CreateTask (carteSource.netId, joueurGenerateur.netId, carteSource.IdISelectionnable,
+			ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE, NetworkInstanceId.Invalid, false);
+		
 	}
 
 	public void setTitre (string titre){

@@ -16,10 +16,6 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 	protected CarteConstructionDTO carteRef;
 
-	/*protected GameObject paternCarteConstruction;
-
-	protected GameObject paternRessourceCarbu;*/
-
 	protected DesignCarteConstructionV2 designCarte;
 
 	public string initCarte (CarteConstructionDTO initCarteRef, bool isServer){
@@ -61,9 +57,9 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		int coutMetal = 0;
 
 		//La construction n'est pas au niveau maximum
-		if (numLvl < carteRef.ListNiveau.Count) {
+		if (numLvl > 0 && numLvl <= carteRef.ListNiveau.Count) {
 			//cout du prochain niveau
-			coutMetal = CapaciteUtils.valeurAvecCapacite (carteRef.ListNiveau [numLvl].Cout, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_COUT_CONSTRUCTION);
+			coutMetal = CapaciteUtils.valeurAvecCapacite (carteRef.ListNiveau [numLvl - 1].Cout, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_COUT_CONSTRUCTION);
 		}
 			
 		return coutMetal;
@@ -96,6 +92,28 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		this.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
 	}
 
+	public void evolutionCarte (int nbNiveau, NetworkInstanceId netIdTask){
+		int evolutionRestante = nbNiveau;
+		if (nbNiveau > 0) {
+			while (nbNiveau > 0) {
+				if (niveauActuel <= 5 && JoueurProprietaire.RessourceMetal.Stock >= getCoutMetal (niveauActuel + 1)) {
+					JoueurProprietaire.RessourceMetal.Stock -= getCoutMetal (niveauActuel + 1);
+					niveauActuel++;
+				} else {
+					break;
+				}
+			}
+
+			JoueurProprietaire.RessourceMetal.updateVisual ();
+			designCarte.setNiveauActuel (niveauActuel);
+
+		} else if (nbNiveau < 0) {
+			//Si perte de niveau, pas de consommation de ressource
+			niveauActuel += nbNiveau;
+			designCarte.setNiveauActuel (niveauActuel);
+		}
+	}
+
 	//Affiche la carte si clique dessus
 	public virtual void generateVisualCard() {
 		if (!JoueurProprietaire.CarteEnVisuel) {
@@ -112,8 +130,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 				nbNiveau--;
 			}
 
-			//TODO le joueur envoyé devrait être celui qui clique
-			designCarte = new DesignCarteConstructionV2 (panelGO, height, width, nbNiveau,JoueurProprietaire);
+			designCarte = new DesignCarteConstructionV2 (this, panelGO, height, width, nbNiveau, JoueurProprietaire.isLocalPlayer, JoueurUtils.getJoueurLocal());
 
 			designCarte.setTitre (carteSource.TitreCarte);
 			designCarte.setImage (Resources.Load<Sprite>(carteSource.ImagePath));
@@ -280,6 +297,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		ActionEventManager.onInvocation += useInvocationCapacity;
 		ActionEventManager.onRecoitDegat += useRecoitDegatCapacity;
 		ActionEventManager.onCardDeplacement += useDeplacementCapacity;
+		ActionEventManager.onCardEvolution += useEvolutionCapacity;
 	}
 
 
@@ -399,6 +417,16 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 			foreach (CapaciteDTO capacite in capaciteDeplacementAttaque) {
 				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_DEPLACEMENT_STANDART, netIdTaskEvent);
+			}
+		}
+	}
+
+	public void useEvolutionCapacity (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
+		if (this.getConteneur () is EmplacementMetierAbstract) {
+			List<CapaciteDTO> capacitesEvolution = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE);
+
+			foreach (CapaciteDTO capacite in capacitesEvolution) {
+				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE, netIdTaskEvent);
 			}
 		}
 	}

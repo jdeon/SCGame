@@ -68,6 +68,7 @@ public class ActionEventManager : NetworkBehaviour {
 	public static event CardEventHandler onInvocation;
 	public static event CardEventHandler onRecoitDegat;
 	public static event CardEventHandler onCardDeplacement;
+	public static event CardEventHandler onCardEvolution;
 
 	[Command]
 	public void CmdPiocheConstruction (NetworkInstanceId netIdJoueur,  NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
@@ -188,6 +189,16 @@ public class ActionEventManager : NetworkBehaviour {
 
 		if (null != carteOrigineAction && null != onCardDeplacement) {
 			onCardDeplacement (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
+		}
+	}
+
+	[Command]
+	public void CmdCardEvolution (NetworkInstanceId netIdJoueur,  NetworkInstanceId netIdCarteSource, int idSelectionnableCible, NetworkInstanceId netIdTaskEvent){
+		CarteMetierAbstract carteOrigineAction = ConvertUtils.convertNetIdToScript<CarteMetierAbstract> (netIdCarteSource, false);
+		ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionnableCible);
+
+		if (null != onPiocheConstruction&& null != onCardEvolution) {
+			onCardEvolution (netIdJoueur, carteOrigineAction, cible, netIdTaskEvent);
 		}
 	}
 		
