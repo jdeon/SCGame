@@ -99,6 +99,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 				if (niveauActuel <= 5 && JoueurProprietaire.RessourceMetal.Stock >= getCoutMetal (niveauActuel + 1)) {
 					JoueurProprietaire.RessourceMetal.Stock -= getCoutMetal (niveauActuel + 1);
 					niveauActuel++;
+					nbNiveau--;
 				} else {
 					break;
 				}
@@ -386,7 +387,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	}
 
 	public void useInvocationCapacity(NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
-		if (this.getConteneur () is EmplacementMetierAbstract) {
+		if (this.getConteneur () is EmplacementMetierAbstract) {//TODO uniquement carte en jeu affecte?
 			List<CapaciteDTO> capaciteInvocation = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_INVOCATION);
 
 			foreach (CapaciteDTO capacite in capaciteInvocation) {
@@ -422,16 +423,21 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	}
 
 	public void useEvolutionCapacity (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
-		if (this.getConteneur () is EmplacementMetierAbstract) {
-			List<CapaciteDTO> capacitesEvolution = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE);
-
+		if (this.getConteneur () is EmplacementMetierAbstract || this == cible) {//TODO uniquement carte en jeu affecte?
+			EventTask eventTask = ConvertUtils.convertNetIdToScript<EventTask> (netIdTaskEvent, isLocalPlayer);
+			List<CapaciteDTO> capacitesEvolution = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, this.NiveauActuel + eventTask.InfoComp, ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE);
 			foreach (CapaciteDTO capacite in capacitesEvolution) {
 				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE, netIdTaskEvent);
 			}
 		}
 	}
 
-	private List<CapaciteDTO> getListCapaciteToCall(NetworkInstanceId netIdJoueur, NetworkInstanceId netCarteSource,int idTypActionCapacite){
+	private List<CapaciteDTO> getListCapaciteToCall(NetworkInstanceId netIdJoueur, NetworkInstanceId netCarteSource, int idTypActionCapacite){
+		return getListCapaciteToCall (netIdJoueur, netCarteSource, this.NiveauActuel, idTypActionCapacite);
+	}
+
+
+	private List<CapaciteDTO> getListCapaciteToCall(NetworkInstanceId netIdJoueur, NetworkInstanceId netCarteSource, int nivCard, int idTypActionCapacite){
 		List<CapaciteDTO> capaciteToCall = new List<CapaciteDTO> ();
 
 		int valeurIncapacite = 0;
@@ -444,7 +450,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		}
 
 		if (valeurIncapacite == 0) {
-			for (int nivCapacity = 1; nivCapacity <= this.NiveauActuel; nivCapacity++) {
+			for (int nivCapacity = 1; nivCapacity <= nivCard; nivCapacity++) {
 				foreach (CapaciteDTO capacite in carteRef.ListNiveau[nivCapacity-1].Capacite) {
 					if (CapaciteUtils.isCapaciteCall (capacite, idTypActionCapacite, netIdJoueur == this.idJoueurProprietaire, this.netId == netCarteSource)) {
 						capaciteToCall.Add (capacite);

@@ -32,6 +32,9 @@ public class EventTask : NetworkBehaviour {
 	[SyncVar]
 	protected bool finish = false;
 
+	[SyncVar]
+	protected int infoComp = 0;
+
 	public void initVariable(NetworkInstanceId origin, NetworkInstanceId joueur, int target, int typeEvent, bool createTaskBrother){
 		this.originAction = origin;
 		this.idSelectionnableTarget = target;
@@ -79,7 +82,7 @@ public class EventTask : NetworkBehaviour {
 			netIdParentFuturTask = NetworkInstanceId.Invalid;
 		}
 
-		EventTaskUtils.launchEventAction (this.typeEvent, this.originAction, this.joueur, this.idSelectionnableTarget, netIdParentFuturTask);
+		EventTaskUtils.launchEventAction (this.typeEvent, this.originAction, this.joueur, this.idSelectionnableTarget, this.infoComp, netIdParentFuturTask);
 		//TODO annimation 
 		endOfTask();
 	}
@@ -114,5 +117,10 @@ public class EventTask : NetworkBehaviour {
 
 	public bool EnCours {
 		get {return this.activate && !(this.pause || this.finish);}
+	}
+
+	public int InfoComp {
+		get{ return infoComp; }
+		set { infoComp = value; }
 	}
 }

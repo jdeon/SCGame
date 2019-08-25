@@ -62,17 +62,17 @@ public class EventTaskUtils  {
 	}
 
 
-		public static void launchEventAction (int idActionEvent, NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction,int idSelectionCible, NetworkInstanceId netIdEventTask){
+	public static void launchEventAction (int idActionEvent, NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction,int idSelectionCible,int infoComp, NetworkInstanceId netIdEventTask){
 		NetworkBehaviour scriptSource = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (netIdSourceAction, false);
+		bool actionTrouvee = false;
 		//TODO remplacer les -1
 
 		if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_CONSTRUCTION) {
-
 			if (scriptSource is CarteConstructionMetierAbstract) {
 				((CarteConstructionMetierAbstract)scriptSource).CmdPiocheCard (netIdJoueurSourceAction);
-			} else {
-				aucuneActionEffectuer ();
+				actionTrouvee = true;
 			}
+
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_PIOCHE_AMELIORATION) {
 			//TODO
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_POSE_CONSTRUCTION 
@@ -87,8 +87,7 @@ public class EventTaskUtils  {
 				if (((CarteConstructionMetierAbstract)scriptSource).isDeplacable()) {
 					EmplacementUtils.putCardFromServer ((IConteneurCarte)cible, (CarteConstructionMetierAbstract) scriptSource);
 				}
-			} else {
-				aucuneActionEffectuer ();
+				actionTrouvee = true;
 			}
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DEBUT_TOUR) {
@@ -96,8 +95,7 @@ public class EventTaskUtils  {
 			Joueur joueur = ConvertUtils.convertNetIdToScript<Joueur> (netIdJoueurSourceAction, false);
 			if (null != joueur) {
 				TourJeuSystem.getTourSystem ().debutTour (joueur);
-			} else {
-				aucuneActionEffectuer ();
+				actionTrouvee = true;
 			}
 				
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR) {
@@ -105,8 +103,7 @@ public class EventTaskUtils  {
 			Joueur joueur = ConvertUtils.convertNetIdToScript<Joueur> (netIdJoueurSourceAction, false);
 			if (null != joueur) {
 				TourJeuSystem.getTourSystem ().finTour (joueur);
-			} else {
-				aucuneActionEffectuer ();
+				actionTrouvee = true;
 			}
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_ATTAQUE && scriptSource is IAttaquer) {
@@ -114,17 +111,18 @@ public class EventTaskUtils  {
 
 			if (null != cible && cible is CarteConstructionMetierAbstract) {
 				((IAttaquer)scriptSource).attaqueCarte ((CarteConstructionMetierAbstract)cible, netIdEventTask);
+				actionTrouvee = true;
 			} else if (null != cible && cible is CartePlaneteMetier) {
 				((IAttaquer)scriptSource).attaquePlanete ((CartePlaneteMetier)cible, netIdEventTask);
-			} else {
-				aucuneActionEffectuer ();
-			}
+				actionTrouvee = true;
+			} 
 				
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DEFEND  && scriptSource is CarteMetierAbstract) {
 			ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionCible);
 
 			if (null != cible && cible is CarteVaisseauMetier && scriptSource is IDefendre) {
 				((IDefendre)scriptSource).defenseSimultanee ((CarteVaisseauMetier)cible, netIdEventTask);
+				actionTrouvee = true;
 			} else if (scriptSource is CartePlaneteMetier) {
 
 				List<CarteConstructionMetierAbstract> listDefenseur = CarteUtils.getListCarteCapableDefendrePlanete (((CartePlaneteMetier)scriptSource).JoueurProprietaire);
@@ -141,9 +139,8 @@ public class EventTaskUtils  {
 				} 
 					
 				ActionEventManager.EventActionManager.CreateTask (scriptSource.netId, ((CartePlaneteMetier)scriptSource).JoueurProprietaire.netId, cible.IdISelectionnable , ConstanteIdObjet.ID_CONDITION_ACTION_RECOIT_DEGAT, netIdEventTask, false);
-					
-			} else {
-				aucuneActionEffectuer ();
+				actionTrouvee = true;
+
 			}
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_UTILISE) {
@@ -153,10 +150,12 @@ public class EventTaskUtils  {
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE && scriptSource is IVulnerable) {
 				
 			((IVulnerable)scriptSource).destruction (netIdEventTask);
+			actionTrouvee = true;
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE) {
 
 			ActionEventManager.EventActionManager.CreateTask (NetworkInstanceId.Invalid, netIdJoueurSourceAction, -1, ConstanteIdObjet.ID_CONDITION_ACTION_FIN_TOUR, NetworkInstanceId.Invalid, false);
+			actionTrouvee = true;
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_GAIN_XP) {
 
@@ -170,12 +169,13 @@ public class EventTaskUtils  {
 
 			ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionCible);
 
+			//TODO mettre degat dans info comp
 			if (null != cible && cible is CarteVaisseauMetier) {
 				((IVulnerable)scriptSource).recevoirDegat (((CarteVaisseauMetier)cible).getPointDegat(), (CarteVaisseauMetier)cible, netIdEventTask);
+				actionTrouvee = true;
 			} else if (null != cible && cible is CarteDefenseMetier) {
 				((IVulnerable)scriptSource).recevoirDegat (((CarteDefenseMetier)cible).getPointDegat(), (CarteDefenseMetier)cible, netIdEventTask);
-			} else {
-				aucuneActionEffectuer ();
+				actionTrouvee = true;
 			}
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE) {
@@ -183,12 +183,13 @@ public class EventTaskUtils  {
 			ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionCible);
 
 			if (null != cible && cible is CarteConstructionMetierAbstract) {
-				((CarteConstructionMetierAbstract)cible).evolutionCarte (1, netIdEventTask); //TODO get nb niveau
-			} else {
-				aucuneActionEffectuer ();
-			}
+				((CarteConstructionMetierAbstract)cible).evolutionCarte (infoComp, netIdEventTask); 
+				actionTrouvee = true;
+			} 
 
-		} else {
+		} 
+
+		if (!actionTrouvee) {
 			aucuneActionEffectuer ();
 		}
 	}

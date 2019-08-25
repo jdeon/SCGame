@@ -37,10 +37,18 @@ public class EventTaskChoixCible : EventTask {
 
 				while (SelectionCibles.ListIdCiblesProbables.Count > selectionCibles.NbCible) {
 					int indexToDelete = Random.Range (0, selectionCibles.ListIdCiblesProbables.Count);
-					SelectionCibles.ListIdCiblesProbables.RemoveAt (indexToDelete);
+					int i = 0;
+					foreach (int idCibleProbale in SelectionCibles.ListIdCiblesProbables) {
+						if (i == indexToDelete) {
+							SelectionCibles.ListIdCiblesProbables.Remove (idCibleProbale);
+							break;
+						} else {
+							i++;
+						}
+					}
 				}
 
-				ActionEventManager.EventActionManager.CmdExecuteCapacity (SelectionCibles.ListIdCiblesProbables.ToArray(), netId);
+				ActionEventManager.EventActionManager.CmdExecuteCapacity (ConvertUtils.convertHashsetToArray<int>(SelectionCibles.ListIdCiblesProbables), netId);
 
 				finish = true;
 			}
@@ -97,7 +105,7 @@ public class EventTaskChoixCible : EventTask {
 					selectionCibles.ListIdCiblesProbables.Add(cible.IdISelectionnable);
 				}
 
-				ActionEventManager.EventActionManager.CmdExecuteCapacity (selectionCibles.ListIdCiblesProbables.ToArray(), netId);
+				ActionEventManager.EventActionManager.CmdExecuteCapacity (ConvertUtils.convertHashsetToArray<int>(selectionCibles.ListIdCiblesProbables), netId);
 			} else {
 				NetworkBehaviour netBehaviour = ConvertUtils.convertNetIdToScript<NetworkBehaviour> (originAction, true);
 				ISelectionnable cible = SelectionnableUtils.getSelectiobleById (this.idSelectionnableTarget);
@@ -134,7 +142,7 @@ public class EventTaskChoixCible : EventTask {
 	public void RpcInitSelectionForClient(int[] arrayCibleProbable, int nbChoixMax, int idCapacite, int idTypeCapacite){
 		if (!isServer) { //On ecrase pas les données de l'hote
 
-			List <int> listCibleProbable = new List<int> (arrayCibleProbable);
+			HashSet <int> listCibleProbable = new HashSet<int> (arrayCibleProbable);
 
 			selectionCibles.initSelectionForClient(listCibleProbable, nbChoixMax, idCapacite, idTypeCapacite);
 		}
@@ -153,7 +161,7 @@ public class EventTaskChoixCible : EventTask {
 				this.typeEvent = selectionCibles.IdActionAppelante;
 			}
 
-			RpcInitSelectionForClient (selectionCibles.ListIdCiblesProbables.ToArray(), selectionCibles.NbCible, selectionCibles.IdCapaciteSource, selectionCibles.IdTypeCapacite);
+			RpcInitSelectionForClient (ConvertUtils.convertHashsetToArray<int>(selectionCibles.ListIdCiblesProbables), selectionCibles.NbCible, selectionCibles.IdCapaciteSource, selectionCibles.IdTypeCapacite);
 		}
 	}
 

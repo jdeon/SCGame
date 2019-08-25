@@ -17,7 +17,7 @@ public struct SelectionCiblesExecutionCapacite {
 
 	private NetworkInstanceId idJoueurCarteSource;
 
-	private List<int> listIdCiblesProbables;
+	private HashSet<int> listIdCiblesProbables;
 
 	private List<int> listIdRessouceCible;
 
@@ -38,7 +38,7 @@ public struct SelectionCiblesExecutionCapacite {
 		this.idActionAppelante = idActionAppelante;
 		this.idCarteSource = carteSource.netId;
 		this.idJoueurCarteSource = carteSource.JoueurProprietaire.netId;
-		this.listIdCiblesProbables = new List<int> ();
+		this.listIdCiblesProbables = new HashSet<int> ();
 
 		this.listIdRessouceCible = null;
 	}
@@ -54,7 +54,7 @@ public struct SelectionCiblesExecutionCapacite {
 		this.idActionAppelante = idActionAppelante;
 		this.idCarteSource = carteSource.netId;
 		this.idJoueurCarteSource = carteSource.JoueurProprietaire.netId;
-		this.listIdCiblesProbables = new List<int> ();
+		this.listIdCiblesProbables = new HashSet<int> ();
 
 		this.listIdRessouceCible = null;
 	}
@@ -67,7 +67,7 @@ public struct SelectionCiblesExecutionCapacite {
 		}
 	}
 
-	public void initSelectionForClient(List<int> listCibleProbable, int nbChoixMax, int idCapacite, int idTypeCapacite){
+	public void initSelectionForClient(HashSet<int> listCibleProbable, int nbChoixMax, int idCapacite, int idTypeCapacite){
 		this.listIdCiblesProbables = listCibleProbable;
 		this.nbChoixCible = nbChoixMax;
 		this.idCapaciteSource = idCapacite;
@@ -99,7 +99,7 @@ public struct SelectionCiblesExecutionCapacite {
 	}
 
 
-	public List<int> ListIdCiblesProbables{
+	public HashSet<int> ListIdCiblesProbables{
 		get{ return listIdCiblesProbables; }
 	}
 

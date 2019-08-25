@@ -142,8 +142,9 @@ public class DesignCarteConstructionV2 {
 	}
 
 	private void evolCard(){
-		ActionEventManager.EventActionManager.CreateTask (carteSource.netId, joueurGenerateur.netId, carteSource.IdISelectionnable,
+		EventTask eventTask =  ActionEventManager.EventActionManager.CreateTask (carteSource.netId, joueurGenerateur.netId, carteSource.IdISelectionnable,
 			ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE, NetworkInstanceId.Invalid, false);
+		eventTask.InfoComp = 1;
 		
 	}
 

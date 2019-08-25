@@ -31,4 +31,16 @@ public class ConvertUtils {
 
 		return result;
 	}
+
+	public static T[] convertHashsetToArray<T> (HashSet<T> hashsetToChange){
+		T[] result = new T[hashsetToChange.Count];
+		int i = 0;
+
+		foreach (T toConvert in hashsetToChange) {
+			result [i] = toConvert;
+			i++;
+		}
+
+		return result;
+	}
 }

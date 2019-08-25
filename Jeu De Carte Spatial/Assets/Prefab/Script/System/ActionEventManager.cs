@@ -202,7 +202,9 @@ public class ActionEventManager : NetworkBehaviour {
 		}
 	}
 		
-	public void CreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask, bool createTaskBrother){
+	public EventTask CreateTask(NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask, bool createTaskBrother){
+		EventTask taskCreate = null;
+
 		if (isServer) {
 			GameObject eventTaskGO = Instantiate<GameObject> (ConstanteInGame.eventTaskPrefab);
 
@@ -216,14 +218,16 @@ public class ActionEventManager : NetworkBehaviour {
 
 			eventTaskGO.transform.SetParent (eventParnetTaskGO.transform);
 
-			EventTask eventTask = eventTaskGO.GetComponent<EventTask> ();
+			taskCreate = eventTaskGO.GetComponent<EventTask> ();
 
-			eventTask.initVariable (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, createTaskBrother);
+			taskCreate.initVariable (netIdSourceAction, netIdJoueurSourceAction, idSelectionCible, typeAction, createTaskBrother);
 
 			NetworkServer.Spawn (eventTaskGO);
 		} else {
 			print ("Create Task call on client");
 		}
+
+		return taskCreate;
 	}
 		
 	public void createTaskChooseTarget(SelectionCiblesExecutionCapacite selectionCibles,NetworkInstanceId netIdSourceAction, NetworkInstanceId netIdJoueurSourceAction, int idSelectionCible, int typeAction, NetworkInstanceId netIdParentTask){
@@ -255,7 +259,7 @@ public class ActionEventManager : NetworkBehaviour {
 	public void CmdExecuteCapacity(int[] listCibleProbable, NetworkInstanceId netIdEventTask){
 		EventTaskChoixCible eventSource = ConvertUtils.convertNetIdToScript<EventTaskChoixCible>(netIdEventTask,false);
 		eventSource.SelectionCibles.ListIdCiblesProbables.Clear();
-		eventSource.SelectionCibles.ListIdCiblesProbables.AddRange (listCibleProbable);
+		eventSource.SelectionCibles.ListIdCiblesProbables.UnionWith (listCibleProbable);
 
 		//TODO modifier
 		CapaciteUtils.executeCapacity (eventSource.SelectionCibles, netIdEventTask);

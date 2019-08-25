@@ -172,14 +172,15 @@ public class CapaciteUtils {
 			capacite.Capacite = Random.Range (1, 40);
 		}
 
-
 		if (ConditionCarteUtils.listIdCapacitePourCarte.Contains (capacite.Capacite) && (null == cible || cible is CarteMetierAbstract)) {
 			List<CarteMetierAbstract> cartesCible = getCartesCible (carteSourceCapacite, (CarteMetierAbstract)cible, capacite, netIdJoueur);
 			//TODO use ConstanteIdObjet.ID_CAPACITE_CONDITION
 			selectionCiblesResult = new SelectionCiblesExecutionCapacite(capacite, carteSourceCapacite, actionAppelante);
 
 			foreach (CarteMetierAbstract cibleProbable in cartesCible) {
-				selectionCiblesResult.ListIdCiblesProbables.Add (cibleProbable.IdISelectionnable);
+				if(!selectionCiblesResult.ListIdCiblesProbables.Contains(cibleProbable.IdISelectionnable)){
+					selectionCiblesResult.ListIdCiblesProbables.Add (cibleProbable.IdISelectionnable);
+				}
 			}
 		} else {
 			selectionCiblesResult = findCiblesHorsCarte (capacite, carteSourceCapacite,carteSourceAction, netIdJoueur, NetworkInstanceId.Invalid /*TODO cible.netIdJoueurCible*/, actionAppelante);
@@ -428,6 +429,9 @@ public class CapaciteUtils {
 			//TODO en cas de nombre nzgatif desactiver emplacement
 			//TODO en cas de nombre positif mettre l'emplacement sur un autre
 
+		} else {
+			CapaciteMetier capaciteMetier = convertCapaciteDTOToMetier (capacite, netIdCarteSourceCapacite);
+			cible.addCapacity (capaciteMetier);
 		}
 	}
 
