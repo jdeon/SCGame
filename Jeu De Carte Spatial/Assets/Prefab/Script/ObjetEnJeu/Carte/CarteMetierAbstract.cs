@@ -70,7 +70,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	//public abstract string initCarte (); //Besoin carte Ref
 
-	public virtual void cadreCarburant(){
+	public virtual void OnMouseDown(){
 		if (!JoueurUtils.getJoueur (idJoueurProprietaire).CarteEnVisuel) {
 			if (this is CartePlaneteMetier) {
 				((CartePlaneteMetier)this).onClick ();
@@ -153,6 +153,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		beanTextCarte = GenerateCardUtils.generateCardBase (this, this.id);
 		faceCarteGO = beanTextCarte.goFaceCarte;
 	}
+
+	protected abstract void updateVisuals ();
 		
 
 	/*********************************IAvecCapacite*********************/

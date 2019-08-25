@@ -9,7 +9,7 @@ public class UIDialogInfo : UIDialogAbstract {
 
 	public UIDialogInfo(string descriptionAction) : base (descriptionAction) {
 
-		GameObject goBoutonCancel = UIUtils.createPanel("BoutonCancel",goDialog,width*(0.25f),height*(-.25f), width*.25f,height*.25f);
+		GameObject goBoutonCancel = UIUtils.createPanel("BoutonCancel",goDialog,0f,height*(-.25f), width*.25f,height*.25f);
 		Text txtCancel = UIUtils.createText ("TextValidCancel", goBoutonCancel, 1, 0, 0, .9f * width * .25f, height * .25f);
 		txtCancel.text = "Retour";
 		btnCancel = goBoutonCancel.AddComponent<Button> ();
