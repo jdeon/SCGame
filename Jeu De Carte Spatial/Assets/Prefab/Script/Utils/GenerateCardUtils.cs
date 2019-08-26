@@ -282,7 +282,7 @@ public class GenerateCardUtils {
 		beanTextCarte.txtPointAttaque = txtPA;
 	}
 		
-	private static Sprite getSpriteNiveau(int niveau){
+	public static Sprite getSpriteNiveau(int niveau){
 		Sprite result = null;
 
 		switch (niveau) {	

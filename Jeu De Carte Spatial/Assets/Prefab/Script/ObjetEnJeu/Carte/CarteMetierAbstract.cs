@@ -283,7 +283,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 			this.listEffetCapacite = listCapacite;
 		}
 
-		//TODO update visual
+		updateVisuals ();
 	}
 
 	[ClientRpc]

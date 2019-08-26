@@ -228,6 +228,15 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		GenerateCardUtils.generateAttaquePartCard (this, id, beanTextCarte);
 	}
 
+	protected override void updateVisuals (){
+		base.updateVisuals ();
+		beanTextCarte.txtPointAttaque.text = "Att - " + getPointAttaque();
+		beanTextCarte.txtCarburant.text = "C - " + getConsomationCarburant() ;
+
+		designCarte.setPA (getPointAttaque());
+		designCarte.setCarburant (getConsomationCarburant());
+	}
+
 	public override Color getColorCarte (){
 		return ConstanteInGame.colorVaisseau;
 	}

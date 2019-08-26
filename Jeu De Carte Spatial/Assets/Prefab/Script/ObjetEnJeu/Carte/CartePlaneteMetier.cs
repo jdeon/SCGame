@@ -167,6 +167,11 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 		txtPointVie = GenerateObjectUtils.createText ("pointVie", new Vector3 (0, 0.01f, -.75f), Quaternion.identity, new Vector3 (2f, 1, .5f), 14, goCartePlanete);
 		txtPointVie.text = "PV - " + pointVie;
 	}
+
+	protected override void updateVisuals (){
+		txtPointVie.text = "PV - " + pointVie;
+		//TODO carte virtuel
+	}
 		
 	public void onChangePointVie(int PV){
 		if (null != txtPointVie) {

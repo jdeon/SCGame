@@ -42,15 +42,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	}
 
 	public int getCoutMetal(){
-		int coutMetal = 0;
-
-		//La construction n'est pas au niveau maximum
-		if (NiveauActuel < carteRef.ListNiveau.Count) {
-			//cout du prochain niveau
-			coutMetal = CapaciteUtils.valeurAvecCapacite (carteRef.ListNiveau [NiveauActuel].Cout, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_COUT_CONSTRUCTION);
-		}
-			
-		return coutMetal;
+		return getCoutMetal(niveauActuel);
 	}
 
 	public int getCoutMetal(int numLvl){
@@ -223,6 +215,19 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	public virtual void generateGOCard(){
 		base.generateGOCard ();
 		GenerateCardUtils.generateConstructionPartCard (this, id, beanTextCarte);
+	}
+
+	protected override void updateVisuals (){
+		//Update carte physique
+		beanTextCarte.txtMetal.text = "M - " + getCoutMetal ();
+		beanTextCarte.txtPointDefense.text = "Def - " + PV;
+		beanTextCarte.goNiveau.GetComponent<Renderer> ().material.SetTexture ("_DetailAlbedoMap", GenerateCardUtils.getSpriteNiveau (NiveauActuel).texture);
+
+		//Update carte virtuel
+		designCarte.setPD (this.PV);
+		designCarte.setMetal (getCoutMetal());
+		designCarte.setNiveauActuel (NiveauActuel);
+	
 	}
 
 	/***********************IVulnerable*****************/

@@ -54,6 +54,13 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		GenerateCardUtils.generateAttaquePartCard (this, id, beanTextCarte);
 	}
 
+	protected override void updateVisuals (){
+		base.updateVisuals ();
+		beanTextCarte.txtPointAttaque.text = "Att - " + getPointAttaque();
+
+		designCarte.setPA (getPointAttaque());
+	}
+
 	public override Color getColorCarte (){
 		return ConstanteInGame.colorDefense;
 	}
