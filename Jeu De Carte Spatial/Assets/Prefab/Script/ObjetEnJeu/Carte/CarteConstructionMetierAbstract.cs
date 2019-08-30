@@ -116,14 +116,8 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 			float width = panelGO.GetComponent<RectTransform> ().rect.width;
 
 			CarteConstructionDTO carteSource = getCarteRef ();
-			int nbNiveau = carteSource.ListNiveau.Count;
 
-			//On supprime le premier niveau s'il est vide
-			if (nbNiveau > 1 && carteSource.ListNiveau [0].TitreNiveau == "") {
-				nbNiveau--;
-			}
-
-			designCarte = new DesignCarteConstructionV2 (this, panelGO, height, width, nbNiveau, JoueurProprietaire.isLocalPlayer, JoueurUtils.getJoueurLocal());
+			designCarte = new DesignCarteConstructionV2 (this, panelGO, height, width, JoueurProprietaire.isLocalPlayer, JoueurUtils.getJoueurLocal());
 
 			designCarte.setTitre (carteSource.TitreCarte);
 			designCarte.setImage (Resources.Load<Sprite>(carteSource.ImagePath));
@@ -143,11 +137,6 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 					premierNivCache = true;
 					continue;
 				}
-
-				//On affiche le cout uniquement
-				int cout = NiveauActuel < index + 1 ? niveau.Cout : 0;
-
-				designCarte.setNiveau (premierNivCache ? index : index + 1, niveau.TitreNiveau, niveau.DescriptionNiveau, niveau.Cout);
 			}
 
 			//TODO calcul PA, PD, ...

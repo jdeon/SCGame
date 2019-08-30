@@ -47,14 +47,9 @@ public class UICollapseElement : MonoBehaviour {
 	private UICollapseGroup collapseGroup;
 
 	// Use this for initialization
-	void Start () {
+	public void initialisationEmement (UICollapseGroup groupParent) {
+		this.collapseGroup = groupParent;
 		onChange = false;
-
-		collapseGroup = gameObject.GetComponent<UICollapseGroup>();
-
-		if (null != collapseGroup) {
-			collapseGroup.initializeGroup ();
-		}
 
 		heightParent = gameObject.GetComponent<RectTransform>().rect.height;
 		witdhParent = gameObject.GetComponent<RectTransform>().rect.width;
@@ -63,6 +58,8 @@ public class UICollapseElement : MonoBehaviour {
 		rectTitre = panelTitre.GetComponent<RectTransform> ();
 		txtTitre = UIUtils.createTextStretch ("Titre_Texte_UICollapseElement", panelTitre,(int) (rectTitre.sizeDelta.y * .75f / 2), 5, 5, 5, 5);
 		txtTitre.text = titre;
+		Button boutonCollapse = panelTitre.AddComponent<Button> ();
+		boutonCollapse.onClick.AddListener (collapseChange);
 
 		//On ancre le panel de description au centre en haut à la limite du panel titre
 		GameObject panelDescription = UIUtils.createPanelAnchorCenterHigh ("Description_UICollapseElement", gameObject, ancreSuperieur.x, ancreSuperieur.y-tailleTitre, witdhParent, collapse? 0 : tailleDescription);
@@ -79,7 +76,6 @@ public class UICollapseElement : MonoBehaviour {
 
 		GameObject buttonGO = UIUtils.createPanel ("Button_UICollapseElement", panelTitre, witdhParent * 3 / 8, 0, witdhParent/8, tailleTitre/2);
 		buttonAction = buttonGO.AddComponent<Button> ();
-		buttonAction.onClick.AddListener (collapseChange);
 
 	}
 
@@ -213,5 +209,9 @@ public class UICollapseElement : MonoBehaviour {
 	public string Description{  
 		get{return description;}
 		set{description = value;}
+	}
+
+	public Button BoutonAction {
+		get { return buttonAction; }
 	}
 }

@@ -29,7 +29,7 @@ public class DesignCarteConstructionV2 {
 	private CarteConstructionMetierAbstract carteSource;
 
 	//TODO utilsé l'id de la carte pour le nommage des objet
-	public DesignCarteConstructionV2 (CarteConstructionMetierAbstract carteSource, GameObject goParent, float height, float width, int nbNiveau, bool isJoueurPossesseur, Joueur joueurGenerateur){
+	public DesignCarteConstructionV2 (CarteConstructionMetierAbstract carteSource, GameObject goParent, float height, float width, bool isJoueurPossesseur, Joueur joueurGenerateur){
 
 		this.goParent = goParent;
 		this.joueurGenerateur = joueurGenerateur;
@@ -87,16 +87,29 @@ public class DesignCarteConstructionV2 {
 		collapseGroup = paternListNiveaux.AddComponent<UICollapseGroup> ();
 		List<UICollapseElement> listCollapseElement = new List<UICollapseElement> ();
 
-		for (int i = 0; i < nbNiveau; i++) {
-			UICollapseElement collapseElement = paternListNiveaux.AddComponent<UICollapseElement> ();
-			collapseElement.TailleTitre = 50;
-			collapseElement.TailleDescription = 75;
-			collapseElement.TempsDecompression = 3;
-			listCollapseElement.Add (collapseElement);
+		int premierNiveauAffiche = 1;
+		for (int i = 1; i <= carteSource.getCarteRef ().ListNiveau.Count; i++) {
+			//Le premier niveau n'est pas affiché si le titre est vide
+			if (i > 1 || carteSource.getCarteRef ().ListNiveau [0].TitreNiveau != "") {
+				UICollapseElement collapseElement = paternListNiveaux.AddComponent<UICollapseElement> ();
+				collapseElement.TailleTitre = 50;
+				collapseElement.TailleDescription = 75;
+				collapseElement.TempsDecompression = 3;
+				collapseElement.Titre = carteSource.getCarteRef ().ListNiveau [i-1].TitreNiveau;
+				collapseElement.Description = carteSource.getCarteRef ().ListNiveau [i-1].DescriptionNiveau;
+				listCollapseElement.Add (collapseElement);
+			} else {
+				premierNiveauAffiche = 2;
+			}
 		}
 
 		collapseGroup.ListCollapseElement = listCollapseElement;
+		collapseGroup.initializeGroup ();
 
+		for (int i = 0; i < listCollapseElement.Count; i++) {
+			gestionBoutonNiveau (listCollapseElement[i].BoutonAction, premierNiveauAffiche, isJoueurPossesseur);
+			premierNiveauAffiche++;
+		}
 
 		GameObject paternBouton = UIUtils.createPanel("BoutonAction",goParent,
 			width*(ConstanteInGame.propDesignBouton.x-0.5f),height*(0.5f-ConstanteInGame.propDesignBouton.y),
@@ -151,6 +164,61 @@ public class DesignCarteConstructionV2 {
 		
 	}
 
+	private void gestionBoutonNiveau(Button bouton, int lvl, bool isJoueurPossesseur){
+		Text textBtnLvl = getTextBouton (bouton);
+
+		if (!isJoueurPossesseur || lvl > carteSource.NiveauActuel) {
+			textBtnLvl.text = "M-" + carteSource.getCoutMetal (lvl);
+
+			if (isJoueurPossesseur && lvl == carteSource.NiveauActuel + 1) {
+				bouton.onClick.AddListener (showConfirmAddLevel);
+				bouton.interactable = true;
+			} else {
+				bouton.interactable = false;
+			}
+		} else if (lvl > 0 && lvl < carteSource.getCarteRef ().ListNiveau.Count
+		           && carteSource.getCarteRef ().ListNiveau [lvl - 1].CapaciteManuelle.Count > 0) {
+			List<CapaciteMannuelleDTO> listCapaManuelle = carteSource.getCarteRef ().ListNiveau [lvl - 1].CapaciteManuelle;
+
+			bool actionTrouve = false;
+			foreach (CapaciteMannuelleDTO capaManuelle in listCapaManuelle) {
+				if(capaManuelle.PeriodeUtilisable.Contains("5-A")){ //TODO vérifier l'ID periode
+					actionTrouve = true;
+					break;
+				}
+			}
+
+			if (actionTrouve) {
+				textBtnLvl.text = "Use";
+				bouton.onClick.RemoveAllListeners ();
+				bouton.onClick.AddListener (useCapa);
+				bouton.interactable = true;
+			} else {
+				bouton.gameObject.SetActive (false);
+			}
+
+		} else {
+			bouton.gameObject.SetActive (false);
+		}
+
+	}
+
+	private Text getTextBouton(Button bouton){
+		Text textBtnLvl;
+
+		if (null != bouton.gameObject.GetComponent<Text> ()) {
+			textBtnLvl = bouton.gameObject.GetComponentInChildren<Text> ();
+		} else {
+			textBtnLvl = UIUtils.createTextStretch ("Txt" + bouton.gameObject.name, bouton.gameObject, 10, 0, 0, 0, 0);
+		}
+
+		return textBtnLvl;
+	}
+
+	private void useCapa(){
+		//TODO
+	}
+
 	public void setTitre (string titre){
 		txtTitre.text = titre;
 	}
@@ -197,16 +265,5 @@ public class DesignCarteConstructionV2 {
 
 	public void setImage(Sprite imageSource){
 		imageCarte.sprite = imageSource; 
-	}
-
-	public void setNiveau(int numNiv, string titre, string description, int cout){
-		UICollapseElement collapseElement = collapseGroup.ListCollapseElement [numNiv - 1];
-
-		collapseElement.Titre = titre;
-		collapseElement.Description = description;
-
-		if (cout > 0) {
-			collapseElement.Titre += " (" + cout + ")";
-		}
 	}
 }

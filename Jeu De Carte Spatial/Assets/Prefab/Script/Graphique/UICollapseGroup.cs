@@ -34,6 +34,7 @@ public class UICollapseGroup : MonoBehaviour {
 				collapseElement.TailleTitre = nouvelleTaille;
 				collapseElement.AncreSuperieur = ancreCoordonne;
 				collapseElement.Collapse = true;
+				collapseElement.initialisationEmement (this);
 				ancreCoordonne.y -= nouvelleTaille;
 			}
 		
