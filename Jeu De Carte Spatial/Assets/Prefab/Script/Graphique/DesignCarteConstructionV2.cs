@@ -27,9 +27,10 @@ public class DesignCarteConstructionV2 {
 	private Joueur joueurGenerateur;
 
 	private CarteConstructionMetierAbstract carteSource;
+	private int premierNivDescription;
 
 	//TODO utilsé l'id de la carte pour le nommage des objet
-	public DesignCarteConstructionV2 (CarteConstructionMetierAbstract carteSource, GameObject goParent, float height, float width, bool isJoueurPossesseur, Joueur joueurGenerateur){
+	public DesignCarteConstructionV2 (CarteConstructionMetierAbstract carteSource, GameObject goParent, float height, float width, Joueur joueurGenerateur){
 
 		this.goParent = goParent;
 		this.joueurGenerateur = joueurGenerateur;
@@ -69,10 +70,6 @@ public class DesignCarteConstructionV2 {
 			widthRessource*ConstanteInGame.propDesignNiveauRessource.z,heightRessource*ConstanteInGame.propDesignNiveauRessource.w);
 		txtNiveauActuel = UIUtils.createText ("textNiveauActuel", paternRessourceNiveauActuel,1, 0, 0,
 			.9f*widthRessource*ConstanteInGame.propDesignNiveauRessource.z, heightRessource*ConstanteInGame.propDesignNiveauRessource.w);
-		if (isJoueurPossesseur) {
-			Button buttonNiveau = paternRessourceNiveauActuel.AddComponent<Button> ();
-			buttonNiveau.onClick.AddListener (showConfirmAddLevel);
-		}
 
 		paternRessourceCarburant = UIUtils.createPanel("RessourceCarburant",paternRessource,
 			widthRessource*(ConstanteInGame.propDesignCarburantRessource.x-0.5f),heightRessource*(0.5f-ConstanteInGame.propDesignCarburantRessource.y),
@@ -87,11 +84,22 @@ public class DesignCarteConstructionV2 {
 		collapseGroup = paternListNiveaux.AddComponent<UICollapseGroup> ();
 		List<UICollapseElement> listCollapseElement = new List<UICollapseElement> ();
 
-		int premierNiveauAffiche = 1;
+		this.premierNivDescription = 1;
 		for (int i = 1; i <= carteSource.getCarteRef ().ListNiveau.Count; i++) {
 			//Le premier niveau n'est pas affiché si le titre est vide
 			if (i > 1 || carteSource.getCarteRef ().ListNiveau [0].TitreNiveau != "") {
-				UICollapseElement collapseElement = paternListNiveaux.AddComponent<UICollapseElement> ();
+				UICollapseElement collapseElement;
+				List<CapaciteMannuelleDTO> listCapaManuelleCarte = carteSource.getCarteRef ().ListNiveau [i - 1].CapaciteManuelle;
+
+				if (null != listCapaManuelleCarte && listCapaManuelleCarte.Count > 0) {
+					collapseElement = paternListNiveaux.AddComponent<UICollapseUseCapa> ();
+					((UICollapseUseCapa)collapseElement).NumLvl = i;
+					((UICollapseUseCapa)collapseElement).ListCapaManuelle = listCapaManuelleCarte;
+					((UICollapseUseCapa)collapseElement).CarteSource = carteSource;
+				} else {
+					collapseElement = paternListNiveaux.AddComponent<UICollapseElement> ();
+				}
+
 				collapseElement.TailleTitre = 50;
 				collapseElement.TailleDescription = 75;
 				collapseElement.TempsDecompression = 3;
@@ -99,17 +107,14 @@ public class DesignCarteConstructionV2 {
 				collapseElement.Description = carteSource.getCarteRef ().ListNiveau [i-1].DescriptionNiveau;
 				listCollapseElement.Add (collapseElement);
 			} else {
-				premierNiveauAffiche = 2;
+				this.premierNivDescription = 2;
 			}
 		}
 
 		collapseGroup.ListCollapseElement = listCollapseElement;
 		collapseGroup.initializeGroup ();
 
-		for (int i = 0; i < listCollapseElement.Count; i++) {
-			gestionBoutonNiveau (listCollapseElement[i].BoutonAction, premierNiveauAffiche, isJoueurPossesseur);
-			premierNiveauAffiche++;
-		}
+		gestionAffichageDesBoutons ();
 
 		GameObject paternBouton = UIUtils.createPanel("BoutonAction",goParent,
 			width*(ConstanteInGame.propDesignBouton.x-0.5f),height*(0.5f-ConstanteInGame.propDesignBouton.y),
@@ -161,44 +166,34 @@ public class DesignCarteConstructionV2 {
 		EventTask eventTask =  ActionEventManager.EventActionManager.CreateTask (carteSource.netId, joueurGenerateur.netId, carteSource.IdISelectionnable,
 			ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE, NetworkInstanceId.Invalid, false);
 		eventTask.InfoComp = 1;
-		
+
 	}
 
-	private void gestionBoutonNiveau(Button bouton, int lvl, bool isJoueurPossesseur){
-		Text textBtnLvl = getTextBouton (bouton);
+	private void gestionAffichageDesBoutons(){
+		for (int i = 0; i < collapseGroup.ListCollapseElement.Count; i++) {
+			gestionBoutonNiveau (collapseGroup.ListCollapseElement[i], i + premierNivDescription);
+		}
+	}
+
+	private void gestionBoutonNiveau(UICollapseElement element, int lvl){
+		Text textBtnLvl = getTextBouton (element.BoutonAction);
+		bool isJoueurPossesseur = carteSource.NetIdJoueurPossesseur == joueurGenerateur.netId;
+		element.BoutonAction.onClick.RemoveAllListeners ();
 
 		if (!isJoueurPossesseur || lvl > carteSource.NiveauActuel) {
 			textBtnLvl.text = "M-" + carteSource.getCoutMetal (lvl);
 
 			if (isJoueurPossesseur && lvl == carteSource.NiveauActuel + 1) {
-				bouton.onClick.AddListener (showConfirmAddLevel);
-				bouton.interactable = true;
+				element.BoutonAction.onClick.AddListener (showConfirmAddLevel);
+				element.BoutonAction.interactable = true;
 			} else {
-				bouton.interactable = false;
+				element.BoutonAction.interactable = false;
 			}
-		} else if (lvl > 0 && lvl < carteSource.getCarteRef ().ListNiveau.Count
-		           && carteSource.getCarteRef ().ListNiveau [lvl - 1].CapaciteManuelle.Count > 0) {
-			List<CapaciteMannuelleDTO> listCapaManuelle = carteSource.getCarteRef ().ListNiveau [lvl - 1].CapaciteManuelle;
-
-			bool actionTrouve = false;
-			foreach (CapaciteMannuelleDTO capaManuelle in listCapaManuelle) {
-				if(capaManuelle.PeriodeUtilisable.Contains("5-A")){ //TODO vérifier l'ID periode
-					actionTrouve = true;
-					break;
-				}
-			}
-
-			if (actionTrouve) {
-				textBtnLvl.text = "Use";
-				bouton.onClick.RemoveAllListeners ();
-				bouton.onClick.AddListener (useCapa);
-				bouton.interactable = true;
-			} else {
-				bouton.gameObject.SetActive (false);
-			}
+		} else if (element is UICollapseUseCapa) {
+			((UICollapseUseCapa)element).gestionBoutonNiveau (textBtnLvl);
 
 		} else {
-			bouton.gameObject.SetActive (false);
+			element.BoutonAction.gameObject.SetActive (false);
 		}
 
 	}
@@ -215,10 +210,6 @@ public class DesignCarteConstructionV2 {
 		return textBtnLvl;
 	}
 
-	private void useCapa(){
-		//TODO
-	}
-
 	public void setTitre (string titre){
 		txtTitre.text = titre;
 	}
@@ -229,6 +220,7 @@ public class DesignCarteConstructionV2 {
 
 	public void setNiveauActuel (int numNiveau){
 		txtNiveauActuel.text = "" + numNiveau;
+		gestionAffichageDesBoutons ();
 	}
 
 	public void setCarburant (int numCarburant){

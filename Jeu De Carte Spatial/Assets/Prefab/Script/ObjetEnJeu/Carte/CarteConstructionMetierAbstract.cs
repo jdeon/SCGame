@@ -117,7 +117,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 			CarteConstructionDTO carteSource = getCarteRef ();
 
-			designCarte = new DesignCarteConstructionV2 (this, panelGO, height, width, JoueurProprietaire.isLocalPlayer, JoueurUtils.getJoueurLocal());
+			designCarte = new DesignCarteConstructionV2 (this, panelGO, height, width, JoueurUtils.getJoueurLocal());
 
 			designCarte.setTitre (carteSource.TitreCarte);
 			designCarte.setImage (Resources.Load<Sprite>(carteSource.ImagePath));
@@ -419,7 +419,10 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	public void useEvolutionCapacity (NetworkInstanceId netIdJoueur, CarteMetierAbstract carteSourceAction, ISelectionnable cible, NetworkInstanceId netIdTaskEvent){
 		if (this.getConteneur () is EmplacementMetierAbstract || this == cible) {//TODO uniquement carte en jeu affecte?
 			EventTask eventTask = ConvertUtils.convertNetIdToScript<EventTask> (netIdTaskEvent, isLocalPlayer);
-			List<CapaciteDTO> capacitesEvolution = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, this.NiveauActuel + eventTask.InfoComp, ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE);
+
+			//Si c'est cette carte qui évolue, on lui attribut ses futur niveau
+			int nbNivCapaTeste = this.IdISelectionnable == cible.IdISelectionnable ? this.NiveauActuel + eventTask.InfoComp : this.NiveauActuel;
+			List<CapaciteDTO> capacitesEvolution = getListCapaciteToCall (netIdJoueur, carteSourceAction.netId, nbNivCapaTeste, ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE);
 			foreach (CapaciteDTO capacite in capacitesEvolution) {
 				CapaciteUtils.callCapacite (this, carteSourceAction, cible, capacite, netIdJoueur, ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE, netIdTaskEvent);
 			}
@@ -444,7 +447,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		}
 
 		if (valeurIncapacite == 0) {
-			for (int nivCapacity = 1; nivCapacity <= nivCard; nivCapacity++) {
+			for (int nivCapacity = 1; nivCapacity <= nivCard && nivCapacity < carteRef.ListNiveau.Count; nivCapacity++) {
 				foreach (CapaciteDTO capacite in carteRef.ListNiveau[nivCapacity-1].Capacite) {
 					if (CapaciteUtils.isCapaciteCall (capacite, idTypActionCapacite, netIdJoueur == this.idJoueurProprietaire, this.netId == netCarteSource)) {
 						capaciteToCall.Add (capacite);
@@ -475,7 +478,9 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		get{
 			return CapaciteUtils.valeurAvecCapacite (this.niveauActuel, listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_LVL); 
 		}
-		set{niveauActuel = value;}
+		set{
+			niveauActuel = value;
+		}
 	}
 
 	public int PV {

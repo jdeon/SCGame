@@ -7,44 +7,44 @@ using UnityEngine.UI;
 public class UICollapseElement : MonoBehaviour {
 
 	[SerializeField]
-	private string titre;
+	protected string titre;
 
 	[SerializeField]
-	private string description;
+	protected string description;
 
 	[SerializeField]
-	private Vector2 ancreSuperieur;
+	protected Vector2 ancreSuperieur;
 
 	[SerializeField]
-	private int tailleTitre;
+	protected int tailleTitre;
 
 	[SerializeField]
-	private int tailleDescription;
+	protected int tailleDescription;
 
 	[SerializeField]
-	private float tempsDecompression;
+	protected float tempsDecompression;
 
 	[SerializeField]
-	private bool collapse;
+	protected bool collapse;
 
 
-	private Text txtTitre;
+	protected Text txtTitre;
 
-	private Text txtDescription;
+	protected Text txtDescription;
 
-	private Button buttonAction;
+	protected Button buttonAction;
 
-	private RectTransform rectTitre;
+	protected RectTransform rectTitre;
 
-	private RectTransform rectDescription;
+	protected RectTransform rectDescription;
 
-	private float heightParent;
+	protected float heightParent;
 
-	private float witdhParent;
+	protected float witdhParent;
 
-	private bool onChange;
+	protected bool onChange;
 
-	private UICollapseGroup collapseGroup;
+	protected UICollapseGroup collapseGroup;
 
 	// Use this for initialization
 	public void initialisationEmement (UICollapseGroup groupParent) {

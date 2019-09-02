@@ -42,4 +42,13 @@ public abstract class  UIDialogAbstract {
 	public void hideDialog(){
 		GameObject.Destroy(goDialog);
 	}
+
+	public Vector3 Anchor {
+		get { return goDialog.transform.localPosition; }
+		set { goDialog.transform.localPosition = value; }
+	}
+
+	public Vector2 Size {
+		get { return goDialog.GetComponent<RectTransform> ().sizeDelta; }
+	}
 }

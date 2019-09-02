@@ -30,4 +30,8 @@ public class UIDialogInfo : UIDialogAbstract {
 	public Button BtnCancel{
 		get{ return btnCancel; }
 	}
+
+	public Text TextBtnCancel{
+		get{ return btnCancel.GetComponentInChildren<Text>(); }
+	}
 }
