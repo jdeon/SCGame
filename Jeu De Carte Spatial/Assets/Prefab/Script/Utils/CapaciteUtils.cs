@@ -250,7 +250,7 @@ public class CapaciteUtils {
 		return selectionCible;
 	}
 
-	private static List<CarteMetierAbstract> getCartesCible (CarteMetierAbstract carteOrigin, CarteMetierAbstract carteCible,CapaciteDTO capacite, NetworkInstanceId netIdJoueur){
+	public static List<CarteMetierAbstract> getCartesCible (CarteMetierAbstract carteOrigin, CarteMetierAbstract carteCible,CapaciteDTO capacite, NetworkInstanceId netIdJoueur){
 		List<CarteMetierAbstract> listCartesCible = new List<CarteMetierAbstract> ();
 
 		List<IConteneurCarte> listEmplacementsCible = new List<IConteneurCarte> ();
