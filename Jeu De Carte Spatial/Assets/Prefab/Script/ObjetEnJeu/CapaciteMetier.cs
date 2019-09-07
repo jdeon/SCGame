@@ -94,7 +94,11 @@ public class CapaciteMetier  {
 			newValue = oldValue / valeurOperation;
 			break;
 		case ConstanteEnum.TypeCalcul.Des:
-			newValue = (int) Random.Range(0,valeurOperation+1);
+			if (valeurOperation > 0) {
+				newValue = oldValue + (int)Random.Range (0, valeurOperation + 1);
+			} else {
+				newValue = oldValue + (int)Random.Range (valeurOperation, 1);
+			}
 			break;
 		case ConstanteEnum.TypeCalcul.Chance: 
 			newValue = Random.Range(0,valeurOperation+1) >= valeurOperation ? 1 : 0;

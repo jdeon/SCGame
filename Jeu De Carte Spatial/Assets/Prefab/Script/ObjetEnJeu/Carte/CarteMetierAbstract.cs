@@ -270,6 +270,11 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 		}
 	}
 
+
+	public NetworkInstanceId Possesseur { 
+		get { return NetIdJoueurPossesseur; }
+	}
+
 	/********************************Dialogue serveur client**************/
 	[ClientRpc]
 	public void RpcDestroyClientCard(){

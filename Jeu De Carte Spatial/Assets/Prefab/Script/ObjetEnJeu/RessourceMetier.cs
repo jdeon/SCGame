@@ -145,6 +145,10 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 		}
 	}
 
+	public NetworkInstanceId Possesseur { 
+		get { return NetIdJoueurPossesseur; }
+	}
+
 	/*******************IAvecCapacity*****************/
 
 	public void addCapacity (CapaciteMetier capaToAdd){

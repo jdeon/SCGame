@@ -1,36 +1,57 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class CapaciteManuelleUtils {
 
-	public static void useCapacite(CarteConstructionMetierAbstract carteSource, CapaciteMannuelleDTO capaciteAppelee){
-		bool utilisable = true;
+	private delegate void executeTest();
 
-		foreach (CapaciteDTO conditionUtilisation in capaciteAppelee.CapaciteCondition) {
-			if (!testCondition (carteSource, conditionUtilisation)) {
-				utilisable = false;
-				break;
+	private static event executeTest executeCapaciteTest;
+
+	public static void useCapacite(CarteConstructionMetierAbstract carteSource, int numLvl, int indexCapaciteAppelee){
+		CapaciteMannuelleDTO capaciteAppelee;
+
+		if (carteSource.getCarteRef ().ListNiveau.Count > numLvl
+			&& carteSource.getCarteRef ().ListNiveau [numLvl-1].CapaciteManuelle.Count > indexCapaciteAppelee) {
+			capaciteAppelee = carteSource.getCarteRef ().ListNiveau [numLvl-1].CapaciteManuelle [indexCapaciteAppelee];
+		} else {
+			capaciteAppelee = null;
+		}
+
+		if (null != capaciteAppelee) {
+			bool utilisable = true;
+			executeCapaciteTest = null;
+
+			foreach (CapaciteDTO conditionUtilisation in capaciteAppelee.CapaciteCondition) {
+				CapaciteDTO capaciteUtilisable = cloneCapacityWhithoutDuRandom (conditionUtilisation);
+				if (!testCondition (carteSource, capaciteUtilisable)) {
+					utilisable = false;
+					break;
+				} 
 			}
-		}
 	
-		if (utilisable) {
+			if (utilisable) {
+				if (null != executeCapaciteTest) {
+					executeCapaciteTest ();
+				}
 
+				carteSource.CmdUseCapacityManuelle (numLvl, indexCapaciteAppelee);
+			}
+		} else {
+			Debug.Log ("Capacité manuelle pas retrouvé avec index");
 		}
-
-
-
 	}
 
 	public static bool testCondition(CarteConstructionMetierAbstract carteSource, CapaciteDTO testCapa){
 		bool result;
-		if (ConstanteIdObjet.ID_CAPACITE_CONDITION == testCapa.idCapacite) {
+		if (ConstanteIdObjet.ID_CAPACITE_CONDITION == testCapa.Capacite) {
 			result = testPlacementCarte (carteSource, testCapa);
-		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_STOCK_RESSOURCE == testCapa.idCapacite) {
+		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_STOCK_RESSOURCE == testCapa.Capacite) {
 			result = testRessourceJoueur (carteSource.JoueurProprietaire, testCapa);
-		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_PV == testCapa.idCapacite) {
+		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_PV == testCapa.Capacite) {
 			result = testValeurSuperieur(carteSource.PV, testCapa.Quantite, testCapa.ModeCalcul);
-		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_POINT_ATTAQUE == testCapa.idCapacite) {
+		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_POINT_ATTAQUE == testCapa.Capacite) {
 			if (carteSource is CarteDefenseMetier) {
 				result = testValeurSuperieur(((CarteDefenseMetier)carteSource).getPointAttaque(), testCapa.Quantite, testCapa.ModeCalcul);
 			} else if (carteSource is CarteVaisseauMetier) {
@@ -39,20 +60,20 @@ public class CapaciteManuelleUtils {
 				result = false;
 			}
 
-		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_LVL == testCapa.idCapacite) {
+		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_LVL == testCapa.Capacite) {
 			result = testValeurSuperieur(carteSource.NiveauActuel, testCapa.Quantite, testCapa.ModeCalcul);
-		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_CONSOMATION_CARBURANT == testCapa.idCapacite) {
+		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_CONSOMATION_CARBURANT == testCapa.Capacite) {
 			if (carteSource is CarteVaisseauMetier) {
 				result = testValeurSuperieur(((CarteVaisseauMetier)carteSource).getConsomationCarburant(), testCapa.Quantite, testCapa.ModeCalcul);
 			} else {
 				result = false;
 			}
 
-		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_COUT_CONSTRUCTION == testCapa.idCapacite) {
+		} else if (ConstanteIdObjet.ID_CAPACITE_MODIF_COUT_CONSTRUCTION == testCapa.Capacite) {
 			result = testValeurSuperieur(carteSource.getCoutMetalReelCarte(), testCapa.Quantite, testCapa.ModeCalcul);
 		} else {
 			result = true;
-			Debug.Log ("Condition : " + testCapa.idCapacite + " non définie pour les capacités manuelle");
+			Debug.Log ("Condition : " + testCapa.Capacite + " non définie pour les capacités manuelle");
 		}
 
 		return result;
@@ -68,18 +89,39 @@ public class CapaciteManuelleUtils {
 		bool result = true;
 
 		foreach (string conditionEmplacement in testCapa.ConditionsEmplacement) {
-				if (conditionEmplacement.Contains (ConstanteIdObjet.ID_CONDITION_EMPLACEMENT_RESSOURCE_METAL.ToString ())
-				&& ! testValeurSuperieur(joueurCarteSource.RessourceMetal.Stock, testCapa.Quantite, testCapa.ModeCalcul)) {
+			if (conditionEmplacement.Contains (ConstanteIdObjet.ID_CONDITION_EMPLACEMENT_RESSOURCE_METAL.ToString ())) {
+				int oldValue = joueurCarteSource.RessourceMetal.Stock;
+				if (testValeurSuperieur (oldValue, testCapa.Quantite, testCapa.ModeCalcul)) {
+					int newValue = CapaciteUtils.getNewValue (oldValue, testCapa.Quantite, testCapa.ModeCalcul);
+					addListnerToDelegate (joueurCarteSource.RessourceMetal, oldValue - newValue);
+				} else {
 					result = false;
 					break;
-			} else if (conditionEmplacement.Contains (ConstanteIdObjet.ID_CONDITION_EMPLACEMENT_RESSOURCE_CARBURANT.ToString ())
-				&& ! testValeurSuperieur(joueurCarteSource.RessourceCarburant.Stock, testCapa.Quantite, testCapa.ModeCalcul)) {
-				result = false;
-				break;
+				}
+			} else if (conditionEmplacement.Contains (ConstanteIdObjet.ID_CONDITION_EMPLACEMENT_RESSOURCE_CARBURANT.ToString ())) {
+				int oldValue = joueurCarteSource.RessourceCarburant.Stock;
+				if (testValeurSuperieur (oldValue, testCapa.Quantite, testCapa.ModeCalcul)) {
+					int newValue = CapaciteUtils.getNewValue (oldValue, testCapa.Quantite, testCapa.ModeCalcul);
+					addListnerToDelegate (joueurCarteSource.RessourceCarburant, oldValue - newValue);
+				} else {
+					result = false;
+					break;
 				}
 			}
+		}
 
 		return result;
+	}
+
+	private static void addListnerToDelegate(RessourceMetier ressource, int payAmount){
+		executeCapaciteTest += delegate {
+			payRessource (ressource, payAmount);
+		};
+	}
+
+	private static void payRessource(RessourceMetier ressource, int payAmount){
+		ressource.Stock -= payAmount;
+		ressource.updateVisual ();
 	}
 
 private static bool testValeurSuperieur(int valeurOrigine, int valeurCible, ConstanteEnum.TypeCalcul typeCalcul){
@@ -98,11 +140,7 @@ private static bool testValeurSuperieur(int valeurOrigine, int valeurCible, Cons
 		case ConstanteEnum.TypeCalcul.Division:	
 			resultTest = valeurOrigine / valeurCible >= 1;
 			break;
-		case ConstanteEnum.TypeCalcul.Des:
-			resultTest = (int)Random.Range (0, valeurCible + 1) >= valeurOrigine;
-			break;
 		case ConstanteEnum.TypeCalcul.Chance: 
-		//TODO
 			resultTest = Random.Range (0, valeurCible + 1) >= valeurOrigine;
 			break;
 		default :
@@ -112,6 +150,18 @@ private static bool testValeurSuperieur(int valeurOrigine, int valeurCible, Cons
 		}
 
 		return resultTest;
+	}
+
+	private static CapaciteDTO cloneCapacityWhithoutDuRandom(CapaciteDTO capacityBase){
+		CapaciteDTO capacityResult = capacityBase.Clone ();
+
+		if (capacityResult.ModeCalcul == ConstanteEnum.TypeCalcul.Des) {
+			int newValue = Random.Range (0, capacityResult.Quantite + 1);
+			capacityResult.Quantite = newValue;
+			capacityResult.ModeCalcul = ConstanteEnum.TypeCalcul.Ajout;
+		}
+
+		return capacityResult;
 	}
 
 }

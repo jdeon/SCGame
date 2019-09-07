@@ -28,21 +28,24 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 	}
 		
 	public void OnMouseDown(){
-		if (!JoueurUtils.getJoueur (idJoueurPossesseur).CarteEnVisuel) {
+		Joueur possesseur = JoueurUtils.getJoueur (idJoueurPossesseur);
+			if (null != possesseur && !possesseur.CarteEnVisuel) {
 			onClick ();
 		}
 	}
 
 	void OnMouseOver()
 	{
-		if (!JoueurUtils.getJoueur (idJoueurPossesseur).CarteEnVisuel) {
+		Joueur possesseur = JoueurUtils.getJoueur (idJoueurPossesseur);
+		if (null != possesseur && !possesseur.CarteEnVisuel) {
 			EtatSelectionnable = SelectionnableUtils.ETAT_MOUSE_OVER;
 		}
 	}
 
 	void OnMouseExit()
 	{
-		if (!JoueurUtils.getJoueur (idJoueurPossesseur).CarteEnVisuel) {
+		Joueur possesseur = JoueurUtils.getJoueur (idJoueurPossesseur);
+		if (null != possesseur && !possesseur.CarteEnVisuel) {
 			EtatSelectionnable = SelectionnableUtils.ETAT_RETOUR_ATTIERE;
 		}
 	}
@@ -144,6 +147,10 @@ public abstract class EmplacementMetierAbstract : NetworkBehaviour, IConteneurCa
 				}
 			}
 		}
+	}
+		
+	public NetworkInstanceId Possesseur { 
+		get { return idJoueurPossesseur; }
 	}
 
 	[ClientRpc]

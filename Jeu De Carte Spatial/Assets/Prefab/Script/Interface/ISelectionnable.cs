@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public interface ISelectionnable  {
 
@@ -15,4 +16,6 @@ public interface ISelectionnable  {
 	 * 3 : Selectionne
 	 * */
 	int EtatSelectionnable{ get; set;}
+
+	NetworkInstanceId Possesseur { get; }
 }

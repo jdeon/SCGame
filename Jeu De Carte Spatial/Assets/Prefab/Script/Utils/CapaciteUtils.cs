@@ -183,7 +183,7 @@ public class CapaciteUtils {
 				}
 			}
 		} else {
-			selectionCiblesResult = findCiblesHorsCarte (capacite, carteSourceCapacite,carteSourceAction, netIdJoueur, NetworkInstanceId.Invalid /*TODO cible.netIdJoueurCible*/, actionAppelante);
+				selectionCiblesResult = findCiblesHorsCarte (capacite, carteSourceCapacite,carteSourceAction, netIdJoueur, cible.Possesseur, actionAppelante);
 		}
 
 		return selectionCiblesResult;
@@ -193,7 +193,7 @@ public class CapaciteUtils {
 		SelectionCiblesExecutionCapacite selectionCible;
 
 		if (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE
-		    || capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_PRODUCTION_RESSOURCE
+		    || capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_STOCK_RESSOURCE
 		    || (capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_VOL_RESSOURCE && null != carteSourceCapacite && null != carteSourceCapacite.JoueurProprietaire)
 		    || capacite.Capacite == ConstanteIdObjet.ID_CAPACITE_MODIF_TYPE_RESSOURCE) {
 

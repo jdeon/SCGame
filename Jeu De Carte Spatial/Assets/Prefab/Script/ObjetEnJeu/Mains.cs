@@ -103,6 +103,11 @@ public class Mains : MonoBehaviour, IConteneurCarte, ISelectionnable {
 		}
 	}
 
+
+	public NetworkInstanceId Possesseur { 
+		get { return netIdJoueurPossesseur; }
+	}
+
 	public NetworkInstanceId NetIdJoueur {
 		get{ return netIdJoueurPossesseur;}
 	}

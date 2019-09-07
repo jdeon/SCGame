@@ -222,6 +222,10 @@ public abstract class DeckMetierAbstract : NetworkBehaviour, IConteneurCarte, IA
 		}
 	}
 
+	public NetworkInstanceId Possesseur { 
+		get { return NetIdJoueurPossesseur; }
+	}
+
 
 	/********************Getter et Setter************************/
 	public List<CapaciteMetier> ListCapaciteDeck {

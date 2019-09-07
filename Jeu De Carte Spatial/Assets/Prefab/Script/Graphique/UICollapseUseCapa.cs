@@ -9,7 +9,6 @@ public class UICollapseUseCapa : UICollapseElement {
 	private CarteConstructionMetierAbstract carteSource;
 	private List<CapaciteMannuelleDTO> listCapaManuelle;
 
-	private List<CapaciteMannuelleDTO> listCapaPropose = new List<CapaciteMannuelleDTO> ();
 	private List<UIDialogInfo> listDialogOUverte = new List<UIDialogInfo> ();
 
 
@@ -43,14 +42,12 @@ public class UICollapseUseCapa : UICollapseElement {
 		if (capaciteUtilisable.Count > 1) {
 			showChoiceCapa (capaciteUtilisable);
 		} else {
-			CapaciteManuelleUtils.useCapacite(carteSource, capaciteUtilisable [0]);
+			CapaciteManuelleUtils.useCapacite(carteSource, numLvl, 0);
 		}
 	}
 
 	private void useCapa(int index){
-		if (index < listCapaPropose.Count) {
-			CapaciteManuelleUtils.useCapacite (carteSource, listCapaPropose[index]);
-		}
+		CapaciteManuelleUtils.useCapacite (carteSource, numLvl, index);
 	}
 	
 
@@ -58,7 +55,6 @@ public class UICollapseUseCapa : UICollapseElement {
 		int nbOption = listCapaciteUtilisable.Count + 1;
 
 		for(int i = 0 ; i < listCapaciteUtilisable.Count; i++){
-			listCapaPropose.Add (listCapaciteUtilisable [i]);
 			UIDialogInfo choixDialog = new UIDialogInfo (listCapaciteUtilisable[i].LibelleCarte);
 			Vector3 baseAnchor = choixDialog.Anchor;
 
@@ -89,7 +85,6 @@ public class UICollapseUseCapa : UICollapseElement {
 	}
 
 	private void fermerToutChoix(){
-		listCapaPropose.Clear();
 		while(listDialogOUverte.Count > 0){
 			UIDialogInfo dialogAFermer = listDialogOUverte [0];
 			listDialogOUverte.RemoveAt (0);

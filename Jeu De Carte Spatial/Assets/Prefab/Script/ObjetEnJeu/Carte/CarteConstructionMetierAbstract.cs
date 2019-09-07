@@ -107,6 +107,24 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		}
 	}
 
+	[Command]
+	public void CmdUseCapacityManuelle ( int numLvl, int indexCapaciteAppelee){
+		CapaciteMannuelleDTO capaUsed;
+		if (carteRef.ListNiveau.Count > numLvl
+			&& carteRef.ListNiveau [numLvl-1].CapaciteManuelle.Count > indexCapaciteAppelee) {
+			capaUsed = carteRef.ListNiveau [numLvl-1].CapaciteManuelle [indexCapaciteAppelee];
+		} else {
+			capaUsed = null;
+		}
+
+		if (null != capaUsed) {
+			foreach (CapaciteDTO capaAppeler in capaUsed.CapaciteEffet) {
+				CapaciteUtils.callCapacite (this, this, this, capaAppeler, this.NetIdJoueurPossesseur
+					, ConstanteIdObjet.ID_CONDITION_ACTION_UTILISE, NetworkInstanceId.Invalid); 
+			}
+		}
+	}
+
 	//Affiche la carte si clique dessus
 	public virtual void generateVisualCard() {
 		if (!JoueurProprietaire.CarteEnVisuel) {

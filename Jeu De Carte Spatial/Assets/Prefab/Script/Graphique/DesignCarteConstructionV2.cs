@@ -201,7 +201,7 @@ public class DesignCarteConstructionV2 {
 	private Text getTextBouton(Button bouton){
 		Text textBtnLvl;
 
-		if (null != bouton.gameObject.GetComponent<Text> ()) {
+		if (null != bouton.gameObject.GetComponentInChildren<Text> ()) {
 			textBtnLvl = bouton.gameObject.GetComponentInChildren<Text> ();
 		} else {
 			textBtnLvl = UIUtils.createTextStretch ("Txt" + bouton.gameObject.name, bouton.gameObject, 10, 0, 0, 0, 0);
