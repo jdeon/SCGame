@@ -35,49 +35,52 @@ public class DesignCarteConstructionV2 {
 		this.goParent = goParent;
 		this.joueurGenerateur = joueurGenerateur;
 		this.carteSource = carteSource;
+		string typCarte = CarteUtils.getTypeCard (carteSource);
 
-		GameObject paternBoutonCancel = UIUtils.createPanel("BoutonFermeture",goParent,
-			width*(ConstanteInGame.propBoutonRetour.x-0.5f),height*(0.5f-ConstanteInGame.propBoutonRetour.y),
-			width*ConstanteInGame.propBoutonRetour.z,height*ConstanteInGame.propBoutonRetour.w);
-		paternBoutonCancel.GetComponent<Image> ().sprite = ConstanteInGame.spriteCroixCancel;
-		Button buttonFermeture = paternBoutonCancel.AddComponent<Button> ();
-		buttonFermeture.onClick.AddListener (deleteVisual);
+		Dictionary<string,Sprite> dictionnarySpriteCard = UIUtils.dictionnaryOfCardSprite[typCarte];
 
-		txtTitre = UIUtils.createText("Titre",goParent,1,
+		Image imageConteneur = UIUtils.createImage(dictionnarySpriteCard[UIUtils.KEY_IMAGE], "ImageConteneur",goParent,
+			width*(ConstanteInGame.propDesignImage.x-0.5f),height*(0.5f-ConstanteInGame.propDesignImage.y),
+			width*ConstanteInGame.propDesignImage.z,height*ConstanteInGame.propDesignImage.w);
+
+		imageCarte = UIUtils.createMaskImage(dictionnarySpriteCard[UIUtils.KEY_IMAGE], ConstanteInGame.spriteTest, "Image",goParent,
+			width*(ConstanteInGame.propDesignImage.x-0.5f),height*(0.5f-ConstanteInGame.propDesignImage.y),
+			.95f*width*ConstanteInGame.propDesignImage.z,.95f*height*ConstanteInGame.propDesignImage.w);
+
+
+		GameObject goTitre = UIUtils.createPanel("Titre",goParent, dictionnarySpriteCard[UIUtils.KEY_TITRE],
 			width*(ConstanteInGame.propDesignTitre.x-0.5f),height*(0.5f-ConstanteInGame.propDesignTitre.y),
 			width*ConstanteInGame.propDesignTitre.z,height*ConstanteInGame.propDesignTitre.w);
 
-		imageCarte = UIUtils.createImage(null, "Image",goParent,
-			width*(ConstanteInGame.propDesignImage.x-0.5f),height*(0.5f-ConstanteInGame.propDesignImage.y),
-			width*ConstanteInGame.propDesignImage.z,height*ConstanteInGame.propDesignImage.w);
+		txtTitre = UIUtils.createText("txtTitre",goTitre,2, 0, 0, .95f*width*ConstanteInGame.propDesignTitre.z, .95f*height*ConstanteInGame.propDesignTitre.w);
 
 		//Creation bloc des ressources
 		float widthRessource = width*ConstanteInGame.propDesignRessource.z;
 		float heightRessource = height*ConstanteInGame.propDesignRessource.w;
 
-		GameObject paternRessource = UIUtils.createPanel("Ressource",goParent,
+		GameObject paternRessource = UIUtils.createPanel("Ressource",goParent, null,
 			width*(ConstanteInGame.propDesignRessource.x-0.5f),height*(0.5f-ConstanteInGame.propDesignRessource.y),
 			widthRessource,heightRessource);
 
-		GameObject paternRessourceMetal = UIUtils.createPanel("RessourceMetal",paternRessource,
+		GameObject paternRessourceMetal = UIUtils.createPanel("RessourceMetal",paternRessource, dictionnarySpriteCard[UIUtils.KEY_RESSOURCE],
 			widthRessource*(ConstanteInGame.propDesignMetalRessource.x-0.5f),heightRessource*(0.5f-ConstanteInGame.propDesignMetalRessource.y),
 			widthRessource*ConstanteInGame.propDesignMetalRessource.z,heightRessource*ConstanteInGame.propDesignMetalRessource.w);
+		paternRessourceMetal.transform.localScale = new Vector3 (-1, -1, 1);
 		txtMetal = UIUtils.createText ("textMetal", paternRessourceMetal,1, 0, 0,
-			.9f*widthRessource*ConstanteInGame.propDesignMetalRessource.z, heightRessource*ConstanteInGame.propDesignMetalRessource.w);
+			.75f*widthRessource*ConstanteInGame.propDesignMetalRessource.z, .75f*heightRessource*ConstanteInGame.propDesignMetalRessource.w);
+		txtMetal.gameObject.transform.localScale = new Vector3 (-1, -1, 1);
+		txtMetal.alignment = TextAnchor.MiddleCenter;
 
-		GameObject paternRessourceNiveauActuel = UIUtils.createPanel("RessourceNiveauActuel",paternRessource,
-			widthRessource*(ConstanteInGame.propDesignNiveauRessource.x-0.5f),heightRessource*(0.5f-ConstanteInGame.propDesignNiveauRessource.y),
-			widthRessource*ConstanteInGame.propDesignNiveauRessource.z,heightRessource*ConstanteInGame.propDesignNiveauRessource.w);
-		txtNiveauActuel = UIUtils.createText ("textNiveauActuel", paternRessourceNiveauActuel,1, 0, 0,
-			.9f*widthRessource*ConstanteInGame.propDesignNiveauRessource.z, heightRessource*ConstanteInGame.propDesignNiveauRessource.w);
-
-		paternRessourceCarburant = UIUtils.createPanel("RessourceCarburant",paternRessource,
+		paternRessourceCarburant = UIUtils.createPanel("RessourceCarburant",paternRessource, dictionnarySpriteCard[UIUtils.KEY_RESSOURCE],
 			widthRessource*(ConstanteInGame.propDesignCarburantRessource.x-0.5f),heightRessource*(0.5f-ConstanteInGame.propDesignCarburantRessource.y),
 			widthRessource*ConstanteInGame.propDesignCarburantRessource.z,heightRessource*ConstanteInGame.propDesignCarburantRessource.w);
+		paternRessourceCarburant.transform.localScale = new Vector3 (1, -1, 1);
 		txtCarburant = UIUtils.createText ("textCarburant", paternRessourceCarburant,1, 0, 0,
-			.9f*widthRessource*ConstanteInGame.propDesignCarburantRessource.z, heightRessource*ConstanteInGame.propDesignCarburantRessource.w);
+			.75f*widthRessource*ConstanteInGame.propDesignCarburantRessource.z, .75f*heightRessource*ConstanteInGame.propDesignCarburantRessource.w);
+		txtCarburant.alignment = TextAnchor.MiddleCenter;
+		txtCarburant.gameObject.transform.localScale = new Vector3 (1, -1, 1);
 
-		GameObject paternListNiveaux = UIUtils.createPanel("ListNiveaux",goParent,
+		GameObject paternListNiveaux = UIUtils.createPanel("ListNiveaux",goParent, dictionnarySpriteCard[UIUtils.KEY_DESCRIPTION],
 			width*(ConstanteInGame.propDesignListNiveaux.x-0.5f),height*(0.5f-ConstanteInGame.propDesignListNiveaux.y),
 			width*ConstanteInGame.propDesignListNiveaux.z,height*ConstanteInGame.propDesignListNiveaux.w);
 
@@ -116,23 +119,39 @@ public class DesignCarteConstructionV2 {
 
 		gestionAffichageDesBoutons ();
 
+		/**
 		GameObject paternBouton = UIUtils.createPanel("BoutonAction",goParent,
 			width*(ConstanteInGame.propDesignBouton.x-0.5f),height*(0.5f-ConstanteInGame.propDesignBouton.y),
 			width*ConstanteInGame.propDesignBouton.z,height*ConstanteInGame.propDesignBouton.w);
 		Button buttonAction = paternBouton.AddComponent<Button> ();
+		*/
 
+		GameObject paternRessourceNiveauActuel = UIUtils.createPanel("RessourceNiveauActuel",paternRessource, dictionnarySpriteCard[UIUtils.KEY_NIVEAU],
+			widthRessource*(ConstanteInGame.propDesignNiveauRessource.x-0.5f),heightRessource*(0.5f-ConstanteInGame.propDesignNiveauRessource.y),
+			widthRessource*ConstanteInGame.propDesignNiveauRessource.z,heightRessource*ConstanteInGame.propDesignNiveauRessource.w);
+		txtNiveauActuel = UIUtils.createText ("textNiveauActuel", paternRessourceNiveauActuel,1, 0, 0,
+			.75f*widthRessource*ConstanteInGame.propDesignNiveauRessource.z, .75f*heightRessource*ConstanteInGame.propDesignNiveauRessource.w);
+		txtNiveauActuel.alignment = TextAnchor.MiddleCenter;
 
-		paternPA = UIUtils.createPanel("PointAttaque",goParent,
+		paternPA = UIUtils.createPanel("PointAttaque",goParent, dictionnarySpriteCard[UIUtils.KEY_POINT_DEF_ATT],
 			width*(ConstanteInGame.propDesignPointAttaque.x-0.5f),height*(0.5f-ConstanteInGame.propDesignPointAttaque.y),
 			width*ConstanteInGame.propDesignPointAttaque.z,height*ConstanteInGame.propDesignPointAttaque.w);
 		txtPointAttaque = UIUtils.createText ("textPA", paternPA,1, 0, 0,
-			.9f*width*ConstanteInGame.propDesignPointAttaque.z,height*ConstanteInGame.propDesignPointAttaque.w);
+			.75f*width*ConstanteInGame.propDesignPointAttaque.z,.75f*height*ConstanteInGame.propDesignPointAttaque.w);
+		txtPointAttaque.alignment = TextAnchor.MiddleCenter;
 
-		GameObject paternPD = UIUtils.createPanel("PointDefense",goParent,
+		GameObject paternPD = UIUtils.createPanel("PointDefense",goParent, dictionnarySpriteCard[UIUtils.KEY_POINT_DEF_ATT],
 			width*(ConstanteInGame.propDesignPointDefense.x-0.5f),height*(0.5f-ConstanteInGame.propDesignPointDefense.y),
 			width*ConstanteInGame.propDesignPointDefense.z,height*ConstanteInGame.propDesignPointDefense.w);
 		txtPointDefense = UIUtils.createText ("textPD", paternPD,1, 0, 0,
-			.9f*width*ConstanteInGame.propDesignPointDefense.z,height*ConstanteInGame.propDesignPointDefense.w);
+			.75f*width*ConstanteInGame.propDesignPointDefense.z,.75f*height*ConstanteInGame.propDesignPointDefense.w);
+		txtPointDefense.alignment = TextAnchor.MiddleCenter;
+
+		GameObject paternBoutonCancel = UIUtils.createPanel("BoutonFermeture",goParent, ConstanteInGame.spriteCroixCancel,
+			width*(ConstanteInGame.propBoutonRetour.x-0.5f),height*(0.5f-ConstanteInGame.propBoutonRetour.y),
+			width*ConstanteInGame.propBoutonRetour.z,height*ConstanteInGame.propBoutonRetour.w);
+		Button buttonFermeture = paternBoutonCancel.AddComponent<Button> ();
+		buttonFermeture.onClick.AddListener (deleteVisual);
 	}
 
 	private void deleteVisual(){

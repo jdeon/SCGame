@@ -102,10 +102,6 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 		return null;
 	}
 
-	public override Color getColorCarte (){
-		return Color.white;
-	}
-
 	protected override void initId (){
 		id = "Planete_" + pseudo;
 	}

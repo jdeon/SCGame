@@ -11,8 +11,4 @@ public class CarteBatimentMetier : CarteConstructionMetierAbstract {
 			sequenceId++;
 		}
 	}		
-
-	public override Color getColorCarte (){
-		return ConstanteInGame.colorBatiment;
-	}
 }

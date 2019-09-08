@@ -167,4 +167,18 @@ public class CarteUtils {
 		//This equals null est étrange mais est du à l'operateur == custom qui fait des faut negatif
 		return (null != carte && !carte.Equals (null) && carte.gameObject.activeInHierarchy);
 	}
+		
+	public static string getTypeCard(CarteMetierAbstract carteTest){
+		string result = "";
+
+		if (carteTest is CarteBatimentMetier) {
+			result = ConstanteInGame.strBatiment;
+		} else if (carteTest is CarteDefenseMetier) {
+			result = ConstanteInGame.strDefense;
+		} else if (carteTest is CarteVaisseauMetier) {
+			result = ConstanteInGame.strVaisseau;
+		}
+
+		return result;
+	}
 }

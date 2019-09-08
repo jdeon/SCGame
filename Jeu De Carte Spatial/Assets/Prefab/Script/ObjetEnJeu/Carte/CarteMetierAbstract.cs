@@ -29,8 +29,6 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	public abstract CarteDTO getCarteDTORef ();
 
-	public abstract Color getColorCarte ();
-
 	protected abstract void initId ();
 
 	public abstract void reinitDebutTour ();
@@ -131,8 +129,7 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 			panelGO.transform.SetParent (canvasGO.transform, false);
 
 			Image i = panelGO.AddComponent<Image> ();
-			i.sprite = ConstanteInGame.spriteBackgroundCarte;
-			i.color = getColorCarte ();
+			i.sprite = UIUtils.dictionnaryOfCardSprite[CarteUtils.getTypeCard(this)][UIUtils.KEY_FOND];
 
 			panelGO.GetComponent<RectTransform> ().sizeDelta = UIUtils.getUICardSize ();
 

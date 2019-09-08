@@ -51,6 +51,54 @@ public class ConstanteInGame {
 
 	public static readonly Sprite spriteTest = Resources.Load<Sprite>("Sprite/testImage");
 
+	public static readonly Sprite spriteConstructionImage = Resources.Load<Sprite>("Sprites/imageContainer-Centrer");
+
+	/**
+	 * Sprite pour carte batiment
+	*/
+	public static readonly Sprite spriteBatimentFond = Resources.Load<Sprite>("Sprites/cardBase_08-Jaune");
+
+	public static readonly Sprite spriteBatimentCardreTitre = Resources.Load<Sprite>("Sprites/titleBarV2_06-Centrer");
+
+	public static readonly Sprite spriteBatimentCardreRessource = Resources.Load<Sprite>("Sprites/titleBarV4_03-Centrer");
+
+	public static readonly Sprite spriteBatimentCardreNiveau = Resources.Load<Sprite>("Sprites/cardDiamond_05-Centrer");
+
+	public static readonly Sprite spriteBatimentCardreDescription = Resources.Load<Sprite>("Sprites/textBoxV2_04-Double");
+
+	public static readonly Sprite spriteBatimentPointAttDef = Resources.Load<Sprite>("Sprites/goldOrb-Centrer");
+
+
+	/**
+	 * Sprite pour carte Defense
+	*/
+	public static readonly Sprite spriteDefenseFond = Resources.Load<Sprite>("Sprites/cardBase_09");
+
+	public static readonly Sprite spriteDefenseCardreTitre = Resources.Load<Sprite>("Sprites/titleBarV2_02-Centrer");
+
+	public static readonly Sprite spriteDefenseCardreRessource = Resources.Load<Sprite>("Sprites/titleBarV4_02-Centrer");
+
+	public static readonly Sprite spriteDefenseCardreNiveau = Resources.Load<Sprite>("Sprites/cardDiamond_01-Centrer");
+
+	public static readonly Sprite spriteDefenseCardreDescription = Resources.Load<Sprite>("Sprites/textBoxV2_02-Double");
+
+	public static readonly Sprite spriteDefensePointAttDef = Resources.Load<Sprite>("Sprites/greenOrb-Centrer");
+
+	/**
+	 * Sprite pour carte vaisseau
+	*/
+	public static readonly Sprite spriteVaisseauFond = Resources.Load<Sprite>("Sprites/cardBase_08");
+
+	public static readonly Sprite spriteVaisseauCardreTitre = Resources.Load<Sprite>("Sprites/titleBarV2_01-Centrer");
+
+	public static readonly Sprite spriteVaisseauCardreRessource = Resources.Load<Sprite>("Sprites/titleBarV4_11-Centrer");
+
+	public static readonly Sprite spriteVaisseauCardreNiveau = Resources.Load<Sprite>("Sprites/cardDiamond_02-Centrer");
+
+	public static readonly Sprite spriteVaisseauCardreDescription = Resources.Load<Sprite>("Sprites/textBoxV2_06-Double");
+
+	public static readonly Sprite spriteVaisseauPointAttDef = Resources.Load<Sprite>("Sprites/blueOrb-Centrer");
+
 
 	public static readonly Font fontArial = Resources.GetBuiltinResource<Font>("Arial.ttf");
 
@@ -170,18 +218,18 @@ public class ConstanteInGame {
 
 	/******Propriété carte niveau 1****/
 	public static readonly Vector4  propBoutonRetour = new Vector4 (1f, 0f, .20f, .1f);
-	public static readonly Vector4  propDesignTitre = new Vector4 (.5f, .058f, .95f, .083f);
-	public static readonly Vector4  propDesignImage = new Vector4 (.5f, .271f, .95f, .292f);
-	public static readonly Vector4  propDesignRessource = new Vector4 (.5f, .5f, .95f, .083f);
-	public static readonly Vector4  propDesignListNiveaux = new Vector4 (.5f, .75f, .95f, .333f);
-	public static readonly Vector4  propDesignBouton = new Vector4 (.5f, .954f, .25f, .042f);
-	public static readonly Vector4  propDesignPointAttaque = new Vector4 (.075f, .967f, .125f, .05f);
-	public static readonly Vector4  propDesignPointDefense = new Vector4 (.925f, .967f, .125f, .05f);
+	public static readonly Vector4  propDesignTitre = new Vector4 (.5f, .15f, .95f, .25f);
+	public static readonly Vector4  propDesignImage = new Vector4 (.5f, .35f, .75f, .30f);
+	public static readonly Vector4  propDesignRessource = new Vector4 (.5f, .5f, .95f, .2f);
+	public static readonly Vector4  propDesignListNiveaux = new Vector4 (.5f, .725f, .95f, .333f);
+	//public static readonly Vector4  propDesignBouton = new Vector4 (.5f, .954f, .25f, .042f);
+	public static readonly Vector4  propDesignPointAttaque = new Vector4 (.2f, .94f, .30f, .10f);
+	public static readonly Vector4  propDesignPointDefense = new Vector4 (.8f, .94f, .30f, .10f);
 
 
 	/******Propriété carte niveau 2****/
 	/******Sous propriété de ressource****/
-	public static readonly Vector4  propDesignMetalRessource = new Vector4 (.224f, .5f, .263f, .4f);
-	public static readonly Vector4  propDesignNiveauRessource = new Vector4 (.5f, .5f,.105f, .8f);
-	public static readonly Vector4  propDesignCarburantRessource = new Vector4 (.776f, .5f, .263f, .4f);
+	public static readonly Vector4  propDesignMetalRessource = new Vector4 (.275f, .5f, .45f, .4f);
+	public static readonly Vector4  propDesignNiveauRessource = new Vector4 (.5f, .5f,.25f, .8f);
+	public static readonly Vector4  propDesignCarburantRessource = new Vector4 (.725f, .5f, .45f, .4f);
 }

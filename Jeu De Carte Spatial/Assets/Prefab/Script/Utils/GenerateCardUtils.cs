@@ -25,7 +25,7 @@ public class GenerateCardUtils {
 	public static TextesCarteBean generateCardBase(CarteMetierAbstract carteBean, string idCarte){
 		TextesCarteBean retour = new TextesCarteBean ();
 
-		string typeCarte = getTypeCard (carteBean);
+		string typeCarte = CarteUtils.getTypeCard (carteBean);
 		Dictionary<string,Material> dictionaryMaterialForCardType = dictionnaryOfMaterial [typeCarte];
 
 		carteBean.transform.localScale = ConstanteInGame.tailleCarte;
@@ -109,7 +109,7 @@ public class GenerateCardUtils {
 	}
 
 	public static void generateConstructionPartCard (CarteConstructionMetierAbstract carteBean, string idCarte, TextesCarteBean beanTextCarte){
-		string typeCarte = getTypeCard (carteBean);
+		string typeCarte = CarteUtils.getTypeCard (carteBean);
 		Dictionary<string,Material> dictionaryMaterialForCardType = dictionnaryOfMaterial [typeCarte];
 
 		CarteConstructionDTO carteRef = carteBean.getCarteRef ();
@@ -220,7 +220,7 @@ public class GenerateCardUtils {
 	}
 
 	public static void generateCarburantPartCard (CarteConstructionMetierAbstract carteBean, string idCarte, TextesCarteBean beanTextCarte){
-		string typeCarte = getTypeCard (carteBean);
+		string typeCarte = CarteUtils.getTypeCard (carteBean);
 		Dictionary<string,Material> dictionaryMaterialForCardType = dictionnaryOfMaterial [typeCarte];
 
 		CarteConstructionDTO carteRef = carteBean.getCarteRef ();
@@ -251,7 +251,7 @@ public class GenerateCardUtils {
 	}
 
 	public static void generateAttaquePartCard (CarteConstructionMetierAbstract carteBean, string idCarte, TextesCarteBean beanTextCarte){
-		string typeCarte = getTypeCard (carteBean);
+		string typeCarte = CarteUtils.getTypeCard (carteBean);
 		Dictionary<string,Material> dictionaryMaterialForCardType = dictionnaryOfMaterial [typeCarte];
 
 		CarteConstructionDTO carteRef = carteBean.getCarteRef ();
@@ -343,19 +343,5 @@ public class GenerateCardUtils {
 		resultDictionary.Add (ConstanteInGame.strVaisseau, dictionaryVaisseau);
 
 		return resultDictionary;
-	}
-
-	private static string getTypeCard(CarteMetierAbstract carteTest){
-		string result = "";
-
-		if (carteTest is CarteBatimentMetier) {
-			result = ConstanteInGame.strBatiment;
-		} else if (carteTest is CarteDefenseMetier) {
-			result = ConstanteInGame.strDefense;
-		} else if (carteTest is CarteVaisseauMetier) {
-			result = ConstanteInGame.strVaisseau;
-		}
-
-		return result;
 	}
 }

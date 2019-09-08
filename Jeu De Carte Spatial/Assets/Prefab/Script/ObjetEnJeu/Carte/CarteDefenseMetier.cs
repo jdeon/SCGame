@@ -65,10 +65,6 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		designCarte.setPA (getPointAttaque());
 	}
 
-	public override Color getColorCarte (){
-		return ConstanteInGame.colorDefense;
-	}
-
 	public void preDefense (CarteVaisseauMetier vaisseauAttaquant, NetworkInstanceId netIdTaskEvent){
 		vaisseauAttaquant.recevoirAttaque (this, netIdTaskEvent, false);
 

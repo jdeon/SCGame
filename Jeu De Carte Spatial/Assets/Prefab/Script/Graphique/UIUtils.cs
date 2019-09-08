@@ -5,6 +5,22 @@ using UnityEngine.UI;
 
 public class UIUtils : MonoBehaviour {
 
+	public static readonly string KEY_FOND = "Fond";
+
+	public static readonly string KEY_TITRE = "Titre";
+
+	public static readonly string KEY_IMAGE = "Image";
+
+	public static readonly string KEY_RESSOURCE = "Ressource";
+
+	public static readonly string KEY_NIVEAU = "Niveau";
+
+	public static readonly string KEY_DESCRIPTION = "Description";
+
+	public static readonly string KEY_POINT_DEF_ATT = "PointAttaque/Defense";
+
+	public static Dictionary<string,Dictionary<string,Sprite>> dictionnaryOfCardSprite = initDictionnarySpriteCard();
+
 	private static GameObject goCanvas;
 
 	public static GameObject getCanvas(){
@@ -30,18 +46,28 @@ public class UIUtils : MonoBehaviour {
 		return new Vector2 (width, height);
 	}
 
+	public static GameObject createPanel (string name, GameObject goParent,  float anchorX, float anchorY, float width, float height){
+		GameObject result = createPanel (name, goParent, ConstanteInGame.spriteBackgroundCarte, anchorX, anchorY, width, height);
+		result.GetComponent<Image> ().color = new Color (.75f, .75f, .75f, .5f);
+		return result;
+	}
+		
 	//Cree un panel
-	public static GameObject createPanel (string name, GameObject goParent, float anchorX, float anchorY, float width, float height){
+	public static GameObject createPanel (string name, GameObject goParent, Sprite background, float anchorX, float anchorY, float width, float height){
 		GameObject panelGO = new GameObject (name);
 		panelGO.AddComponent<CanvasRenderer> ();
 		panelGO.transform.SetParent (goParent.transform, false);
 		panelGO.transform.localPosition = new Vector3(anchorX, anchorY);
 
-		Image i = panelGO.AddComponent<Image> ();
-		i.sprite = ConstanteInGame.spriteBackgroundCarte;
-		i.color = new Color (.75f, .75f, .75f, .5f);
+		if (null != background) {
+			Image i = panelGO.AddComponent<Image> ();
+			i.sprite = background;
+		} else {
+			Image i = panelGO.AddComponent<Image> ();
+			i.color = new Color (0f, 0f, 0f, 0f);
+		}
 
-		panelGO.GetComponent<RectTransform> ().sizeDelta = new Vector2 (width, height);
+		panelGO.GetComponent<RectTransform>().sizeDelta = new Vector2 (width, height);
 		panelGO.GetComponent<RectTransform>().ForceUpdateRectTransforms();
 
 		return panelGO;
@@ -79,6 +105,21 @@ public class UIUtils : MonoBehaviour {
 		imageGO.GetComponent<RectTransform> ().sizeDelta = new Vector2 (width, height);
 
 		return i;
+	}
+
+	public static Image createMaskImage (Sprite mask, Sprite image, string nameGO, GameObject goParent, float anchorX, float anchorY, float width, float height){
+		GameObject maskGO = new GameObject ("Mask" + nameGO);
+		maskGO.AddComponent<CanvasRenderer> ();
+		maskGO.transform.SetParent (goParent.transform, false);
+		maskGO.transform.localPosition = new Vector3(anchorX, anchorY);
+
+		maskGO.AddComponent<Mask> ();
+		Image i = maskGO.AddComponent<Image> ();
+		i.sprite = mask;
+
+		maskGO.GetComponent<RectTransform> ().sizeDelta = new Vector2 (width, height);
+
+		return createImage(image,nameGO, maskGO, 0, 0, width, height);
 	}
 
 	public static Text createText (string nameGO, GameObject goParent, int nbLigneAttendu, float anchorX, float anchorY, float width, float height){
@@ -127,5 +168,41 @@ public class UIUtils : MonoBehaviour {
 
 		//buttonGO.GetComponent<RectTransform> ().sizeDelta = new Vector2 (width, height);
 		return button;
+	}
+
+	private static Dictionary<string,Dictionary<string,Sprite>> initDictionnarySpriteCard(){
+		Dictionary<string,Dictionary<string,Sprite>> resultDictionary = new Dictionary<string, Dictionary<string, Sprite>> ();
+
+		Dictionary<string,Sprite> dictionaryBatiment = new Dictionary<string, Sprite> ();
+		dictionaryBatiment.Add (KEY_FOND, ConstanteInGame.spriteBatimentFond);
+		dictionaryBatiment.Add (KEY_TITRE, ConstanteInGame.spriteBatimentCardreTitre);
+		dictionaryBatiment.Add (KEY_IMAGE, ConstanteInGame.spriteConstructionImage);
+		dictionaryBatiment.Add (KEY_RESSOURCE, ConstanteInGame.spriteBatimentCardreRessource);
+		dictionaryBatiment.Add (KEY_NIVEAU, ConstanteInGame.spriteBatimentCardreNiveau);
+		dictionaryBatiment.Add (KEY_DESCRIPTION, ConstanteInGame.spriteBatimentCardreDescription);
+		dictionaryBatiment.Add (KEY_POINT_DEF_ATT, ConstanteInGame.spriteBatimentPointAttDef);
+		resultDictionary.Add (ConstanteInGame.strBatiment, dictionaryBatiment);
+
+		Dictionary<string,Sprite> dictionaryDefense = new Dictionary<string, Sprite> ();
+		dictionaryDefense.Add (KEY_FOND, ConstanteInGame.spriteDefenseFond);
+		dictionaryDefense.Add (KEY_TITRE, ConstanteInGame.spriteDefenseCardreTitre);
+		dictionaryDefense.Add (KEY_IMAGE, ConstanteInGame.spriteConstructionImage);
+		dictionaryDefense.Add (KEY_RESSOURCE, ConstanteInGame.spriteDefenseCardreRessource);
+		dictionaryDefense.Add (KEY_NIVEAU, ConstanteInGame.spriteDefenseCardreNiveau);
+		dictionaryDefense.Add (KEY_DESCRIPTION, ConstanteInGame.spriteDefenseCardreDescription);
+		dictionaryDefense.Add (KEY_POINT_DEF_ATT, ConstanteInGame.spriteDefensePointAttDef);
+		resultDictionary.Add (ConstanteInGame.strDefense, dictionaryDefense);
+
+		Dictionary<string,Sprite> dictionaryVaisseau = new Dictionary<string, Sprite> ();
+		dictionaryVaisseau.Add (KEY_FOND, ConstanteInGame.spriteVaisseauFond);
+		dictionaryVaisseau.Add (KEY_TITRE, ConstanteInGame.spriteVaisseauCardreTitre);
+		dictionaryVaisseau.Add (KEY_IMAGE, ConstanteInGame.spriteConstructionImage);
+		dictionaryVaisseau.Add (KEY_RESSOURCE, ConstanteInGame.spriteVaisseauCardreRessource);
+		dictionaryVaisseau.Add (KEY_NIVEAU, ConstanteInGame.spriteVaisseauCardreNiveau);
+		dictionaryVaisseau.Add (KEY_DESCRIPTION, ConstanteInGame.spriteVaisseauCardreDescription);
+		dictionaryVaisseau.Add (KEY_POINT_DEF_ATT, ConstanteInGame.spriteVaisseauPointAttDef);
+		resultDictionary.Add (ConstanteInGame.strVaisseau, dictionaryVaisseau);
+
+		return resultDictionary;
 	}
 }

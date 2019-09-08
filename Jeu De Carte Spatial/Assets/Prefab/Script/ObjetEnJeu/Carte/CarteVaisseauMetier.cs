@@ -241,9 +241,4 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		designCarte.setPA (getPointAttaque());
 		designCarte.setCarburant (getConsomationCarburant());
 	}
-
-	public override Color getColorCarte (){
-		return ConstanteInGame.colorVaisseau;
-	}
-
 }
