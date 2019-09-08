@@ -33,6 +33,8 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 
 	protected abstract void initId ();
 
+	public abstract void reinitDebutTour ();
+
 	/**Retourne si l'init est faite*/
 	public abstract bool initCarteRef (CarteDTO carteRef);
 
@@ -118,33 +120,37 @@ public abstract class CarteMetierAbstract : NetworkBehaviour, IAvecCapacite, ISe
 	}
 
 	public virtual void generateVisualCard(){
-		string pseudo = JoueurProprietaire.Pseudo;
-		GameObject canvasGO = UIUtils.getCanvas();
-		Text text;
+		JoueurProprietaire.CarteEnVisuel = true;
+		if (null == panelGO) {
+			string pseudo = JoueurProprietaire.Pseudo;
+			GameObject canvasGO = UIUtils.getCanvas ();
+			Text text;
 
-		//TODO doit on ne pas recreer sans cesse le panel?
-		panelGO = new GameObject ("Panel_" + pseudo);
-		panelGO.AddComponent<CanvasRenderer> ();
-		panelGO.transform.SetParent (canvasGO.transform, false);
+			panelGO = new GameObject ("Panel_" + pseudo + "_Carte_" + id);
+			panelGO.AddComponent<CanvasRenderer> ();
+			panelGO.transform.SetParent (canvasGO.transform, false);
 
-		Image i = panelGO.AddComponent<Image> ();
-		i.sprite = ConstanteInGame.spriteBackgroundCarte;
-		i.color = getColorCarte ();
+			Image i = panelGO.AddComponent<Image> ();
+			i.sprite = ConstanteInGame.spriteBackgroundCarte;
+			i.color = getColorCarte ();
 
-		panelGO.GetComponent<RectTransform> ().sizeDelta = UIUtils.getUICardSize();
+			panelGO.GetComponent<RectTransform> ().sizeDelta = UIUtils.getUICardSize ();
 
-		/**
+			/**
 		(GameObject)Instantiate(Resources.Load("CarteConstructionGraphique"))
 */
 
 
-		//TODO pour l'instant on ne fait apparaitre que le text de la carte
-		/*CarteAbstractData carteRef = getCarteRef ();
+			//TODO pour l'instant on ne fait apparaitre que le text de la carte
+			/*CarteAbstractData carteRef = getCarteRef ();
 		string strTextCarte = "Titre : " + carteRef.titreCarte;
 		strTextCarte += "\nLibelle : " + carteRef.libelleCarte;
 		strTextCarte += "\nCitation : \"" + carteRef.citationCarte + "\"";
 
 		text.text = strTextCarte;*/
+		} else {
+			panelGO.SetActive (true);
+		}
 	}
 
 

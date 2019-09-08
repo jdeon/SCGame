@@ -9,8 +9,9 @@ public class CapaciteManuelleUtils {
 
 	private static event executeTest executeCapaciteTest;
 
-	public static void useCapacite(CarteConstructionMetierAbstract carteSource, int numLvl, int indexCapaciteAppelee){
+	public static bool useCapacite(CarteConstructionMetierAbstract carteSource, int numLvl, int indexCapaciteAppelee){
 		CapaciteMannuelleDTO capaciteAppelee;
+		bool utilisable;
 
 		if (carteSource.getCarteRef ().ListNiveau.Count > numLvl
 			&& carteSource.getCarteRef ().ListNiveau [numLvl-1].CapaciteManuelle.Count > indexCapaciteAppelee) {
@@ -20,7 +21,7 @@ public class CapaciteManuelleUtils {
 		}
 
 		if (null != capaciteAppelee) {
-			bool utilisable = true;
+			utilisable = true;
 			executeCapaciteTest = null;
 
 			foreach (CapaciteDTO conditionUtilisation in capaciteAppelee.CapaciteCondition) {
@@ -39,8 +40,11 @@ public class CapaciteManuelleUtils {
 				carteSource.CmdUseCapacityManuelle (numLvl, indexCapaciteAppelee);
 			}
 		} else {
+			utilisable = false;
 			Debug.Log ("Capacité manuelle pas retrouvé avec index");
 		}
+
+		return utilisable;
 	}
 
 	public static bool testCondition(CarteConstructionMetierAbstract carteSource, CapaciteDTO testCapa){

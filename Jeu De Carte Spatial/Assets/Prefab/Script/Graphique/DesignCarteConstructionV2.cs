@@ -137,7 +137,7 @@ public class DesignCarteConstructionV2 {
 
 	private void deleteVisual(){
 		joueurGenerateur.CarteEnVisuel = false;
-		GameObject.Destroy (goParent);
+		goParent.SetActive (false);
 	}
 
 	private void showConfirmAddLevel(){
@@ -195,7 +195,14 @@ public class DesignCarteConstructionV2 {
 		} else {
 			element.BoutonAction.gameObject.SetActive (false);
 		}
+	}
 
+	public void reinitDebutTour(){
+		foreach (UICollapseElement element in collapseGroup.ListCollapseElement) {
+			if (element is UICollapseUseCapa) {
+				((UICollapseUseCapa)element).reinitDebutTour ();
+			}
+		}
 	}
 
 	private Text getTextBouton(Button bouton){

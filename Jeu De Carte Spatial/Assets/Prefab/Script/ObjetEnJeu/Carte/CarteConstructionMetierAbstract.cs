@@ -41,6 +41,12 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		return initDo;
 	}
 
+	public override void reinitDebutTour (){
+		if (null != designCarte) {
+			designCarte.reinitDebutTour ();
+		}
+	}
+
 	public int getCoutMetal(){
 		return getCoutMetal(niveauActuel);
 	}
@@ -129,69 +135,43 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	public virtual void generateVisualCard() {
 		if (!JoueurProprietaire.CarteEnVisuel) {
 			base.generateVisualCard ();
-			JoueurProprietaire.CarteEnVisuel = true;
-			float height = panelGO.GetComponent<RectTransform> ().rect.height;
-			float width = panelGO.GetComponent<RectTransform> ().rect.width;
 
-			CarteConstructionDTO carteSource = getCarteRef ();
+			if (null == designCarte) {
+				float height = panelGO.GetComponent<RectTransform> ().rect.height;
+				float width = panelGO.GetComponent<RectTransform> ().rect.width;
 
-			designCarte = new DesignCarteConstructionV2 (this, panelGO, height, width, JoueurUtils.getJoueurLocal());
+				CarteConstructionDTO carteSource = getCarteRef ();
 
-			designCarte.setTitre (carteSource.TitreCarte);
-			designCarte.setImage (Resources.Load<Sprite>(carteSource.ImagePath));
+				designCarte = new DesignCarteConstructionV2 (this, panelGO, height, width, JoueurUtils.getJoueurLocal ());
 
-			designCarte.setMetal (carteSource.ListNiveau [0].Cout);//TODO passer par getCout(qui vérifie s'il y a des capacité malus au bonus vert ou roge)
-			designCarte.setNiveauActuel (NiveauActuel);
-			designCarte.setCarburant (0);
-			//designCarte.setDescription ("Ceci est une description de la carte");
-			//designCarte.setCitation ("Il était une fois une carte");
+				designCarte.setTitre (carteSource.TitreCarte);
+				designCarte.setImage (Resources.Load<Sprite> (carteSource.ImagePath));
 
-			bool premierNivCache = false;
-			for (int index = 0; index < carteSource.ListNiveau.Count; index++) {
-				NiveauDTO niveau = carteSource.ListNiveau [index];
+				designCarte.setMetal (getCoutMetal(1));
+				designCarte.setNiveauActuel (NiveauActuel);
+				designCarte.setCarburant (0);
+				//designCarte.setDescription ("Ceci est une description de la carte");
+				//designCarte.setCitation ("Il était une fois une carte");
 
-				//ne rempie pas le premier titre s'il est vide
-				if (index == 0 && niveau.TitreNiveau == "") {
-					premierNivCache = true;
-					continue;
+				bool premierNivCache = false;
+				for (int index = 0; index < carteSource.ListNiveau.Count; index++) {
+					NiveauDTO niveau = carteSource.ListNiveau [index];
+
+					//ne rempie pas le premier titre s'il est vide
+					if (index == 0 && niveau.TitreNiveau == "") {
+						premierNivCache = true;
+						continue;
+					}
 				}
+
+				//TODO calcul PA, PD, ...
+				designCarte.setPA (0);
+				designCarte.setPD (this.PV);
+			} else {
+				designCarte.setMetal (getCoutMetal());
+				designCarte.setNiveauActuel (NiveauActuel);
+				designCarte.setPD (this.PV);
 			}
-
-			//TODO calcul PA, PD, ...
-			designCarte.setPA (0);
-			designCarte.setPD (this.PV);
-
-			/*paternCarteConstruction = (GameObject) Instantiate(Resources.Load("Graphique/CarteConstructionPatern"));
-		paternCarteConstruction.transform.SetParent (panelGO.transform);
-		paternCarteConstruction.transform.localPosition = Vector3.zero;
-		paternCarteConstruction.GetComponent<RectTransform>().ForceUpdateRectTransforms();
-
-		float height = panelGO.GetComponent<RectTransform>().rect.height;
-		float width = panelGO.GetComponent<RectTransform>().rect.width;
-		paternCarteConstruction.GetComponent<RectTransform> ().sizeDelta = new Vector2 (width, height);
-
-		GameObject paternTitre = paternCarteConstruction.transform.Find ("Titre").gameObject;
-		GameObject paternImage = paternCarteConstruction.transform.Find ("Image").gameObject;
-		GameObject paternRessource = paternCarteConstruction.transform.Find ("Ressource").gameObject;
-		GameObject paternRessourceMetal = paternRessource.transform.Find ("Metal").gameObject;
-		GameObject paternRessourceNiveau = paternRessource.transform.Find ("NiveauActuel").gameObject;
-		paternRessourceCarbu = paternRessource.transform.Find ("Carburant").gameObject;
-		GameObject paternDescription = paternCarteConstruction.transform.Find ("Description").gameObject;
-		GameObject paternCitation = paternCarteConstruction.transform.Find ("Citation").gameObject;
-		GameObject paternNiveaux = paternCarteConstruction.transform.Find ("Niveaux").gameObject;
-		GameObject paternUtilise = paternCarteConstruction.transform.Find ("Utilise").gameObject;
-
-		CarteConstructionAbstractData carteRef = (CarteConstructionAbstractData) getCarteRef ();
-
-		paternTitre.GetComponent<Text>().text = carteRef.titreCarte;
-		//paternImage.GetComponent<Image> ().sprite = carteRef.image; //TODO carte Ref doit être un sprite
-		paternRessourceMetal.GetComponentInChildren<Text>().text = "" + carteRef.listNiveau[0].cout; //TODO passer par getCout(qui vérifie s'il y a des capacité malus au bonus vert ou roge)
-		paternRessourceNiveau.GetComponentInChildren<Text> ().text = "" + this.niveauActuel; //TODO rajouter niveau actuelle dans la carte
-
-		paternRessourceCarbu.SetActive (false);
-
-		paternDescription.GetComponent<Text> ().text = carteRef.libelleCarte;
-		paternCitation.GetComponent<Text> ().text = "\"" + carteRef.citationCarte+ "\"";*/
 		}
 	}
 

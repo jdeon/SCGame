@@ -25,6 +25,12 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		}
 	}
 
+	public override void reinitDebutTour(){
+		base.reinitDebutTour ();
+		reinitDefenseSelectTour ();
+		AttaqueCeTour = false;
+	}
+
 	/***************************Methode IAttaquer*************************/
 
 	public void attaqueCarte (CarteConstructionMetierAbstract cible, NetworkInstanceId netIdEventTask){
@@ -211,11 +217,10 @@ public class CarteVaisseauMetier : CarteConstructionMetierAbstract, IAttaquer, I
 		return CapaciteUtils.valeurAvecCapacite (getPointAttaque(), listEffetCapacite, ConstanteIdObjet.ID_CAPACITE_MODIF_DEGAT_INFLIGE);
 	}
 
-	public override void generateVisualCard()
-	{
+	public override void generateVisualCard(){
 		if (!JoueurProprietaire.CarteEnVisuel) {
 			base.generateVisualCard ();
-			JoueurProprietaire.CarteEnVisuel = true;
+
 			designCarte.setCarburant (carteRef.ConsommationCarburant);
 			designCarte.setPA (carteRef.PointAttaque);
 		}

@@ -11,6 +11,9 @@ public class UICollapseUseCapa : UICollapseElement {
 
 	private List<UIDialogInfo> listDialogOUverte = new List<UIDialogInfo> ();
 
+	public void reinitDebutTour(){
+		BoutonAction.gameObject.SetActive (true);
+	}
 
 	public void gestionBoutonNiveau(Text textBtnLvl){
 		bool actionTrouve = false;
@@ -42,12 +45,18 @@ public class UICollapseUseCapa : UICollapseElement {
 		if (capaciteUtilisable.Count > 1) {
 			showChoiceCapa (capaciteUtilisable);
 		} else {
-			CapaciteManuelleUtils.useCapacite(carteSource, numLvl, 0);
+			bool capaUtilisee = CapaciteManuelleUtils.useCapacite(carteSource, numLvl, 0);
+			if (capaUtilisee) {
+				BoutonAction.gameObject.SetActive (false);
+			}
 		}
 	}
 
 	private void useCapa(int index){
-		CapaciteManuelleUtils.useCapacite (carteSource, numLvl, index);
+		bool capaUtilisee = CapaciteManuelleUtils.useCapacite (carteSource, numLvl, index);
+		if (capaUtilisee) {
+			BoutonAction.gameObject.SetActive (false);
+		}
 	}
 	
 

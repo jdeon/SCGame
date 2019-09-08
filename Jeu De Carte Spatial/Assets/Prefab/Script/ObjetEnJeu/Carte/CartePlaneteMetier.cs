@@ -116,6 +116,10 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 		return false;
 	}
 
+	public override void reinitDebutTour (){
+		//TODO a implementer
+	}
+
 	public override void onClick(){
 		Joueur joueurLocal = JoueurUtils.getJoueurLocal ();
 

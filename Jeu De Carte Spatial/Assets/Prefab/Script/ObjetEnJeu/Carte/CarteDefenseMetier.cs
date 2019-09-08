@@ -21,11 +21,15 @@ public class CarteDefenseMetier : CarteConstructionMetierAbstract, IDefendre {
 		}
 	}
 
+	public override void reinitDebutTour(){
+		base.reinitDebutTour ();
+		reinitDefenseSelectTour ();
+	}
+
 	public override void generateVisualCard()
 	{
 		if (!JoueurProprietaire.CarteEnVisuel) {
 			base.generateVisualCard ();
-			JoueurProprietaire.CarteEnVisuel = true;
 			designCarte.setPA (carteRef.PointAttaque);
 		}
 	}

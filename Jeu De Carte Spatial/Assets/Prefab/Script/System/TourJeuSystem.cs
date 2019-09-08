@@ -203,25 +203,19 @@ public class TourJeuSystem : NetworkBehaviour {
 	[ClientRpc]
 	public void RpcRemiseEnPlaceCarte(NetworkInstanceId netIdJoueur){
 
-		if(JoueurUtils.getJoueurLocal().netId == netIdJoueur){
-		List<CarteMetierAbstract> listCarteJoueur = CarteUtils.getListCarteJoueur (netIdJoueur);
+		if (JoueurUtils.getJoueurLocal ().netId == netIdJoueur) {
+			List<CarteMetierAbstract> listCarteJoueur = CarteUtils.getListCarteJoueur (netIdJoueur);
 
-		foreach (CarteMetierAbstract carteJoueur in listCarteJoueur) {
-			if (carteJoueur is IAttaquer) {
-				((IAttaquer)carteJoueur).AttaqueCeTour = false;
+			foreach (CarteMetierAbstract carteJoueur in listCarteJoueur) {
+				carteJoueur.reinitDebutTour ();
 			}
-
-			if (carteJoueur is IDefendre) {
-				((IDefendre)carteJoueur).reinitDefenseSelectTour ();
-			}
-		}
 			
-		List<EmplacementAttaque> listEmplacementAttaqueOccuper = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementAttaque> (netIdJoueur);
+			List<EmplacementAttaque> listEmplacementAttaqueOccuper = EmplacementUtils.getListEmplacementOccuperJoueur<EmplacementAttaque> (netIdJoueur);
 
-		if (listEmplacementAttaqueOccuper.Count > 0) {
-			List<EmplacementAtomsphereMetier> listEmplacementAtmosJoueurLibre = EmplacementUtils.getListEmplacementLibreJoueur <EmplacementAtomsphereMetier> (netIdJoueur);
+			if (listEmplacementAttaqueOccuper.Count > 0) {
+				List<EmplacementAtomsphereMetier> listEmplacementAtmosJoueurLibre = EmplacementUtils.getListEmplacementLibreJoueur <EmplacementAtomsphereMetier> (netIdJoueur);
 				
-			//On essaye d'abord de replacer les vaisseaux au bonne endroit
+				//On essaye d'abord de replacer les vaisseaux au bonne endroit
 				if (listEmplacementAtmosJoueurLibre.Count > 0) {
 					List<EmplacementAttaque> listEmplacementAttaqueToujoursOccuper = new List<EmplacementAttaque> (listEmplacementAttaqueOccuper);
 					List<EmplacementAtomsphereMetier> listEmplacementAtmosToujoursLibre = new List<EmplacementAtomsphereMetier> (listEmplacementAtmosJoueurLibre);
