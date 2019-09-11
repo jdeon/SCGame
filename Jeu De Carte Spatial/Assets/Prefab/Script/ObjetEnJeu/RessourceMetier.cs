@@ -5,10 +5,11 @@ using UnityEngine.Networking;
 
 public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 
-	[SerializeField]
 	private string typeRessource;
 
 	private Joueur joueur;
+
+	private int production;
 
 	private TextMesh txtProd;
 
@@ -38,39 +39,6 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 		}
 	}
 
-	//TODO cree des constante
-	private static string getPrefixeProd(string typeRessource){
-		string result;
-
-		if(typeRessource == "Metal"){
-			result = "Prod M -";
-		} else if(typeRessource == "Carburant"){
-			result = "Prod C - ";
-		} else if(typeRessource == "XP"){
-			result = "XP - ";
-		} else {
-			result = "";
-		}
-
-		return result;
-	}
-
-	private static string getPrefixeStock(string typeRessource){
-		string result;
-
-		if(typeRessource == "Metal"){
-			result = "Stock M -";
-		} else if(typeRessource == "Carburant"){
-			result = "Stock C - ";
-		} else if(typeRessource == "XP"){
-			result = "Niv - ";
-		} else {
-			result = "";
-		}
-
-		return result;
-	}
-
 	public void Start(){
 		if (joueur.isServer) {
 			idSelectionnable = ++SelectionnableUtils.sequenceSelectionnable;
@@ -78,13 +46,15 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 		}
 	}
 			
-	public void init (Joueur joueurPossesseur){
+	public void init (Joueur joueurPossesseur, string typeRessource){
 		this.joueur = joueurPossesseur;
-		Production = 1;
-		Stock = 20; //TODO change to 3
+		this.typeRessource = typeRessource;
 
-		this.prefixeRessourceProd = getPrefixeProd (typeRessource);
-		this.prefixeRessourceStock = getPrefixeStock (typeRessource);
+		Production = RessourceUtils.getValeurProdInitialeRessource(typeRessource);
+		Stock = RessourceUtils.getValeurStockInitialeRessource(typeRessource);
+
+		this.prefixeRessourceProd = RessourceUtils.getPrefixeProd (typeRessource);
+		this.prefixeRessourceStock = RessourceUtils.getPrefixeStock (typeRessource);
 
 		Transform tProd = transform.Find("Prod");
 		if(null != tProd){
@@ -239,7 +209,17 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 		get { return typeRessource; }
 	}
 
-	public int Production { get; set; }
+	public int Production { 
+		get { return production; }
+		set {
+			production = value;
+			if (TypeRessource == ConstanteInGame.STR_TYPE_RESSOURCE_XP && production >= 10) {
+				int gainNiveau = production / 10;
+				Stock += gainNiveau;
+				production -= gainNiveau * 10;
+			}
+		}
+	}
 
 	public int Stock{ get; set; }
 

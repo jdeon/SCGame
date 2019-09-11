@@ -11,6 +11,6 @@ public interface IVulnerable {
 	//Retourne PV restant
 	int recevoirDegat (int nbDegat, CarteMetierAbstract sourceDegat, NetworkInstanceId netdTaskEvent);
 
-	void destruction (NetworkInstanceId netdTaskEvent);
+	void destruction (Joueur joueurSourceAction, NetworkInstanceId netdTaskEvent);
 
 }

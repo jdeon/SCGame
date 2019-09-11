@@ -303,7 +303,7 @@ public class CapaciteUtils {
 		} else if (capaciteReference.Capacite == ConstanteIdObjet.ID_CAPACITE_DESTRUCTION_CARTE) {
 			//TODO que faire si pas IVulnerable?
 			if (carteCibleCapacite is IVulnerable) {
-				((IVulnerable)carteCibleCapacite).destruction (netIdTaskEvent);
+				((IVulnerable)carteCibleCapacite).destruction (joueur, netIdTaskEvent);
 			}
 
 		} else if (capaciteReference.Capacite == ConstanteIdObjet.ID_CAPACITE_INVOQUE_CARTE && null != capaciteReference.CarteInvocation) {
@@ -388,10 +388,10 @@ public class CapaciteUtils {
 				ressource.Stock -= montantEchange;
 
 				string ressourceOppose = "";
-				if (ressource.TypeRessource == "Metal") {
-					ressourceOppose = "Carburant";
-				} else if (ressource.TypeRessource == "Carburant") {
-					ressourceOppose = "Metal";
+				if (ressource.TypeRessource == ConstanteInGame.STR_TYPE_RESSOURCE_METAL) {
+					ressourceOppose = ConstanteInGame.STR_TYPE_RESSOURCE_CARBU;
+				} else if (ressource.TypeRessource == ConstanteInGame.STR_TYPE_RESSOURCE_CARBU) {
+					ressourceOppose = ConstanteInGame.STR_TYPE_RESSOURCE_METAL;
 				}
 
 				Joueur joueurRessource = JoueurUtils.getJoueur (ressource.NetIdJoueur);
@@ -531,11 +531,11 @@ public class CapaciteUtils {
 
 				capaciteResult.ModeCalcul = ConstanteEnum.TypeCalcul.Ajout;
 				int ajouterAuRessource = 0;
-				if (typeRessource == "Metal") {
+				if (typeRessource == ConstanteInGame.STR_TYPE_RESSOURCE_METAL) {
 					ajouterAuRessource = getNewValue (((CarteConstructionMetierAbstract)cibleSelectionne).getCoutMetalReelCarte (), capaciteSource.Quantite, capaciteSource.ModeCalcul);
-				} else if (cibleSelectionne is CarteVaisseauMetier && typeRessource == "Carburant") {
+				} else if (cibleSelectionne is CarteVaisseauMetier && typeRessource == ConstanteInGame.STR_TYPE_RESSOURCE_CARBU) {
 					ajouterAuRessource = getNewValue (((CarteVaisseauMetier)cibleSelectionne).getConsomationCarburant (), capaciteSource.Quantite, capaciteSource.ModeCalcul);
-				} else if (typeRessource == "XP") {
+				} else if (typeRessource == ConstanteInGame.STR_TYPE_RESSOURCE_XP) {
 					ajouterAuRessource = getNewValue (((CarteConstructionMetierAbstract)cibleSelectionne).NiveauActuel, capaciteSource.Quantite, capaciteSource.ModeCalcul);
 				}
 				//TODO autre cible ?

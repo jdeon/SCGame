@@ -234,6 +234,7 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 
 		if (!invulnerable && nbDegat > 0) {
 			PV -= nbDegat;
+			RessourceUtils.gainXPDegat (nbDegat, sourceDegat.JoueurProprietaire);
 			if (PV <= 0) {
 				JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netdTaskEvent, false); 
 			}
@@ -243,8 +244,9 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	}
 
 
-	public void destruction (NetworkInstanceId netdTaskEvent){
+	public void destruction (Joueur joueurSource ,NetworkInstanceId netdTaskEvent){
 		if (JoueurProprietaire.isServer) {
+			RessourceUtils.gainXPDestruction (NiveauActuel, joueurSource);
 			CapaciteUtils.deleteEffectCapacityOfCard (this.netId);
 			NetworkUtils.unassignObjectFromPlayer (GetComponent<NetworkIdentity> (), JoueurProprietaire .GetComponent<NetworkIdentity> (), -1);
 			JoueurProprietaire.CimetiereConstruction.addCarte (this);

@@ -24,6 +24,14 @@ public class ConstanteInGame {
 
 	public static readonly string strDeterioration = "Deterioration";
 
+
+	public static readonly string STR_TYPE_RESSOURCE_METAL = "Metal";
+
+	public static readonly string STR_TYPE_RESSOURCE_CARBU = "Carburant";
+
+	public static readonly string STR_TYPE_RESSOURCE_XP = "Xp";
+
+
 	public static readonly string strSystemActionEvent = "SystemActionEvent";
 
 	/**Nom composant fils de joueur*/

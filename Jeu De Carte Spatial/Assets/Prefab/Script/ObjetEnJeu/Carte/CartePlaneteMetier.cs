@@ -80,7 +80,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 		if(null != sourceDegat && (! (sourceDegat is CarteConstructionMetierAbstract) || ((CarteConstructionMetierAbstract) sourceDegat).OnBoard)){
 
 			pointVie -= nbDegat;
-
+			RessourceUtils.gainXPDegat (nbDegat, sourceDegat.JoueurProprietaire);
 			if (pointVie <= 0) {
 				JoueurUtils.getJoueurLocal ().CmdCreateTask (this.netId, this.idJoueurProprietaire, sourceDegat.IdISelectionnable, ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE, netIdEventTask, false);
 			}
@@ -88,7 +88,7 @@ public class CartePlaneteMetier : CarteMetierAbstract, IVulnerable, IConteneurCa
 		return pointVie;
 	}
 
-	public void destruction (NetworkInstanceId netdTaskEvent){
+	public void destruction (Joueur joueurSourceAction, NetworkInstanceId netdTaskEvent){
 		//TODO fonction victoire
 
 	}

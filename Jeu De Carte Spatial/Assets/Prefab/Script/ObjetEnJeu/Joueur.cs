@@ -50,9 +50,9 @@ public class Joueur : NetworkBehaviour {
 		deckConstruction.intiDeck (this, isServer);
 		cimetiereConstruction.intiDeck (this, isServer);
 
-		ressourceXP.init (this);
-		ressourceMetal.init (this);
-		ressourceCarburant.init (this);
+		ressourceXP.init (this, ConstanteInGame.STR_TYPE_RESSOURCE_XP);
+		ressourceMetal.init (this, ConstanteInGame.STR_TYPE_RESSOURCE_METAL);
+		ressourceCarburant.init (this, ConstanteInGame.STR_TYPE_RESSOURCE_CARBU);
 
 		if (isLocalPlayer) {
 			CmdGenerateCardAlreadyLaid (this.netId);
@@ -230,12 +230,20 @@ public class Joueur : NetworkBehaviour {
 	/******************Gestion Ressource****************/
 	[Command]
 	public void CmdProductionRessource(){
-		//TODO XP?
 		ressourceMetal.Stock += ressourceMetal.ProductionWithCapacity;
 		RpcSyncRessourceStockAndProd (ressourceMetal.TypeRessource, ressourceMetal.Production, ressourceMetal.Stock);
 
 		ressourceCarburant.Stock += ressourceCarburant.ProductionWithCapacity;
 		RpcSyncRessourceStockAndProd (ressourceCarburant.TypeRessource, ressourceCarburant.Production, ressourceCarburant.Stock);
+
+		ressourceXP.Production += RessourceUtils.PROD_XP_PAR_TOUR;
+		RpcSyncRessourceStockAndProd (ressourceXP.TypeRessource, ressourceXP.Production, ressourceXP.Stock);
+	}
+
+	[Command]
+	public void CmdGainXP(int gainXP){
+		ressourceXP.Production += gainXP;
+		RpcSyncRessourceStockAndProd (ressourceXP.TypeRessource, ressourceXP.Production, ressourceXP.Stock);
 	}
 
 	[Command]

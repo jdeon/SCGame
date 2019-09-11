@@ -148,8 +148,8 @@ public class EventTaskUtils  {
 			//TODO 
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_DESTRUCTION_CARTE && scriptSource is IVulnerable) {
-				
-			((IVulnerable)scriptSource).destruction (netIdEventTask);
+			Joueur joueurSourceAction =	ConvertUtils.convertNetIdToScript<Joueur> (netIdJoueurSourceAction, false);
+			((IVulnerable)scriptSource).destruction (joueurSourceAction, netIdEventTask);
 			actionTrouvee = true;
 
 		} else if (idActionEvent == ConstanteIdObjet.ID_CONDITION_ACTION_FIN_ATTAQUE) {
