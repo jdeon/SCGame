@@ -183,7 +183,8 @@ public class EventTaskUtils  {
 			ISelectionnable cible = SelectionnableUtils.getSelectiobleById (idSelectionCible);
 
 			if (null != cible && cible is CarteConstructionMetierAbstract) {
-				((CarteConstructionMetierAbstract)cible).evolutionCarte (infoComp, netIdEventTask); 
+				//Si la source est la carte, il s'agit d'une demande manuelle d'évolution
+				((CarteConstructionMetierAbstract)cible).evolutionCarte (infoComp, netIdEventTask, netIdSourceAction == ((CarteConstructionMetierAbstract)cible).netId); 
 				actionTrouvee = true;
 			} 
 

@@ -90,12 +90,28 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 		this.RpcGenerate(carteRefData, NetworkInstanceId.Invalid);
 	}
 
-	public void evolutionCarte (int nbNiveau, NetworkInstanceId netIdTask){
+	[Command]
+	public void CmdCreateEvolTask(NetworkInstanceId netIdJoueurSource, int nbNivEvol){
+		EventTask eventTask =  ActionEventManager.EventActionManager.CreateTask (Net, netIdJoueurSource, IdISelectionnable,
+				ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE, NetworkInstanceId.Invalid, false);
+		eventTask.InfoComp = nbNivEvol;
+	}
+
+	public void evolutionCarte (int nbNiveau, NetworkInstanceId netIdTask, bool avecStockNiv){
 		int evolutionRestante = nbNiveau;
 		if (nbNiveau > 0) {
+			RessourceMetier ressourceMetal = JoueurProprietaire.RessourceMetal;
+			RessourceMetier ressourceXp = JoueurProprietaire.RessourceXP;
+
 			while (nbNiveau > 0) {
-				if (niveauActuel <= 5 && JoueurProprietaire.RessourceMetal.Stock >= getCoutMetal (niveauActuel + 1)) {
-					JoueurProprietaire.RessourceMetal.Stock -= getCoutMetal (niveauActuel + 1);
+				if (niveauActuel <= 5 && JoueurProprietaire.RessourceMetal.Stock >= getCoutMetal (niveauActuel + 1)
+				    && (!avecStockNiv || JoueurProprietaire.RessourceXP.StockWithCapacity > 0)) {
+					ressourceMetal.Stock -= getCoutMetal (niveauActuel + 1);
+
+					if (avecStockNiv) {
+						ressourceXp.Stock--;
+					}
+
 					niveauActuel++;
 					nbNiveau--;
 				} else {
@@ -103,7 +119,9 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 				}
 			}
 
-			JoueurProprietaire.RessourceMetal.updateVisual ();
+			JoueurProprietaire.RpcSyncRessourceStockAndProd (ressourceMetal.TypeRessource, ressourceMetal.Production, ressourceMetal.Stock);
+			JoueurProprietaire.RpcSyncRessourceStockAndProd (ressourceXp.TypeRessource, ressourceXp.Production, ressourceXp.Stock);
+			//TODO null sur le serveur
 			designCarte.setNiveauActuel (niveauActuel);
 
 		} else if (nbNiveau < 0) {

@@ -72,7 +72,7 @@ public class RessourceMetier : MonoBehaviour, ISelectionnable, IAvecCapacite {
 
 	public void updateVisual(){
 		txtProd.text = prefixeRessourceProd + ProductionWithCapacity;
-		txtStock.text = prefixeRessourceProd + StockWithCapacity;
+		txtStock.text = prefixeRessourceStock + StockWithCapacity;
 	}
 
 	public void syncListCapacityFromServer(List<CapaciteMetier> listMetierServer){

@@ -163,14 +163,17 @@ public class DesignCarteConstructionV2 {
 
 		int nbMetalNecessaire = carteSource.getCoutMetal (carteSource.NiveauActuel + 1);
 
-		if (nbMetalNecessaire > joueurGenerateur.RessourceMetal.StockWithCapacity) {
+		if (!(carteSource.getConteneur() is EmplacementMetierAbstract)) {
+			UIDialogInfo infoDialog = new UIDialogInfo ("Carte ne peut evoluer que sur le terrain");
+			infoDialog.showDialog ();
+		}else if (nbMetalNecessaire > joueurGenerateur.RessourceMetal.StockWithCapacity) {
 			UIDialogInfo infoDialog = new UIDialogInfo ("Vous n'avez pas assez de metal pour faire evoluer la carte");
+			infoDialog.showDialog ();
+		} else if (joueurGenerateur.RessourceXP.StockWithCapacity <= 0) {
+			UIDialogInfo infoDialog = new UIDialogInfo ("Vous n'avez plus de stock de niveau");
 			infoDialog.showDialog ();
 		} else if (carteSource.NiveauActuel >= 5) {
 			UIDialogInfo infoDialog = new UIDialogInfo ("La carte est deja au niveau maximum");
-			infoDialog.showDialog ();
-		} else if (!(carteSource.getConteneur() is EmplacementMetierAbstract)) {
-			UIDialogInfo infoDialog = new UIDialogInfo ("Carte ne peut evoluer que sur le terrain");
 			infoDialog.showDialog ();
 		} else {
 			UIConfirmDialog confirmDialog = new UIConfirmDialog ("Souhaitez-vous augmenter le niveau de la carte contre " + nbMetalNecessaire + " metal");
@@ -182,10 +185,7 @@ public class DesignCarteConstructionV2 {
 	}
 
 	private void evolCard(){
-		EventTask eventTask =  ActionEventManager.EventActionManager.CreateTask (carteSource.netId, joueurGenerateur.netId, carteSource.IdISelectionnable,
-			ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE, NetworkInstanceId.Invalid, false);
-		eventTask.InfoComp = 1;
-
+		carteSource.CmdCreateEvolTask (joueurGenerateur.netId, 1);
 	}
 
 	private void gestionAffichageDesBoutons(){
