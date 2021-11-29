@@ -185,7 +185,7 @@ public class DesignCarteConstructionV2 {
 	}
 
 	private void evolCard(){
-		carteSource.CmdCreateEvolTask (joueurGenerateur.netId, 1);
+		carteSource.CmdCreateEvolTask (carteSource.netId, joueurGenerateur.netId, 1);
 	}
 
 	private void gestionAffichageDesBoutons(){

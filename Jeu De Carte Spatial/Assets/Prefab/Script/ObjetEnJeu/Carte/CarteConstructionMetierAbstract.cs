@@ -91,8 +91,8 @@ public abstract class CarteConstructionMetierAbstract : CarteMetierAbstract, IVu
 	}
 
 	[Command]
-	public void CmdCreateEvolTask(NetworkInstanceId netIdJoueurSource, int nbNivEvol){
-		EventTask eventTask =  ActionEventManager.EventActionManager.CreateTask (Net, netIdJoueurSource, IdISelectionnable,
+	public void CmdCreateEvolTask(NetworkInstanceId netIdCarteSource, NetworkInstanceId netIdJoueurSource, int nbNivEvol){
+		EventTask eventTask =  ActionEventManager.EventActionManager.CreateTask (netIdCarteSource, netIdJoueurSource, IdISelectionnable,
 				ConstanteIdObjet.ID_CONDITION_ACTION_EVOLUTION_CARTE, NetworkInstanceId.Invalid, false);
 		eventTask.InfoComp = nbNivEvol;
 	}
